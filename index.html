@@ -131,7 +131,7 @@
     }
     .trash:hover{ border-color:rgba(220,38,38,.4); box-shadow:0 0 0 4px rgba(220,38,38,.12); }
 
-    /* ✅ Deletado em vermelho (aparece na lista, mas não entra em totais/relatórios) */
+    /* ✅ DELETADO EM VERMELHO */
     tr.deleted td{
       color:#dc2626 !important;
       background: rgba(220,38,38,.06) !important;
@@ -141,13 +141,14 @@
       color:#dc2626 !important;
     }
 
+    /* Modais */
     .modalBack{
       position:fixed; inset:0; background:rgba(0,0,0,.35);
       display:none; align-items:center; justify-content:center; padding:16px;
       z-index:9999;
     }
     .modal{
-      width:min(720px, 100%);
+      width:min(760px, 100%);
       background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:var(--sh);
       overflow:hidden;
     }
@@ -157,11 +158,17 @@
       width:40px; height:40px; border-radius:14px; border:1px solid var(--line);
       background:#fff; font-weight:900; cursor:pointer;
     }
+
+    /* Modal delete */
+    .delGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    @media(max-width:700px){ .delGrid{ grid-template-columns:1fr; } }
+    .help{ font-size:12px; color:#64748b; margin-top:6px; }
+
     @media print{
       body *{ visibility:hidden; }
       #relModal, #relModal *{ visibility:visible; }
       #relModal{ position:fixed; left:0; top:0; width:100%; border:none; box-shadow:none; }
-      .modalBack{ display:flex !important; background:#fff !important; }
+      .modalBack#relBack{ display:flex !important; background:#fff !important; }
       .closeX, .noPrint{ display:none !important; }
     }
   </style>
@@ -285,11 +292,9 @@
 
           <div style="height:10px"></div>
 
-          <div class="grid2">
-            <div style="grid-column:1 / -1">
-              <label>Valor</label>
-              <input id="valorVenda" inputmode="decimal" placeholder="Ex.: 35,90"/>
-            </div>
+          <div>
+            <label>Valor</label>
+            <input id="valorVenda" inputmode="decimal" placeholder="Ex.: 35,90"/>
           </div>
 
           <div style="height:10px"></div>
@@ -385,7 +390,6 @@
             <div class="small">Escolha o dia/semana/mês e imprima</div>
           </div>
           <div class="btnrow noPrint" style="gap:8px; align-items:flex-end;">
-            <!-- ✅ Diário com dia escolhido -->
             <div style="min-width:170px;">
               <label style="margin:0 0 6px;">Dia (diário)</label>
               <input id="relDayPick" type="date"/>
@@ -464,10 +468,50 @@
   </div>
 </div>
 
+<!-- Modal Excluir -->
+<div class="modalBack" id="delBack" aria-hidden="true">
+  <div class="modal" id="delModal">
+    <div class="hd">
+      <b>Excluir operação</b>
+      <div class="btnrow">
+        <button type="button" class="closeX" id="btnCloseDel">✕</button>
+      </div>
+    </div>
+    <div class="bd">
+      <div class="note" style="margin-top:0">
+        Essa ação não apaga da planilha. Ela marca como <b>DELETADO</b>, aparece em vermelho e não entra nos relatórios.
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="delGrid">
+        <div>
+          <label>Operador autorizador</label>
+          <select id="delOperador"></select>
+          <div class="help">Escolha quem está autorizando a exclusão.</div>
+        </div>
+        <div>
+          <label>PIN</label>
+          <input id="delPin" type="password" placeholder="Digite o PIN"/>
+          <div class="help">PIN usado no Apps Script para validar exclusão.</div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <div class="btnrow" style="justify-content:flex-end">
+        <button type="button" class="ghost" id="btnCancelDel">Cancelar</button>
+        <button type="button" class="danger" id="btnConfirmDel">Confirmar exclusão</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
-  // ✅ Troque se mudar seu Web App
+  // ✅ SEU WEB APP
   const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
 
+  // Utils
   const norm = (s)=> String(s||"").trim().toUpperCase();
   const pad2 = n => String(n).padStart(2,"0");
   const todayISO = () => {
@@ -491,6 +535,14 @@
     return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
   };
 
+  // ✅ Normaliza tipo (ABERTURA antigo vira SUPRIMENTO)
+  function normalizeTipo(tipo){
+    const t = norm(tipo);
+    if(t === "ABERTURA") return "SUPRIMENTO";
+    if(t === "FECHAMENTO") return "SANGRIA";
+    return t;
+  }
+
   function toBRDate(iso){
     if(!iso) return "";
     const [y,m,d] = String(iso).split("-");
@@ -503,9 +555,8 @@
     if(onlyTime){
       const hh = String(onlyTime[1]).padStart(2,"0");
       const mm = onlyTime[2];
-      return `${toBRDate(currentDay())} ${hh}:${mm}`;
+      return `${toBRDate(rawData || todayISO())} ${hh}:${mm}`;
     }
-    // tenta parsear ISO (caso venha timestamp)
     const d = new Date(h);
     if(!isNaN(d) && d.getFullYear() > 2005){
       const dd = String(d.getDate()).padStart(2,"0");
@@ -515,9 +566,10 @@
       const mi = String(d.getMinutes()).padStart(2,"0");
       return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
     }
-    return `${toBRDate(rawData || currentDay())} ${String(rawHora||nowTime()).slice(0,5)}`;
+    return `${toBRDate(rawData || todayISO())} ${String(rawHora||nowTime()).slice(0,5)}`;
   }
 
+  // Header
   const dot = document.getElementById("dot");
   const statusEl = document.getElementById("status");
   const lblLoja = document.getElementById("lblLoja");
@@ -528,6 +580,7 @@
   const menuHint = document.getElementById("menuHint");
   const msgGlobal = document.getElementById("msgGlobal");
 
+  // Menu screens
   const menu = document.getElementById("menu");
   const screenTitle = document.getElementById("screenTitle");
   const screens = {
@@ -547,6 +600,7 @@
     sConfig: "Config",
   };
 
+  // Abertura/base
   const selLoja = document.getElementById("selLoja");
   const dayEl = document.getElementById("day");
   const selOperador = document.getElementById("selOperador");
@@ -556,6 +610,7 @@
   const btnFechar = document.getElementById("btnFechar");
   const msgAbertura = document.getElementById("msgAbertura");
 
+  // Venda
   const boxVenda = document.getElementById("boxVenda");
   const selVendedor = document.getElementById("selVendedor");
   const formaVenda = document.getElementById("formaVenda");
@@ -563,6 +618,7 @@
   const btnAddVenda = document.getElementById("btnAddVenda");
   const msgVenda = document.getElementById("msgVenda");
 
+  // Outros
   const boxOutros = document.getElementById("boxOutros");
   const tipoOutros = document.getElementById("tipoOutros");
   const valorOutros = document.getElementById("valorOutros");
@@ -570,13 +626,14 @@
   const btnLimpar = document.getElementById("btnLimpar");
   const msgOutros = document.getElementById("msgOutros");
 
+  // Movimentos
   const kpiSaldo = document.getElementById("kpiSaldo");
   const kpiFilterName = document.getElementById("kpiFilterName");
   const kpiFilterTotal = document.getElementById("kpiFilterTotal");
   const tabs = document.getElementById("tabs");
   const tb = document.getElementById("tb");
 
-  // ✅ relatório diário com escolha de dia
+  // Relatórios
   const relDayPick = document.getElementById("relDayPick");
   const relWeekDay = document.getElementById("relWeekDay");
   const relMonthPick = document.getElementById("relMonthPick");
@@ -584,6 +641,7 @@
   const btnRelSemana = document.getElementById("btnRelSemana");
   const btnRelMes = document.getElementById("btnRelMes");
 
+  // Modal relatório
   const relBack = document.getElementById("relBack");
   const btnCloseRel = document.getElementById("btnCloseRel");
   const btnPrintRel = document.getElementById("btnPrintRel");
@@ -599,11 +657,22 @@
   const relDesp = document.getElementById("relDesp");
   const relSaldo = document.getElementById("relSaldo");
 
+  // Modal delete
+  const delBack = document.getElementById("delBack");
+  const btnCloseDel = document.getElementById("btnCloseDel");
+  const btnCancelDel = document.getElementById("btnCancelDel");
+  const btnConfirmDel = document.getElementById("btnConfirmDel");
+  const delOperador = document.getElementById("delOperador");
+  const delPin = document.getElementById("delPin");
+  let pendingDeleteRow = null;
+
   const btnRefreshAll = document.getElementById("btnRefreshAll");
 
+  // State
   let caixaAberto = false;
   let cacheRows = [];
   let activeFilter = "TODOS";
+  let opsCache = [];
 
   const currentDay = () => dayEl.value || todayISO();
   const currentLoja = () => selLoja.value || "LOJA 1";
@@ -669,38 +738,48 @@
     }
   }
 
+  function fillOpsSelects(ops){
+    selOperador.innerHTML = "";
+    selVendedor.innerHTML = "";
+    delOperador.innerHTML = "";
+
+    if(!ops || ops.length === 0){
+      const mk = (text)=>{
+        const o = document.createElement("option");
+        o.value=""; o.textContent=text;
+        return o;
+      };
+      selOperador.appendChild(mk("— cadastre na planilha —"));
+      selVendedor.appendChild(mk("— cadastre na planilha —"));
+      delOperador.appendChild(mk("— cadastre na planilha —"));
+      return;
+    }
+
+    for(const name of ops){
+      const a = document.createElement("option");
+      a.value = name; a.textContent = name;
+      selOperador.appendChild(a);
+
+      const b = document.createElement("option");
+      b.value = name; b.textContent = name;
+      selVendedor.appendChild(b);
+
+      const c = document.createElement("option");
+      c.value = name; c.textContent = name;
+      delOperador.appendChild(c);
+    }
+
+    if(selOperador.value) selVendedor.value = selOperador.value;
+  }
+
   async function loadOperators(){
     try{
       const r = await fetch(`${API_URL}?action=ops`);
       const data = await r.json();
       if(!data.ok) throw new Error();
       setOnline(true);
-
-      const ops = data.ops || [];
-      selOperador.innerHTML = "";
-      selVendedor.innerHTML = "";
-
-      if(ops.length === 0){
-        const o1 = document.createElement("option");
-        o1.value = ""; o1.textContent = "— cadastre na planilha —";
-        selOperador.appendChild(o1);
-
-        const o2 = document.createElement("option");
-        o2.value = ""; o2.textContent = "— cadastre na planilha —";
-        selVendedor.appendChild(o2);
-      }else{
-        for(const name of ops){
-          const a = document.createElement("option");
-          a.value = name; a.textContent = name;
-          selOperador.appendChild(a);
-
-          const b = document.createElement("option");
-          b.value = name; b.textContent = name;
-          selVendedor.appendChild(b);
-        }
-      }
-
-      if(selOperador.value) selVendedor.value = selOperador.value;
+      opsCache = (data.ops || []).slice();
+      fillOpsSelects(opsCache);
     }catch(e){
       setOnline(false);
     }
@@ -710,18 +789,16 @@
     if(selOperador.value) selVendedor.value = selOperador.value;
   });
 
-  function badgeTipo(t, deletado){
-    if(deletado) return `<span class="badge b-sang">DELETADO</span>`;
-    const type = norm(t);
+  function badgeTipo(t){
+    const type = normalizeTipo(t);
     if(type==="VENDA") return `<span class="badge b-venda">VENDA</span>`;
     if(type==="SUPRIMENTO") return `<span class="badge b-supr">SUPRIMENTO</span>`;
     if(type==="SANGRIA") return `<span class="badge b-sang">SANGRIA</span>`;
     if(type==="DESPESA") return `<span class="badge b-desp">DESPESA</span>`;
     return `<span class="badge">${type}</span>`;
   }
-
   function chipForma(type, form){
-    const t = norm(type);
+    const t = normalizeTipo(type);
     const f = norm(form);
     if(t !== "VENDA") return `<span class="chip">—</span>`;
     if(!f) return `<span class="chip">—</span>`;
@@ -733,20 +810,19 @@
     const f = norm(activeFilter);
     if (f === "TODOS") return rows;
     if (["SUPRIMENTO","SANGRIA","DESPESA","VENDA"].includes(f)){
-      return rows.filter(r => norm(r.tipo) === f);
+      return rows.filter(r => normalizeTipo(r.tipo) === f);
     }
     if (["DINHEIRO","PIX","CARTAO","FIADO"].includes(f)){
-      return rows.filter(r => norm(r.tipo) === "VENDA" && norm(r.forma) === f);
+      return rows.filter(r => normalizeTipo(r.tipo) === "VENDA" && norm(r.forma) === f);
     }
     return rows;
   }
 
-  // ✅ não conta deletados
   function computeSaldoSessao(rows){
     let entradas=0, saidas=0;
     for(const r of rows){
       if(r.deletado) continue;
-      const t = norm(r.tipo);
+      const t = normalizeTipo(r.tipo);
       const v = Number(r.valor||0);
       const isSaida = (t==="SANGRIA" || t==="DESPESA");
       if(isSaida) saidas += v; else entradas += v;
@@ -754,7 +830,6 @@
     kpiSaldo.textContent = brl(entradas - saidas);
   }
 
-  // ✅ não conta deletados
   function computeTotalDoFiltro(filteredRows){
     let total = 0;
     for(const r of filteredRows){
@@ -780,11 +855,10 @@
       return;
     }
 
-    // ordena por hora (mais antigo -> mais novo)
     filtered.sort((a,b)=> String(a.hora||"").localeCompare(String(b.hora||"")));
 
     for(const r of filtered){
-      const t = norm(r.tipo);
+      const t = normalizeTipo(r.tipo);
       const v = Number(r.valor||0);
       const del = !!r.deletado;
       const isSaida = (t==="SANGRIA" || t==="DESPESA");
@@ -795,7 +869,7 @@
       tr.innerHTML = `
         <td class="mono">${fmtDataHoraCurta(r.hora, r.data)}</td>
         <td>${r.operador || ""}</td>
-        <td>${badgeTipo(t, del)}</td>
+        <td>${del ? `<span class="badge b-sang">DELETADO</span>` : badgeTipo(t)}</td>
         <td>${chipForma(t, r.forma)}</td>
         <td class="mono ${(!del && isSaida) ? "neg" : "pos"}">${brl(v)}</td>
         <td>
@@ -834,14 +908,10 @@
         data: (x.data ?? x.Data ?? x.day ?? x.dia ?? ""),
         hora: (x.hora ?? x.Hora ?? x.time ?? x.timestamp ?? ""),
         operador: String(x.operador ?? x.Operador ?? x.op ?? x.vendedor ?? ""),
-        tipo: norm(x.tipo ?? x.Tipo ?? x.movimento ?? x.categoria ?? ""),
+        tipo: normalizeTipo(x.tipo ?? x.Tipo ?? x.movimento ?? x.categoria ?? ""),
         forma: norm(x.forma ?? x.Forma ?? x.pagamento ?? x.meio ?? ""),
         valor: Number(x.valor ?? x.Valor ?? x.amount ?? 0),
-
-        // ✅ deletado vindo do Apps Script (recomendado: boolean)
         deletado: Boolean(x.deletado ?? x.Deletado ?? x.deleted ?? false),
-        deletado_em: String(x.deletado_em ?? x.deleted_at ?? ""),
-        deletado_por: String(x.deletado_por ?? x.deleted_by ?? "")
       }));
 
       computeSaldoSessao(cacheRows);
@@ -856,7 +926,7 @@
     if(!op) return alert("Selecione o operador do caixa.");
     const f = parseMoney(fundo.value);
     if(f < 0) return alert("Fundo inválido.");
-    if(!confirm(`Abrir ${currentLoja()} com fundo ${brl(f)}?\n\nObs: esse fundo vai entrar como SUPRIMENTO.`)) return;
+    if(!confirm(`Abrir ${currentLoja()} com fundo ${brl(f)}?\n\nObs: esse fundo entra em SUPRIMENTO.`)) return;
 
     const body = new URLSearchParams();
     body.set("action","open");
@@ -864,7 +934,7 @@
     body.set("data", currentDay());
     body.set("hora", nowTime());
     body.set("operador", op);
-    body.set("fundo", String(f)); // ✅ Apps Script lança SUPRIMENTO
+    body.set("fundo", String(f));
 
     const r = await fetch(API_URL, { method:"POST", body });
     const data = await r.json();
@@ -910,7 +980,7 @@
     body.set("hora", nowTime());
     body.set("operador", op);
     body.set("tipo", tipo);
-    body.set("forma", (tipo === "VENDA") ? forma : "");
+    body.set("forma", (normalizeTipo(tipo) === "VENDA") ? forma : "");
     body.set("valor", String(v));
 
     const r = await fetch(API_URL, { method:"POST", body });
@@ -952,34 +1022,62 @@
     }
   }
 
-  async function deleteMovement(row){
-    const op = selOperador.value;
-    if(!op) return alert("Selecione o operador do caixa (na Abertura).");
+  // ======== DELETE MODAL ========
+  function openDelModal(row){
+    pendingDeleteRow = row;
+    delPin.value = "";
+    if(delOperador.options.length && !delOperador.value){
+      delOperador.selectedIndex = 0;
+    }
+    delBack.style.display = "flex";
+    delBack.setAttribute("aria-hidden","false");
+    setTimeout(()=> delPin.focus(), 60);
+  }
+  function closeDelModal(){
+    pendingDeleteRow = null;
+    delBack.style.display = "none";
+    delBack.setAttribute("aria-hidden","true");
+  }
 
-    const pin = prompt("Digite o PIN para apagar:");
-    if(pin === null) return;
+  btnCloseDel.addEventListener("click", closeDelModal);
+  btnCancelDel.addEventListener("click", closeDelModal);
+  delBack.addEventListener("click", (e)=>{ if(e.target === delBack) closeDelModal(); });
 
-    if(!confirm("Marcar como DELETADO? (não entra no relatório)")) return;
+  async function confirmDelete(){
+    const row = pendingDeleteRow;
+    if(!row) return closeDelModal();
+
+    const opAuth = delOperador.value;
+    if(!opAuth) return alert("Selecione o operador autorizador.");
+
+    const pin = delPin.value.trim();
+    if(!pin) return alert("Digite o PIN.");
+
+    if(!confirm("Confirmar exclusão? Vai marcar como DELETADO.")) return;
 
     const body = new URLSearchParams();
     body.set("action","del");
     body.set("row", String(row));
-    body.set("operador", op);
-    body.set("pin", String(pin));
+    body.set("operador", opAuth);
+    body.set("pin", pin);
 
     const r = await fetch(API_URL, { method:"POST", body });
     const data = await r.json();
     if(!data.ok) return alert(data.error || "Erro ao apagar.");
 
+    closeDelModal();
     await listSession();
   }
+  btnConfirmDel.addEventListener("click", confirmDelete);
+  delPin.addEventListener("keydown", (e)=>{ if(e.key==="Enter") confirmDelete(); });
 
   tb.addEventListener("click", (e)=>{
     const b = e.target.closest("button[data-row]");
     if(!b) return;
-    deleteMovement(Number(b.getAttribute("data-row")));
+    openDelModal(Number(b.getAttribute("data-row")));
   });
 
+  // Tabs
   tabs.addEventListener("click", (e)=>{
     const btn = e.target.closest("button[data-filter]");
     if(!btn) return;
@@ -989,7 +1087,7 @@
     renderTable();
   });
 
-  // Modal relatório
+  // Relatório modal
   function openRel(){ relBack.style.display = "flex"; relBack.setAttribute("aria-hidden","false"); }
   function closeRel(){ relBack.style.display = "none"; relBack.setAttribute("aria-hidden","true"); }
   btnCloseRel.addEventListener("click", closeRel);
@@ -1029,16 +1127,16 @@
     return Array.isArray(data.rows) ? data.rows : [];
   }
 
-  // ✅ relatório ignora deletados
+  // ✅ relatório ignora deletados e ABERTURA vira SUPRIMENTO
   function calcReport(rows){
     let dinheiro=0, pix=0, cartao=0, fiado=0;
     let supr=0, sang=0, desp=0;
 
     for(const rr of rows){
       const deletado = Boolean(rr.deletado ?? rr.Deletado ?? rr.deleted ?? false);
-      if(deletado) continue; // ✅ não conta
+      if(deletado) continue;
 
-      const tipo = norm(rr.tipo ?? rr.Tipo ?? rr.movimento ?? rr.categoria ?? "");
+      const tipo = normalizeTipo(rr.tipo ?? rr.Tipo ?? rr.movimento ?? rr.categoria ?? "");
       const forma = norm(rr.forma ?? rr.Forma ?? rr.pagamento ?? rr.meio ?? "");
       const v = Number(rr.valor ?? rr.Valor ?? rr.amount ?? 0);
 
@@ -1078,7 +1176,7 @@
 
   btnRelDia.addEventListener("click", async ()=>{
     try{
-      const d = relDayPick.value || currentDay(); // ✅ escolhe qualquer dia
+      const d = relDayPick.value || currentDay();
       const rows = await fetchRange(d, d);
       paintReport(`Relatório Diário (${d})`, d, d, rows);
     }catch(e){ alert(String(e.message || e)); }
@@ -1132,7 +1230,6 @@
 
   dayEl.addEventListener("change", async ()=>{
     syncHeader();
-    // espelha seleção para relatórios
     relDayPick.value = dayEl.value;
     relWeekDay.value = dayEl.value;
     relMonthPick.value = dayEl.value.slice(0,7);
@@ -1150,12 +1247,15 @@
     else if(e.key === "F5"){ e.preventDefault(); showScreen("sRelatorios"); }
     else if(e.key === "F6"){ e.preventDefault(); showScreen("sAbertura"); }
     else if(e.key === "F7"){ e.preventDefault(); showScreen("sConfig"); }
-    else if(e.key === "Escape"){ if(relBack.style.display === "flex") closeRel(); }
+    else if(e.key === "Escape"){
+      if(relBack.style.display === "flex") closeRel();
+      if(delBack.style.display === "flex") closeDelModal();
+    }
   });
 
   // Init
   dayEl.value = todayISO();
-  relDayPick.value = dayEl.value;      // ✅ diário com dia escolhido
+  relDayPick.value = dayEl.value;
   relWeekDay.value = dayEl.value;
   relMonthPick.value = dayEl.value.slice(0,7);
   syncHeader();
