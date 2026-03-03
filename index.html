@@ -20,7 +20,7 @@
     .small{ font-size:12px; opacity:.85; }
     .mono{ font-family:ui-monospace,Consolas,monospace; }
 
-    main{ max-width:1200px; margin:16px auto; padding:0 16px 24px; display:grid; grid-template-columns:420px 1fr; gap:16px; }
+    main{ max-width:1200px; margin:16px auto; padding:0 16px 24px; display:grid; grid-template-columns:440px 1fr; gap:16px; }
     @media(max-width:980px){ main{ grid-template-columns:1fr; } }
 
     .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh); overflow:hidden; }
@@ -75,6 +75,39 @@
     .kpiBox .t{ font-size:12px; font-weight:900; color:#475569; }
     .kpiBox .v{ font-size:18px; font-weight:950; font-family:ui-monospace,Consolas,monospace; }
 
+    /* ===== Venda destaque ===== */
+    .saleCard{
+      border:2px solid rgba(255,106,0,.35);
+      box-shadow:0 18px 45px rgba(255,106,0,.16);
+      background:linear-gradient(180deg, rgba(255,106,0,.10), #fff 45%);
+    }
+    .saleHead{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .saleTag{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:6px 10px; border-radius:999px;
+      background:rgba(255,106,0,.12);
+      border:1px solid rgba(255,106,0,.25);
+      font-weight:950; font-size:12px; color:#5a2300;
+    }
+    .bigBtn{
+      width:100%;
+      padding:14px 14px;
+      border-radius:14px;
+      font-size:15px;
+      font-weight:950;
+      background:linear-gradient(90deg,var(--orange),#ff8a2a);
+      color:#111;
+      box-shadow:0 12px 28px rgba(255,106,0,.22);
+    }
+    .mutedBox{
+      border:1px dashed rgba(17,17,17,.15);
+      background:#fff;
+      border-radius:14px;
+      padding:12px;
+    }
+
     /* ===== Modal discreto de relatório ===== */
     .modalBack{
       position:fixed; inset:0; background:rgba(0,0,0,.35);
@@ -93,7 +126,6 @@
       background:#fff; font-weight:900; cursor:pointer;
     }
 
-    /* Impressão: imprime só o conteúdo do modal (relatório) */
     @media print{
       body *{ visibility:hidden; }
       #relModal, #relModal *{ visibility:visible; }
@@ -111,7 +143,7 @@
       <div class="logo">DR</div>
       <div>
         <div style="font-weight:900">Caixa em Rede — <span style="color:var(--orange)">Drogaria Rocha</span></div>
-        <div class="small">2 lojas • Abrir/Fechar por loja • Relatórios discretos (sem tomar a tela)</div>
+        <div class="small">VENDA em destaque no topo • 2 lojas • Relatórios discretos</div>
       </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -128,11 +160,12 @@
   <!-- Painel esquerdo -->
   <section class="card">
     <div class="hd">
-      <b>🧾 Lançar</b>
+      <b>🧾 Lançamentos</b>
       <span class="mono" id="tagTime">—</span>
     </div>
 
     <div class="bd">
+      <!-- Contexto (loja/data/operador) -->
       <div class="grid2">
         <div>
           <label>Loja</label>
@@ -161,65 +194,98 @@
       </div>
 
       <div class="note" style="margin-top:10px;">
-        Cadastro de operadores é feito direto na planilha (aba <b>operadores</b>).
+        Operadores são cadastrados direto na planilha (aba <b>operadores</b>).
       </div>
 
-      <div style="height:10px"></div>
+      <div style="height:12px"></div>
 
       <!-- Abrir/Fechar -->
-      <div class="grid2">
-        <div>
-          <label>Fundo (ao abrir)</label>
-          <input id="fundo" inputmode="decimal" placeholder="Ex.: 200,00" />
-        </div>
-        <div>
-          <label>Caixa</label>
-          <div class="btnrow">
-            <button class="okbtn" id="btnAbrir">Abrir caixa</button>
-            <button class="danger" id="btnFechar">Fechar caixa</button>
+      <div class="mutedBox">
+        <div class="grid2">
+          <div>
+            <label>Fundo (ao abrir)</label>
+            <input id="fundo" inputmode="decimal" placeholder="Ex.: 200,00" />
+          </div>
+          <div>
+            <label>Caixa</label>
+            <div class="btnrow">
+              <button class="okbtn" id="btnAbrir">Abrir caixa</button>
+              <button class="danger" id="btnFechar">Fechar caixa</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <div style="height:10px"></div>
+      <div style="height:12px"></div>
 
-      <!-- Lançamentos (trava quando FECHADO) -->
-      <div id="boxLancamento">
-        <div class="grid3">
+      <!-- ✅ VENDA EM DESTAQUE NO TOPO -->
+      <div id="boxLancamentoVenda" class="saleCard card" style="box-shadow:none;">
+        <div class="hd" style="border-bottom:1px solid rgba(255,106,0,.22);">
+          <div class="saleHead">
+            <b style="font-size:16px;">🟧 VENDA</b>
+            <span class="saleTag">Lançamento rápido</span>
+          </div>
+          <span class="mono" id="saleHint">Forma + Valor</span>
+        </div>
+        <div class="bd">
+          <div class="grid2">
+            <div>
+              <label>Forma</label>
+              <select id="formaVenda">
+                <option>DINHEIRO</option>
+                <option>PIX</option>
+                <option>CARTAO</option>
+                <option>FIADO</option>
+              </select>
+            </div>
+            <div>
+              <label>Valor da venda</label>
+              <input id="valorVenda" inputmode="decimal" placeholder="Ex.: 35,90" />
+            </div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <button class="bigBtn" id="btnAddVenda">Salvar Venda</button>
+
+          <div class="note" id="msgVenda" style="margin-top:10px;">—</div>
+        </div>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <!-- Outros lançamentos (mais discretos) -->
+      <div id="boxLancamentoOutros" class="mutedBox">
+        <div class="hd" style="padding:0 0 10px 0;border:none;">
+          <b>Outros lançamentos</b>
+          <span class="small">Suprimento / Sangria / Despesa</span>
+        </div>
+
+        <div class="grid2">
           <div>
             <label>Tipo</label>
-            <select id="tipo">
-              <option>VENDA</option>
+            <select id="tipoOutros">
               <option>SUPRIMENTO</option>
               <option>SANGRIA</option>
               <option>DESPESA</option>
             </select>
           </div>
           <div>
-            <label>Forma (VENDA)</label>
-            <select id="forma">
-              <option>DINHEIRO</option>
-              <option>PIX</option>
-              <option>CARTAO</option>
-              <option>FIADO</option>
-            </select>
-          </div>
-          <div>
             <label>Valor</label>
-            <input id="valor" inputmode="decimal" placeholder="Ex.: 35,90" />
+            <input id="valorOutros" inputmode="decimal" placeholder="Ex.: 50,00" />
           </div>
         </div>
 
         <div style="height:10px"></div>
 
         <div class="btnrow">
-          <button class="pri" id="btnAdd">Salvar</button>
+          <button class="pri" id="btnAddOutros">Salvar</button>
           <button class="ghost" id="btnRefresh">Atualizar</button>
           <button class="ghost" id="btnLimpar">Limpar</button>
         </div>
-      </div>
 
-      <div class="note" id="msg">Conectando…</div>
+        <div class="note" id="msg">Conectando…</div>
+      </div>
     </div>
   </section>
 
@@ -235,7 +301,7 @@
       <div class="kpiBox">
         <div>
           <div class="t">RELATÓRIOS</div>
-          <div class="small">Escolha a semana/mês desejado e imprima no modal</div>
+          <div class="small">Escolha semana/mês e abra no modal (imprimir)</div>
         </div>
         <div class="btnrow noPrint" style="gap:8px;">
           <button class="ghost" id="btnRelDia">Diário</button>
@@ -358,8 +424,6 @@
 
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
-
-  // ===== Normalizador (corrige filtros das abas) =====
   function norm(s){ return String(s || "").trim().toUpperCase(); }
 
   const dot = document.getElementById("dot");
@@ -378,10 +442,22 @@
   const btnAbrir = document.getElementById("btnAbrir");
   const btnFechar = document.getElementById("btnFechar");
 
-  const boxLancamento = document.getElementById("boxLancamento");
-  const tipo = document.getElementById("tipo");
-  const forma = document.getElementById("forma");
-  const valor = document.getElementById("valor");
+  // Venda destaque
+  const boxLancamentoVenda = document.getElementById("boxLancamentoVenda");
+  const formaVenda = document.getElementById("formaVenda");
+  const valorVenda = document.getElementById("valorVenda");
+  const btnAddVenda = document.getElementById("btnAddVenda");
+  const msgVenda = document.getElementById("msgVenda");
+  const saleHint = document.getElementById("saleHint");
+
+  // Outros lançamentos
+  const boxLancamentoOutros = document.getElementById("boxLancamentoOutros");
+  const tipoOutros = document.getElementById("tipoOutros");
+  const valorOutros = document.getElementById("valorOutros");
+  const btnAddOutros = document.getElementById("btnAddOutros");
+
+  const btnRefresh = document.getElementById("btnRefresh");
+  const btnLimpar = document.getElementById("btnLimpar");
   const tagTime = document.getElementById("tagTime");
   const msg = document.getElementById("msg");
 
@@ -391,7 +467,7 @@
   const tabs = document.getElementById("tabs");
   const tb = document.getElementById("tb");
 
-  // Relatórios (inputs)
+  // Relatórios
   const relWeekDay = document.getElementById("relWeekDay");
   const relMonthPick = document.getElementById("relMonthPick");
 
@@ -399,7 +475,6 @@
   const relBack = document.getElementById("relBack");
   const btnCloseRel = document.getElementById("btnCloseRel");
   const btnPrintRel = document.getElementById("btnPrintRel");
-
   const relTitle = document.getElementById("relTitle");
   const relInfo = document.getElementById("relInfo");
   const relVendas = document.getElementById("relVendas");
@@ -450,12 +525,17 @@
     caixaAberto = !!open;
     lblStatusCaixa.textContent = caixaAberto ? "ABERTO" : "FECHADO";
 
-    if(caixaAberto){
-      boxLancamento.classList.remove("disabled");
+    const can = caixaAberto;
+    if(can){
+      boxLancamentoVenda.classList.remove("disabled");
+      boxLancamentoOutros.classList.remove("disabled");
       msg.textContent = `${currentLoja()} ABERTA. Pode lançar normalmente.`;
+      msgVenda.textContent = "Pronto para lançar venda.";
     }else{
-      boxLancamento.classList.add("disabled");
+      boxLancamentoVenda.classList.add("disabled");
+      boxLancamentoOutros.classList.add("disabled");
       msg.textContent = `${currentLoja()} FECHADA. Abra o caixa para lançar.`;
+      msgVenda.textContent = "Caixa fechado. Abra para lançar venda.";
     }
   }
 
@@ -492,10 +572,8 @@
     return `<span class="chip">${label}</span>`;
   }
 
-  // ✅ FILTRO ROBUSTO (conserta abas)
   function applyFilter(rows){
     const f = norm(activeFilter);
-
     if (f === "TODOS") return rows;
 
     if (["SUPRIMENTO","SANGRIA","DESPESA","VENDA","ABERTURA","FECHAMENTO"].includes(f)){
@@ -591,6 +669,7 @@
   async function listSession(){
     syncLabels();
     tagTime.textContent = nowTime();
+    saleHint.textContent = `${norm(formaVenda.value) === "CARTAO" ? "CARTÃO" : norm(formaVenda.value)} + Valor`;
 
     try{
       const url = `${API_URL}?action=list&day=${encodeURIComponent(currentDay())}&loja=${encodeURIComponent(currentLoja())}`;
@@ -600,7 +679,6 @@
 
       setOnline(true);
 
-      // ✅ Normaliza tipo/forma (conserta filtro)
       cacheRows = (data.rows || []).map(x => ({
         row: Number(x.row || 0),
         hora: String(x.hora || ""),
@@ -666,11 +744,11 @@
     await listSession();
   }
 
-  async function addMovement(){
+  async function addMovement({tipo, forma, valor}){
     const op = selOperador.value;
     if(!op) return alert("Selecione o operador.");
 
-    const v = parseMoney(valor.value);
+    const v = parseMoney(String(valor || ""));
     if(v <= 0) return alert("Informe um valor maior que zero.");
 
     const body = new URLSearchParams();
@@ -679,16 +757,35 @@
     body.set("data", currentDay());
     body.set("hora", nowTime());
     body.set("operador", op);
-    body.set("tipo", tipo.value);
-    body.set("forma", (tipo.value === "VENDA") ? forma.value : "");
+    body.set("tipo", tipo);
+    body.set("forma", (tipo === "VENDA") ? forma : "");
     body.set("valor", String(v));
 
     const r = await fetch(API_URL, { method:"POST", body });
     const data = await r.json();
     if(!data.ok) return alert(data.error || "Erro ao salvar.");
 
-    valor.value = "";
     await listSession();
+    return true;
+  }
+
+  async function addVenda(){
+    const ok = await addMovement({ tipo:"VENDA", forma: formaVenda.value, valor: valorVenda.value });
+    if(ok){
+      msgVenda.textContent = "Venda salva ✅";
+      valorVenda.value = "";
+      valorVenda.focus();
+      setTimeout(()=> msgVenda.textContent = "Pronto para lançar venda.", 1500);
+    }
+  }
+
+  async function addOutros(){
+    const ok = await addMovement({ tipo: tipoOutros.value, forma:"", valor: valorOutros.value });
+    if(ok){
+      msg.textContent = "Lançamento salvo ✅";
+      valorOutros.value = "";
+      valorOutros.focus();
+    }
   }
 
   async function deleteMovement(row){
@@ -713,10 +810,9 @@
     await listSession();
   }
 
-  // ===== Relatórios (modal discreto) =====
+  // ===== Relatórios =====
   function openRel(){ relBack.style.display = "flex"; relBack.setAttribute("aria-hidden","false"); }
   function closeRel(){ relBack.style.display = "none"; relBack.setAttribute("aria-hidden","true"); }
-
   btnCloseRel.addEventListener("click", closeRel);
   relBack.addEventListener("click", (e)=>{ if(e.target === relBack) closeRel(); });
   btnPrintRel.addEventListener("click", ()=> window.print());
@@ -730,7 +826,6 @@
     const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
     return { from: toISO(mon), to: toISO(sun) };
   }
-
   function getMonthRange(isoDay){
     const d = new Date(isoDay + "T00:00:00");
     const y = d.getFullYear(), m = d.getMonth();
@@ -739,7 +834,6 @@
     const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
     return { from: toISO(first), to: toISO(last) };
   }
-
   async function fetchRange(from, to){
     const url = `${API_URL}?action=range&loja=${encodeURIComponent(currentLoja())}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
     const r = await fetch(url);
@@ -747,7 +841,6 @@
     if(!data.ok) throw new Error(data.error || "Erro no relatório");
     return data.rows || [];
   }
-
   function calcReport(rows){
     let dinheiro=0, pix=0, cartao=0, fiado=0;
     let supr=0, sang=0, desp=0, abertura=0;
@@ -775,27 +868,23 @@
 
     return { vendas, dinheiro, pix, cartao, fiado, supr, sang, desp, abertura, saldo };
   }
-
+  function brl2(n){ return (n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); }
   function paintReport(title, from, to, rows){
     const r = calcReport(rows);
-
     relTitle.textContent = title;
     relInfo.textContent = `Loja: ${currentLoja()} • Período: ${from} até ${to} • Registros: ${rows.length}`;
-
-    relVendas.textContent = brl(r.vendas);
-    relDinheiro.textContent = brl(r.dinheiro);
-    relPix.textContent = brl(r.pix);
-    relCartao.textContent = brl(r.cartao);
-    relFiado.textContent = brl(r.fiado);
-    relSupr.textContent = brl(r.supr);
-    relSang.textContent = brl(r.sang);
-    relDesp.textContent = brl(r.desp);
-    relSaldo.textContent = brl(r.saldo);
-
+    relVendas.textContent = brl2(r.vendas);
+    relDinheiro.textContent = brl2(r.dinheiro);
+    relPix.textContent = brl2(r.pix);
+    relCartao.textContent = brl2(r.cartao);
+    relFiado.textContent = brl2(r.fiado);
+    relSupr.textContent = brl2(r.supr);
+    relSang.textContent = brl2(r.sang);
+    relDesp.textContent = brl2(r.desp);
+    relSaldo.textContent = brl2(r.saldo);
     openRel();
   }
 
-  // Diário (usa o dia do sistema)
   document.getElementById("btnRelDia").addEventListener("click", async ()=>{
     try{
       const d = currentDay();
@@ -803,8 +892,6 @@
       paintReport(`Relatório Diário (${d})`, d, d, rows);
     }catch(e){ alert(String(e.message || e)); }
   });
-
-  // Semanal (usa a data escolhida)
   document.getElementById("btnRelSemana").addEventListener("click", async ()=>{
     try{
       const base = relWeekDay.value || currentDay();
@@ -813,8 +900,6 @@
       paintReport(`Relatório Semanal`, from, to, rows);
     }catch(e){ alert(String(e.message || e)); }
   });
-
-  // Mensal (usa o mês escolhido)
   document.getElementById("btnRelMes").addEventListener("click", async ()=>{
     try{
       const m = relMonthPick.value; // YYYY-MM
@@ -825,7 +910,7 @@
     }catch(e){ alert(String(e.message || e)); }
   });
 
-  // Tabs
+  // Tabs / table delete
   tabs.addEventListener("click", (e)=>{
     const btn = e.target.closest("button[data-filter]");
     if(!btn) return;
@@ -834,20 +919,24 @@
     btn.classList.add("active");
     renderTable();
   });
-
   tb.addEventListener("click", (e)=>{
     const b = e.target.closest("button[data-row]");
     if(!b) return;
     deleteMovement(Number(b.getAttribute("data-row")));
   });
 
-  document.getElementById("btnAdd").addEventListener("click", addMovement);
-  document.getElementById("btnRefresh").addEventListener("click", async ()=>{ await loadStatus(); await listSession(); });
-  document.getElementById("btnLimpar").addEventListener("click", ()=>{ valor.value=""; valor.focus(); });
+  // Botões
+  btnAddVenda.addEventListener("click", addVenda);
+  valorVenda.addEventListener("keydown", (e)=>{ if(e.key==="Enter") addVenda(); });
+
+  btnAddOutros.addEventListener("click", addOutros);
+  valorOutros.addEventListener("keydown", (e)=>{ if(e.key==="Enter") addOutros(); });
+
+  btnRefresh.addEventListener("click", async ()=>{ await loadStatus(); await listSession(); });
+  btnLimpar.addEventListener("click", ()=>{ valorVenda.value=""; valorOutros.value=""; valorVenda.focus(); });
 
   btnAbrir.addEventListener("click", abrirCaixa);
   btnFechar.addEventListener("click", fecharCaixa);
-
   btnReloadOps.addEventListener("click", loadOperators);
 
   selLoja.addEventListener("change", async ()=>{
@@ -856,17 +945,20 @@
     await listSession();
   });
 
-  dayEl.addEventListener("change", async ()=>{ syncLabels(); await listSession(); });
-  tipo.addEventListener("change", ()=>{ forma.disabled = (tipo.value !== "VENDA"); });
+  dayEl.addEventListener("change", async ()=>{
+    syncLabels();
+    relWeekDay.value = dayEl.value;
+    relMonthPick.value = dayEl.value.slice(0,7);
+    await listSession();
+  });
+
+  formaVenda.addEventListener("change", ()=> listSession());
 
   // Init
   dayEl.value = todayISO();
-  syncLabels();
-  forma.disabled = (tipo.value !== "VENDA");
-
-  // Inicializa seleção de semana/mês
   relWeekDay.value = dayEl.value;
   relMonthPick.value = dayEl.value.slice(0,7);
+  syncLabels();
 
   (async ()=>{
     await loadOperators();
