@@ -1,1274 +1,1726 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Caixa — Drogaria Rocha (2 lojas)</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Caixa • Drogaria Rocha (Sessão)</title>
   <style>
     :root{
-      --orange:#ff6a00; --black:#111; --line:#e5e7eb; --bg:#f3f4f6;
-      --ok:#16a34a; --bad:#dc2626; --blue:#2563eb; --amber:#f59e0b;
-      --r:16px; --sh:0 10px 30px rgba(0,0,0,.10);
+      --bg:#0f1216;
+      --panel:#151a20;
+      --panel2:#0c0f13;
+      --muted:#9aa3ad;
+      --text:#e8edf2;
+
+      --brand:#ff6a00;
+      --brand2:#ff8a3d;
+
+      --ok:#1fc77a;
+      --warn:#ffcc66;
+      --bad:#ff4d4d;
+
+      --chip:#1c232c;
+      --border:#26303b;
+      --shadow: 0 16px 40px rgba(0,0,0,.35);
+      --r:18px;
+      --r2:26px;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
     }
+
     *{ box-sizing:border-box; }
-    body{ margin:0; font-family:system-ui,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#fff,var(--bg)); color:#111; }
-
-    header{
-      background:linear-gradient(90deg,var(--black),#1b1b1b);
-      color:#fff; padding:14px 16px; border-bottom:3px solid var(--orange);
-      position:sticky; top:0; z-index:10;
-    }
-    .wrap{ max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
-    .logo{ width:44px;height:44px;border-radius:14px;background:radial-gradient(circle at 30% 30%,#ff8a2a,var(--orange)); display:flex; align-items:center; justify-content:center; color:#111; font-weight:900; }
-    .pill{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); padding:7px 10px; border-radius:999px; font-size:12px; display:flex; gap:8px; align-items:center; }
-    .dot{ width:10px;height:10px;border-radius:50%; background:var(--bad); box-shadow:0 0 0 4px rgba(220,38,38,.15); }
-    .dot.ok{ background:var(--ok); box-shadow:0 0 0 4px rgba(22,163,74,.15); }
-    .small{ font-size:12px; opacity:.85; }
-    .mono{ font-family:ui-monospace,Consolas,monospace; }
-
-    main{
-      max-width:1200px; margin:12px auto; padding:0 16px 20px;
-      display:grid; grid-template-columns:260px 1fr; gap:12px;
-    }
-    @media(max-width:980px){ main{ grid-template-columns:1fr; } }
-
-    .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh); overflow:hidden; }
-    .hd{ padding:12px 14px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px;}
-    .bd{ padding:12px 14px; }
-
-    label{ font-size:12px; font-weight:900; display:block; margin-bottom:6px; }
-    input,select{
-      width:100%; padding:10px; border-radius:12px; border:1px solid var(--line);
-      font-size:14px; outline:none;
-    }
-    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
-    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-
-    button{
-      border:none; cursor:pointer; padding:10px 12px; border-radius:12px;
-      font-weight:900; font-size:13px;
-    }
-    .pri{ background:linear-gradient(90deg,var(--orange),#ff8a2a); color:#111; }
-    .ghost{ background:#fff; border:1px solid var(--line); }
-    .danger{ background:var(--bad); color:#fff; }
-    .okbtn{ background:var(--ok); color:#fff; }
-
-    .note{
-      margin-top:10px; padding:10px 12px; border-radius:14px;
-      background:rgba(255,106,0,.08); border:1px solid rgba(255,106,0,.25);
-      color:#5a2300; font-size:12px; line-height:1.35;
+    html, body{ height:100%; }
+    body{
+      margin:0;
+      background: radial-gradient(1200px 600px at 20% -20%, rgba(255,106,0,.22), transparent 60%),
+                  radial-gradient(900px 450px at 110% 10%, rgba(255,138,61,.10), transparent 60%),
+                  var(--bg);
+      color:var(--text);
+      font-family:var(--font);
     }
 
-    .menu{ padding:12px; display:flex; flex-direction:column; gap:8px; }
-    .mitem{
-      width:100%; text-align:left; padding:10px 12px; border-radius:14px;
-      border:1px solid var(--line); background:#fff; font-weight:950; cursor:pointer;
-      display:flex; align-items:center; justify-content:space-between;
+    /* Layout */
+    .app{
+      display:grid;
+      grid-template-columns: 280px 1fr;
+      min-height:100vh;
     }
-    .mitem.active{
-      border-color:rgba(255,106,0,.55);
-      box-shadow:0 0 0 4px rgba(255,106,0,.12);
+    .side{
+      background: linear-gradient(180deg, rgba(255,106,0,.08), transparent 40%),
+                  var(--panel2);
+      border-right:1px solid var(--border);
+      padding:18px;
+      position:sticky;
+      top:0;
+      height:100vh;
     }
-    .mright{ font-size:12px; opacity:.75; }
+    .main{
+      padding:18px 18px 28px;
+    }
 
-    .disabled{ opacity:.55; pointer-events:none; filter:grayscale(0.1); }
-    .screen{ display:none; }
+    /* Brand */
+    .brand{
+      display:flex; gap:12px; align-items:center;
+      padding:12px 12px;
+      border:1px solid var(--border);
+      border-radius: var(--r2);
+      background: rgba(255,106,0,.06);
+      box-shadow: var(--shadow);
+    }
+    .logo{
+      width:44px; height:44px; border-radius:14px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      display:grid; place-items:center;
+      font-weight:900; color:#111; letter-spacing:.5px;
+    }
+    .brand h1{
+      font-size:14px; margin:0; line-height:1.2;
+    }
+    .brand p{
+      margin:0; font-size:12px; color:var(--muted);
+    }
+
+    /* Menu */
+    .menu{
+      margin-top:14px;
+      display:flex; flex-direction:column; gap:8px;
+    }
+    .btn{
+      appearance:none; border:none; cursor:pointer;
+      background:transparent; color:var(--text);
+      font:inherit;
+    }
+    .menu .item{
+      display:flex; gap:10px; align-items:center;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid transparent;
+      background: rgba(255,255,255,.03);
+      transition:.15s ease;
+    }
+    .menu .item:hover{
+      transform: translateY(-1px);
+      border-color: rgba(255,106,0,.25);
+      background: rgba(255,106,0,.07);
+    }
+    .menu .item.active{
+      border-color: rgba(255,106,0,.45);
+      background: rgba(255,106,0,.12);
+    }
+    .ico{
+      width:30px; height:30px; border-radius:12px;
+      background: rgba(255,255,255,.05);
+      display:grid; place-items:center;
+      border:1px solid rgba(255,255,255,.06);
+      font-size:14px;
+    }
+
+    /* Header / Topbar */
+    .topbar{
+      display:flex; flex-wrap:wrap;
+      gap:10px; align-items:center; justify-content:space-between;
+      padding:14px;
+      border:1px solid var(--border);
+      border-radius: var(--r2);
+      background: rgba(255,255,255,.03);
+      box-shadow: var(--shadow);
+    }
+    .top-left{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+    .top-right{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+    .pill{
+      display:flex; gap:8px; align-items:center;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.20);
+      color:var(--muted);
+      font-size:12px;
+      white-space:nowrap;
+    }
+    .pill b{ color:var(--text); font-weight:800; }
+    .pill.ok b{ color: var(--ok); }
+    .pill.bad b{ color: var(--bad); }
+    .pill.brand b{ color: var(--brand); }
+
+    .select, .input{
+      background: rgba(0,0,0,.22);
+      border:1px solid var(--border);
+      color:var(--text);
+      padding:10px 12px;
+      border-radius:14px;
+      outline:none;
+      font-size:13px;
+    }
+    .select{ padding-right:32px; }
+    .input{ width: 180px; }
+
+    .btnPrimary{
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      color:#1a1a1a;
+      padding:11px 14px;
+      border-radius: 14px;
+      font-weight:900;
+      border: none;
+      box-shadow: 0 10px 26px rgba(255,106,0,.18);
+      cursor:pointer;
+    }
+    .btnGhost{
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding:11px 14px;
+      border-radius: 14px;
+      border:1px solid var(--border);
+      cursor:pointer;
+    }
+    .btnDanger{
+      background: rgba(255,77,77,.12);
+      color: #ffd7d7;
+      border:1px solid rgba(255,77,77,.35);
+      padding:9px 12px;
+      border-radius: 12px;
+      cursor:pointer;
+    }
+    .btnSmall{
+      padding:9px 12px;
+      border-radius: 12px;
+      font-size:12px;
+    }
+    .btnDisabled{
+      opacity:.5; cursor:not-allowed;
+    }
+
+    /* Panels */
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap:14px;
+      margin-top:14px;
+    }
+    .card{
+      background: rgba(255,255,255,.03);
+      border:1px solid var(--border);
+      border-radius: var(--r2);
+      padding:14px;
+      box-shadow: var(--shadow);
+    }
+    .card h2{
+      margin:0 0 10px 0;
+      font-size:14px;
+      letter-spacing:.2px;
+    }
+    .muted{ color: var(--muted); }
+    .row{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .rowBetween{ display:flex; gap:10px; align-items:center; justify-content:space-between; flex-wrap:wrap; }
+
+    /* Screen */
+    .screen{ display:none; margin-top:14px; }
     .screen.active{ display:block; }
 
-    .saleBox{
-      border:2px solid rgba(255,106,0,.32);
-      border-radius:16px;
-      padding:12px;
-      background:linear-gradient(180deg, rgba(255,106,0,.10), #fff 55%);
+    /* Abertura / Fechamento */
+    .big{
+      padding:16px;
+      border-radius: var(--r2);
+      border: 1px solid rgba(255,106,0,.25);
+      background: linear-gradient(180deg, rgba(255,106,0,.10), rgba(0,0,0,.12));
     }
-    .bigBtn{
-      width:100%;
-      padding:14px 14px;
-      border-radius:14px;
-      font-size:15px;
-      font-weight:950;
-      background:linear-gradient(90deg,var(--orange),#ff8a2a);
-      color:#111;
-      box-shadow:0 12px 28px rgba(255,106,0,.22);
+    .big h3{ margin:0 0 6px 0; font-size:16px; }
+    .big p{ margin:0; color:var(--muted); font-size:13px; }
+
+    /* Movimentos */
+    .launcher{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+      align-items:start;
+    }
+    @media (max-width: 980px){
+      .app{ grid-template-columns: 1fr; }
+      .side{ position:relative; height:auto; }
+      .grid{ grid-template-columns: 1fr; }
+      .launcher{ grid-template-columns: 1fr; }
+      .input{ width: 100%; }
     }
 
-    .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+    .typeBar{
+      display:flex; gap:8px; flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .chip{
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: var(--chip);
+      cursor:pointer;
+      font-size:12px;
+      color: var(--text);
+      user-select:none;
+      transition:.12s ease;
+    }
+    .chip:hover{ transform: translateY(-1px); }
+    .chip.active{ border-color: rgba(255,106,0,.55); background: rgba(255,106,0,.12); }
+
+    .chipVenda{ border-color: rgba(31,199,122,.35); }
+    .chipSup{ border-color: rgba(255,204,102,.35); }
+    .chipSang{ border-color: rgba(255,77,77,.35); }
+    .chipDesp{ border-color: rgba(178,132,255,.35); }
+
+    /* Tabs */
+    .tabs{
+      display:flex; gap:8px; flex-wrap:wrap;
+      margin:12px 0 10px;
+    }
     .tab{
-      padding:8px 10px; border-radius:999px; border:1px solid var(--line);
-      background:#fff; font-weight:900; font-size:12px; cursor:pointer;
+      padding:10px 12px;
+      border-radius: 999px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+      cursor:pointer;
+      font-size:12px;
+      color: var(--text);
+      user-select:none;
     }
-    .tab.active{ border-color:rgba(255,106,0,.55); box-shadow:0 0 0 4px rgba(255,106,0,.12); }
-
-    .kpiBox{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:12px;
-    }
-    .kpiBox .t{ font-size:12px; font-weight:900; color:#475569; }
-    .kpiBox .v{ font-size:18px; font-weight:950; font-family:ui-monospace,Consolas,monospace; }
-
-    .tablewrap{ overflow:auto; border:1px solid var(--line); border-radius:14px; }
-    table{ width:100%; border-collapse:collapse; min-width:980px; background:#fff; }
-    th,td{ padding:10px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:top; }
-    th{ background:#fafafa; position:sticky; top:0; text-align:left; font-size:12px; }
-    tr:hover td{ background:#fff7f0; }
-
-    .badge{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; font-weight:950; font-size:12px; border:1px solid var(--line); }
-    .b-venda{ background:rgba(22,163,74,.10); border-color:rgba(22,163,74,.30); color:var(--ok); }
-    .b-supr{ background:rgba(37,99,235,.10); border-color:rgba(37,99,235,.30); color:var(--blue); }
-    .b-sang{ background:rgba(220,38,38,.10); border-color:rgba(220,38,38,.30); color:var(--bad); }
-    .b-desp{ background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.35); color:#92400e; }
-
-    .chip{ display:inline-flex; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:#fff; font-weight:900; font-size:12px; color:#334155; }
-    .pos{ color:var(--ok); font-weight:900; }
-    .neg{ color:var(--bad); font-weight:900; }
-
-    .trash{
-      width:36px; height:36px; border-radius:12px;
-      display:inline-flex; align-items:center; justify-content:center;
-      background:#fff; border:1px solid var(--line);
-      font-weight:900;
-    }
-    .trash:hover{ border-color:rgba(220,38,38,.4); box-shadow:0 0 0 4px rgba(220,38,38,.12); }
-
-    /* ✅ DELETADO EM VERMELHO */
-    tr.deleted td{
-      color:#dc2626 !important;
-      background: rgba(220,38,38,.06) !important;
-    }
-    tr.deleted td .badge, tr.deleted td .chip{
-      border-color: rgba(220,38,38,.35) !important;
-      color:#dc2626 !important;
+    .tab.active{
+      border-color: rgba(255,106,0,.55);
+      background: rgba(255,106,0,.14);
     }
 
-    /* Modais */
+    /* Table */
+    .tableWrap{
+      overflow:auto;
+      border-radius: var(--r2);
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.18);
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      min-width: 780px;
+    }
+    th, td{
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      text-align:left;
+      font-size:13px;
+      vertical-align:middle;
+    }
+    th{
+      color:var(--muted);
+      font-weight:700;
+      background: rgba(255,255,255,.03);
+      position:sticky; top:0;
+      z-index:1;
+    }
+    td strong{ font-weight:900; }
+    .tRight{ text-align:right; }
+    .badge{
+      display:inline-flex; gap:6px; align-items:center;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:11px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.04);
+      color:var(--text);
+      white-space:nowrap;
+    }
+    .bDel{
+      border-color: rgba(255,77,77,.45);
+      background: rgba(255,77,77,.10);
+      color: #ffd0d0;
+    }
+    tr.deleted{
+      background: rgba(255,77,77,.08);
+      color: #ffd0d0;
+    }
+    tr.deleted td{ border-bottom-color: rgba(255,77,77,.18); }
+
+    /* Summary */
+    .summary{
+      display:grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap:10px;
+      margin-top:10px;
+    }
+    @media (max-width: 980px){
+      .summary{ grid-template-columns: repeat(2, 1fr); }
+    }
+    .kpi{
+      padding:12px;
+      border-radius: 18px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+    }
+    .kpi .label{ font-size:11px; color:var(--muted); }
+    .kpi .val{ font-size:18px; font-weight:1000; margin-top:4px; letter-spacing:.2px; }
+    .kpi .val.ok{ color:var(--ok); }
+    .kpi .val.brand{ color:var(--brand); }
+
+    /* Modal */
     .modalBack{
-      position:fixed; inset:0; background:rgba(0,0,0,.35);
-      display:none; align-items:center; justify-content:center; padding:16px;
-      z-index:9999;
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center; justify-content:center;
+      padding:16px;
+      z-index:999;
     }
+    .modalBack.show{ display:flex; }
     .modal{
-      width:min(760px, 100%);
-      background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:var(--sh);
+      width:min(780px, 100%);
+      border-radius: var(--r2);
+      border:1px solid var(--border);
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(0,0,0,.2));
+      box-shadow: var(--shadow);
       overflow:hidden;
     }
-    .modal .hd{ border-bottom:1px solid var(--line); }
-    .modal .bd{ padding:14px; }
-    .closeX{
-      width:40px; height:40px; border-radius:14px; border:1px solid var(--line);
-      background:#fff; font-weight:900; cursor:pointer;
+    .modalHeader{
+      padding:14px;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    .modalHeader h3{ margin:0; font-size:14px; }
+    .modalBody{ padding:14px; }
+    .modalFooter{
+      padding:14px;
+      display:flex; justify-content:flex-end; gap:10px;
+      border-top:1px solid rgba(255,255,255,.08);
     }
 
-    /* Modal delete */
-    .delGrid{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    @media(max-width:700px){ .delGrid{ grid-template-columns:1fr; } }
-    .help{ font-size:12px; color:#64748b; margin-top:6px; }
-
+    /* Print */
     @media print{
-      body *{ visibility:hidden; }
-      #relModal, #relModal *{ visibility:visible; }
-      #relModal{ position:fixed; left:0; top:0; width:100%; border:none; box-shadow:none; }
-      .modalBack#relBack{ display:flex !important; background:#fff !important; }
-      .closeX, .noPrint{ display:none !important; }
+      body{ background:#fff; color:#000; }
+      .app, .side, .topbar, .menu, .screen, .modalBack{ display:none !important; }
+      #printArea{
+        display:block !important;
+        padding:0 !important;
+      }
     }
+    #printArea{ display:none; }
+
+    /* Small helper */
+    .hint{ font-size:12px; color:var(--muted); margin-top:8px; }
+    .sep{ height:1px; background: rgba(255,255,255,.08); margin:12px 0; }
   </style>
 </head>
 
 <body>
-<header>
-  <div class="wrap">
-    <div style="display:flex;gap:12px;align-items:center;">
-      <div class="logo">DR</div>
-      <div>
-        <div style="font-weight:900">Caixa — <span style="color:var(--orange)">Drogaria Rocha</span></div>
-        <div class="small">F2 Venda • F3 Outros • F4 Movimentos • F5 Relatórios • F6 Abertura • F7 Config</div>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-      <div class="pill"><span class="dot" id="dot"></span><span id="status">Offline</span></div>
-      <div class="pill">Loja: <b id="lblLoja">LOJA 1</b></div>
-      <div class="pill">Status: <b id="lblStatusCaixa">—</b></div>
-      <div class="pill">Dia: <b id="lblDay">—</b></div>
-      <div class="pill">Filtro: <b id="lblFilter">TODOS</b></div>
-      <div class="pill">Hora: <b class="mono" id="tagTime">—</b></div>
-    </div>
-  </div>
-</header>
-
-<main>
-  <section class="card">
-    <div class="hd">
-      <b>📌 Menu</b>
-      <span class="mright mono" id="menuHint">—</span>
-    </div>
-    <div class="menu" id="menu">
-      <button type="button" class="mitem active" data-screen="sAbertura">Abertura do caixa <span class="mright">F6</span></button>
-      <button type="button" class="mitem" data-screen="sVenda">Venda <span class="mright">F2</span></button>
-      <button type="button" class="mitem" data-screen="sOutros">Outros <span class="mright">F3</span></button>
-      <button type="button" class="mitem" data-screen="sMovimentos">Movimentos <span class="mright">F4</span></button>
-      <button type="button" class="mitem" data-screen="sRelatorios">Relatórios <span class="mright">F5</span></button>
-      <button type="button" class="mitem" data-screen="sConfig">Config <span class="mright">F7</span></button>
-    </div>
-    <div class="bd">
-      <div class="note" id="msgGlobal">Conectando…</div>
-    </div>
-  </section>
-
-  <section class="card">
-    <div class="hd">
-      <b id="screenTitle">Abertura do caixa</b>
-      <div class="btnrow">
-        <button type="button" class="ghost" id="btnRefreshAll">Atualizar</button>
-      </div>
-    </div>
-    <div class="bd">
-
-      <!-- ABERTURA -->
-      <div class="screen active" id="sAbertura">
-        <div class="grid2">
-          <div>
-            <label>Loja</label>
-            <select id="selLoja">
-              <option>LOJA 1</option>
-              <option>LOJA 2</option>
-            </select>
-          </div>
-          <div>
-            <label>Data</label>
-            <input id="day" type="date"/>
-          </div>
-        </div>
-
-        <div style="height:10px"></div>
-
-        <div class="grid2">
-          <div>
-            <label>Operador do caixa</label>
-            <select id="selOperador"></select>
-          </div>
-          <div>
-            <label>&nbsp;</label>
-            <button type="button" class="ghost" id="btnReloadOps" style="width:100%;">Recarregar operadores</button>
-          </div>
-        </div>
-
-        <div style="height:10px"></div>
-
-        <div class="grid2">
-          <div>
-            <label>Fundo (ao abrir)</label>
-            <input id="fundo" inputmode="decimal" placeholder="Ex.: 200,00"/>
-          </div>
-          <div>
-            <label>Ações</label>
-            <div class="btnrow">
-              <button type="button" class="okbtn" id="btnAbrir">Abrir caixa</button>
-              <button type="button" class="danger" id="btnFechar">Fechar caixa</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="note" id="msgAbertura">—</div>
-      </div>
-
-      <!-- VENDA -->
-      <div class="screen" id="sVenda">
-        <div class="saleBox" id="boxVenda">
-          <div class="grid2">
-            <div>
-              <label>Vendedor</label>
-              <select id="selVendedor"></select>
-            </div>
-            <div>
-              <label>Forma</label>
-              <select id="formaVenda">
-                <option>DINHEIRO</option>
-                <option>PIX</option>
-                <option>CARTAO</option>
-                <option>FIADO</option>
-              </select>
-            </div>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <div>
-            <label>Valor</label>
-            <input id="valorVenda" inputmode="decimal" placeholder="Ex.: 35,90"/>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <button type="button" class="bigBtn" id="btnAddVenda">Salvar Venda</button>
-          <div class="note" id="msgVenda">—</div>
-        </div>
-      </div>
-
-      <!-- OUTROS -->
-      <div class="screen" id="sOutros">
-        <div id="boxOutros">
-          <div class="grid2">
-            <div>
-              <label>Tipo</label>
-              <select id="tipoOutros">
-                <option>SUPRIMENTO</option>
-                <option>SANGRIA</option>
-                <option>DESPESA</option>
-              </select>
-            </div>
-            <div>
-              <label>Valor</label>
-              <input id="valorOutros" inputmode="decimal" placeholder="Ex.: 50,00"/>
-            </div>
-          </div>
-
-          <div style="height:10px"></div>
-
-          <div class="btnrow">
-            <button type="button" class="pri" id="btnAddOutros">Salvar</button>
-            <button type="button" class="ghost" id="btnLimpar">Limpar</button>
-          </div>
-
-          <div class="note" id="msgOutros">—</div>
-        </div>
-      </div>
-
-      <!-- MOVIMENTOS -->
-      <div class="screen" id="sMovimentos">
-        <div class="kpiBox">
-          <div>
-            <div class="t">SALDO DA SESSÃO</div>
-            <div class="small">Entradas - Saídas</div>
-          </div>
-          <div class="v" id="kpiSaldo">R$ 0,00</div>
-        </div>
-
-        <div class="kpiBox">
-          <div>
-            <div class="t">TOTAL DO FILTRO</div>
-            <div class="small" id="kpiFilterName">TODOS</div>
-          </div>
-          <div class="v" id="kpiFilterTotal">R$ 0,00</div>
-        </div>
-
-        <div class="tabs" id="tabs">
-          <button type="button" class="tab active" data-filter="TODOS">TODOS</button>
-          <button type="button" class="tab" data-filter="VENDA">VENDAS</button>
-          <button type="button" class="tab" data-filter="DINHEIRO">DINHEIRO</button>
-          <button type="button" class="tab" data-filter="PIX">PIX</button>
-          <button type="button" class="tab" data-filter="CARTAO">CARTÃO</button>
-          <button type="button" class="tab" data-filter="FIADO">FIADO</button>
-          <button type="button" class="tab" data-filter="SUPRIMENTO">SUPRIMENTOS</button>
-          <button type="button" class="tab" data-filter="SANGRIA">SANGRIAS</button>
-          <button type="button" class="tab" data-filter="DESPESA">DESPESAS</button>
-        </div>
-
-        <div style="height:12px"></div>
-
-        <div class="tablewrap">
-          <table>
-            <thead>
-              <tr>
-                <th>Data/Hora</th>
-                <th>Operador</th>
-                <th>Tipo</th>
-                <th>Forma</th>
-                <th class="mono">Valor</th>
-                <th>Apagar</th>
-              </tr>
-            </thead>
-            <tbody id="tb"></tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- RELATÓRIOS -->
-      <div class="screen" id="sRelatorios">
-        <div class="kpiBox">
-          <div>
-            <div class="t">RELATÓRIOS</div>
-            <div class="small">Escolha o dia/semana/mês e imprima</div>
-          </div>
-          <div class="btnrow noPrint" style="gap:8px; align-items:flex-end;">
-            <div style="min-width:170px;">
-              <label style="margin:0 0 6px;">Dia (diário)</label>
-              <input id="relDayPick" type="date"/>
-            </div>
-            <button type="button" class="ghost" id="btnRelDia">Diário</button>
-
-            <div style="min-width:170px;">
-              <label style="margin:0 0 6px;">Semana (escolha um dia)</label>
-              <input id="relWeekDay" type="date"/>
-            </div>
-            <button type="button" class="ghost" id="btnRelSemana">Semanal</button>
-
-            <div style="min-width:160px;">
-              <label style="margin:0 0 6px;">Mês</label>
-              <input id="relMonthPick" type="month"/>
-            </div>
-            <button type="button" class="ghost" id="btnRelMes">Mensal</button>
-          </div>
-        </div>
-        <div class="note">
-          Importante: lançamentos <b>DELETADOS</b> aparecem em vermelho nos movimentos e <b>não entram</b> no relatório.
-        </div>
-      </div>
-
-      <!-- CONFIG -->
-      <div class="screen" id="sConfig">
-        <div class="note">
-          Operadores/vendedores são cadastrados direto na planilha (aba <b>operadores</b>).
-        </div>
-      </div>
-
-    </div>
-  </section>
-</main>
-
-<!-- Modal Relatório -->
-<div class="modalBack" id="relBack" aria-hidden="true">
-  <div class="modal" id="relModal">
-    <div class="hd">
-      <b id="relTitle">Relatório</b>
-      <div class="btnrow">
-        <button type="button" class="ghost noPrint" id="btnPrintRel">Imprimir</button>
-        <button type="button" class="closeX noPrint" id="btnCloseRel">✕</button>
-      </div>
-    </div>
-    <div class="bd">
-      <div class="small" id="relInfo">—</div>
-      <div style="height:10px"></div>
-
-      <div class="kpiBox">
-        <div><div class="t">VENDAS (TOTAL)</div><div class="small">DINHEIRO + PIX + CARTÃO + FIADO</div></div>
-        <div class="v" id="relVendas">R$ 0,00</div>
-      </div>
-
-      <div class="grid2" style="margin-bottom:10px;">
-        <div class="kpiBox" style="margin:0;"><div><div class="t">DINHEIRO</div></div><div class="v" id="relDinheiro">R$ 0,00</div></div>
-        <div class="kpiBox" style="margin:0;"><div><div class="t">PIX</div></div><div class="v" id="relPix">R$ 0,00</div></div>
-      </div>
-
-      <div class="grid2" style="margin-bottom:10px;">
-        <div class="kpiBox" style="margin:0;"><div><div class="t">CARTÃO</div></div><div class="v" id="relCartao">R$ 0,00</div></div>
-        <div class="kpiBox" style="margin:0;"><div><div class="t">FIADO</div></div><div class="v" id="relFiado">R$ 0,00</div></div>
-      </div>
-
-      <div class="grid3" style="margin-bottom:10px;">
-        <div class="kpiBox" style="margin:0;"><div><div class="t">SUPRIMENTO</div></div><div class="v" id="relSupr">R$ 0,00</div></div>
-        <div class="kpiBox" style="margin:0;"><div><div class="t">SANGRIA</div></div><div class="v" id="relSang">R$ 0,00</div></div>
-        <div class="kpiBox" style="margin:0;"><div><div class="t">DESPESA</div></div><div class="v" id="relDesp">R$ 0,00</div></div>
-      </div>
-
-      <div class="kpiBox">
-        <div><div class="t">SALDO</div><div class="small">Entradas - Saídas</div></div>
-        <div class="v" id="relSaldo">R$ 0,00</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Modal Excluir -->
-<div class="modalBack" id="delBack" aria-hidden="true">
-  <div class="modal" id="delModal">
-    <div class="hd">
-      <b>Excluir operação</b>
-      <div class="btnrow">
-        <button type="button" class="closeX" id="btnCloseDel">✕</button>
-      </div>
-    </div>
-    <div class="bd">
-      <div class="note" style="margin-top:0">
-        Essa ação não apaga da planilha. Ela marca como <b>DELETADO</b>, aparece em vermelho e não entra nos relatórios.
-      </div>
-
-      <div style="height:12px"></div>
-
-      <div class="delGrid">
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="side">
+      <div class="brand">
+        <div class="logo">DR</div>
         <div>
-          <label>Operador autorizador</label>
-          <select id="delOperador"></select>
-          <div class="help">Escolha quem está autorizando a exclusão.</div>
-        </div>
-        <div>
-          <label>PIN</label>
-          <input id="delPin" type="password" placeholder="Digite o PIN"/>
-          <div class="help">PIN usado no Apps Script para validar exclusão.</div>
+          <h1>Drogaria Rocha • Caixa</h1>
+          <p>Controle por Sessão</p>
         </div>
       </div>
 
-      <div style="height:12px"></div>
+      <div class="menu" id="menu">
+        <button class="btn item active" data-screen="scrAbertura">
+          <div class="ico">🔓</div>
+          <div>
+            <div style="font-weight:900; font-size:13px;">Abertura / Fechamento</div>
+            <div class="muted" style="font-size:12px;">Iniciar ou encerrar sessão</div>
+          </div>
+        </button>
 
-      <div class="btnrow" style="justify-content:flex-end">
-        <button type="button" class="ghost" id="btnCancelDel">Cancelar</button>
-        <button type="button" class="danger" id="btnConfirmDel">Confirmar exclusão</button>
+        <button class="btn item" data-screen="scrMov">
+          <div class="ico">💳</div>
+          <div>
+            <div style="font-weight:900; font-size:13px;">Movimentos</div>
+            <div class="muted" style="font-size:12px;">Venda, sangria, despesa…</div>
+          </div>
+        </button>
+
+        <button class="btn item" data-screen="scrRel">
+          <div class="ico">📄</div>
+          <div>
+            <div style="font-weight:900; font-size:13px;">Relatórios</div>
+            <div class="muted" style="font-size:12px;">Sessão / Histórico</div>
+          </div>
+        </button>
+
+        <button class="btn item" data-screen="scrConfig">
+          <div class="ico">⚙️</div>
+          <div>
+            <div style="font-weight:900; font-size:13px;">Config</div>
+            <div class="muted" style="font-size:12px;">URL do WebApp</div>
+          </div>
+        </button>
       </div>
-    </div>
+
+      <div class="sep"></div>
+      <div class="hint">
+        Atalhos:
+        <div>• <b>F5</b> abre Relatórios</div>
+        <div>• <b>F6</b> abre Abertura</div>
+        <div>• <b>F7</b> abre Config</div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+      <!-- TOPBAR -->
+      <div class="topbar">
+        <div class="top-left">
+          <span class="pill brand">Online: <b id="lblOnline">—</b></span>
+
+          <span class="pill">Loja: <b id="lblLoja">—</b></span>
+          <span class="pill" id="pillStatus">Status: <b id="lblStatus">—</b></span>
+          <span class="pill">Sessão: <b id="lblSessao">—</b></span>
+
+          <span class="pill">Dia: <b id="lblDia">—</b></span>
+        </div>
+
+        <div class="top-right">
+          <select class="select" id="selLoja">
+            <option>LOJA 1</option>
+            <option>LOJA 2</option>
+          </select>
+
+          <select class="select" id="selOperador"></select>
+
+          <button class="btnGhost" id="btnAtualizar">Atualizar</button>
+        </div>
+      </div>
+
+      <!-- SCREEN: ABERTURA -->
+      <section class="screen active" id="scrAbertura">
+        <div class="grid">
+          <div class="card big">
+            <h3>Abertura do Caixa (Nova Sessão)</h3>
+            <p>Ao abrir, o sistema cria um <b>ID de sessão</b>. Tudo lançado depois fica separado por turno.</p>
+
+            <div class="sep"></div>
+
+            <div class="row">
+              <div>
+                <div class="muted" style="font-size:12px; margin-bottom:6px;">Operador (Abertura)</div>
+                <select class="select" id="openOperador"></select>
+              </div>
+
+              <div>
+                <div class="muted" style="font-size:12px; margin-bottom:6px;">Fundo de Caixa (R$)</div>
+                <input class="input" id="openFundo" inputmode="decimal" placeholder="ex.: 220,00" />
+              </div>
+
+              <div style="display:flex; align-items:flex-end; gap:10px;">
+                <button class="btnPrimary" id="btnAbrir">Abrir Caixa</button>
+                <button class="btnGhost" id="btnAbrirSemFundo" title="Abre com fundo 0">Abrir sem fundo</button>
+              </div>
+            </div>
+
+            <div class="hint">✅ O valor do fundo entra automaticamente como <b>SUPRIMENTO</b> na sessão.</div>
+          </div>
+
+          <div class="card big">
+            <h3>Fechamento do Caixa</h3>
+            <p>Fecha a sessão atual. Depois disso, você pode abrir outra sessão.</p>
+
+            <div class="sep"></div>
+
+            <div class="row">
+              <div>
+                <div class="muted" style="font-size:12px; margin-bottom:6px;">Operador (Fechamento)</div>
+                <select class="select" id="closeOperador"></select>
+              </div>
+
+              <div style="display:flex; align-items:flex-end; gap:10px;">
+                <button class="btnDanger" id="btnFechar">Fechar Caixa</button>
+              </div>
+            </div>
+
+            <div class="hint">⚠️ Após fechar, a lista e o relatório passam a mostrar somente quando houver nova sessão.</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN: MOVIMENTOS -->
+      <section class="screen" id="scrMov">
+        <div class="card">
+          <div class="rowBetween">
+            <div>
+              <h2 style="margin:0;">Lançamentos</h2>
+              <div class="muted" style="font-size:12px;">Tudo lançado aqui entra na <b>Sessão Atual</b>.</div>
+            </div>
+            <div class="row">
+              <button class="btnGhost btnSmall" id="btnRelatorioSessao">Relatório da Sessão</button>
+              <button class="btnGhost btnSmall" id="btnRefreshMov">Atualizar Movimentos</button>
+            </div>
+          </div>
+
+          <div class="launcher" style="margin-top:12px;">
+            <!-- Form -->
+            <div class="card" style="margin:0; padding:14px;">
+              <h2>Inserir Movimento</h2>
+
+              <div class="row">
+                <div style="flex:1;">
+                  <div class="muted" style="font-size:12px; margin-bottom:6px;">Tipo</div>
+                  <div class="typeBar">
+                    <div class="chip chipVenda active" data-type="VENDA">VENDA</div>
+                    <div class="chip chipSup" data-type="SUPRIMENTO">SUPRIMENTO</div>
+                    <div class="chip chipSang" data-type="SANGRIA">SANGRIA</div>
+                    <div class="chip chipDesp" data-type="DESPESA">DESPESA</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="sep"></div>
+
+              <div class="row">
+                <div style="flex:1;">
+                  <div class="muted" style="font-size:12px; margin-bottom:6px;">Valor (R$)</div>
+                  <input class="input" id="movValor" inputmode="decimal" placeholder="ex.: 49,90" style="width:100%;" />
+                </div>
+
+                <div style="flex:1;" id="wrapForma">
+                  <div class="muted" style="font-size:12px; margin-bottom:6px;">Forma (para Venda)</div>
+                  <select class="select" id="movForma" style="width:100%;">
+                    <option>DINHEIRO</option>
+                    <option>PIX</option>
+                    <option>CARTÃO</option>
+                    <option>FIADO</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:10px;">
+                <div style="flex:1;" id="wrapVendedor">
+                  <div class="muted" style="font-size:12px; margin-bottom:6px;">Vendedor (para Venda)</div>
+                  <select class="select" id="movVendedor" style="width:100%;"></select>
+                </div>
+
+                <div style="flex:1;">
+                  <div class="muted" style="font-size:12px; margin-bottom:6px;">Operador do Caixa (lançamento)</div>
+                  <select class="select" id="movOperador" style="width:100%;"></select>
+                </div>
+              </div>
+
+              <div class="row" style="margin-top:12px;">
+                <button class="btnPrimary" id="btnLancar">Lançar</button>
+                <button class="btnGhost" id="btnLimpar">Limpar</button>
+              </div>
+
+              <div class="hint" id="hintSessao">Sessão atual: —</div>
+            </div>
+
+            <!-- List + tabs -->
+            <div class="card" style="margin:0; padding:14px;">
+              <div class="rowBetween">
+                <h2 style="margin:0;">Movimentos da Sessão</h2>
+                <span class="pill">Filtro: <b id="lblFiltro">TODOS</b></span>
+              </div>
+
+              <div class="tabs" id="tabs">
+                <div class="tab active" data-filter="TODOS">TODOS</div>
+                <div class="tab" data-filter="VENDAS">VENDAS</div>
+                <div class="tab" data-filter="DINHEIRO">DINHEIRO</div>
+                <div class="tab" data-filter="PIX">PIX</div>
+                <div class="tab" data-filter="CARTÃO">CARTÃO</div>
+                <div class="tab" data-filter="FIADO">FIADO</div>
+                <div class="tab" data-filter="SUPRIMENTOS">SUPRIMENTOS</div>
+                <div class="tab" data-filter="SANGRIAS">SANGRIAS</div>
+                <div class="tab" data-filter="DESPESAS">DESPESAS</div>
+              </div>
+
+              <div class="summary" id="summary">
+                <div class="kpi"><div class="label">VENDAS (TOTAL)</div><div class="val brand" id="kVendas">R$ 0,00</div></div>
+                <div class="kpi"><div class="label">SUPRIMENTOS</div><div class="val" id="kSup">R$ 0,00</div></div>
+                <div class="kpi"><div class="label">SAÍDAS (SANGRIA+DESPESA)</div><div class="val" id="kSaidas">R$ 0,00</div></div>
+                <div class="kpi"><div class="label">SALDO (Entradas - Saídas)</div><div class="val ok" id="kSaldo">R$ 0,00</div></div>
+              </div>
+
+              <div class="sep"></div>
+
+              <div class="tableWrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th style="width:170px;">Data/Hora</th>
+                      <th>Operador</th>
+                      <th style="width:140px;">Tipo</th>
+                      <th style="width:120px;">Forma</th>
+                      <th class="tRight" style="width:140px;">Valor</th>
+                      <th style="width:140px;">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tbodyMov"></tbody>
+                </table>
+              </div>
+
+              <div class="hint" id="lblEmpty">Sem lançamentos na sessão atual.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN: RELATORIOS -->
+      <section class="screen" id="scrRel">
+        <div class="card">
+          <div class="rowBetween">
+            <div>
+              <h2 style="margin:0;">Relatórios (Discretos)</h2>
+              <div class="muted" style="font-size:12px;">
+                Use <b>Sessão Atual</b> para o turno e <b>Histórico</b> para datas antigas (inclui registros sem sessão).
+              </div>
+            </div>
+            <div class="row">
+              <button class="btnPrimary" id="btnOpenReport">Abrir Relatório</button>
+            </div>
+          </div>
+
+          <div class="sep"></div>
+
+          <div class="row" style="gap:12px;">
+            <div class="card" style="margin:0; padding:14px; flex:1;">
+              <h2>Sessão Atual</h2>
+              <div class="muted" style="font-size:12px;">Relatório do turno que está aberto agora.</div>
+              <div class="sep"></div>
+              <button class="btnGhost" id="btnReportSessao">Gerar Sessão Atual</button>
+            </div>
+
+            <div class="card" style="margin:0; padding:14px; flex:1;">
+              <h2>Histórico por Dia</h2>
+              <div class="muted" style="font-size:12px;">Escolha o dia que quiser.</div>
+              <div class="sep"></div>
+              <div class="row">
+                <input class="input" type="date" id="repDia" />
+                <button class="btnGhost" id="btnReportDia">Gerar</button>
+              </div>
+            </div>
+
+            <div class="card" style="margin:0; padding:14px; flex:1;">
+              <h2>Histórico Semanal</h2>
+              <div class="muted" style="font-size:12px;">Escolha início e fim.</div>
+              <div class="sep"></div>
+              <div class="row">
+                <input class="input" type="date" id="repIni" />
+                <input class="input" type="date" id="repFim" />
+                <button class="btnGhost" id="btnReportSemana">Gerar</button>
+              </div>
+            </div>
+
+            <div class="card" style="margin:0; padding:14px; flex:1;">
+              <h2>Histórico Mensal</h2>
+              <div class="muted" style="font-size:12px;">Escolha o mês.</div>
+              <div class="sep"></div>
+              <div class="row">
+                <input class="input" type="month" id="repMes" />
+                <button class="btnGhost" id="btnReportMes">Gerar</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="hint" style="margin-top:12px;">
+            Dica: Você pode imprimir o relatório pelo botão <b>Imprimir</b> dentro do modal.
+          </div>
+        </div>
+      </section>
+
+      <!-- SCREEN: CONFIG -->
+      <section class="screen" id="scrConfig">
+        <div class="card">
+          <h2>Configurações</h2>
+          <div class="muted" style="font-size:12px;">Cole aqui a URL do seu WebApp do Apps Script.</div>
+          <div class="sep"></div>
+
+          <div class="row">
+            <input class="input" id="apiUrl" style="width:min(720px,100%);" placeholder="https://script.google.com/macros/s/....../exec" />
+            <button class="btnPrimary" id="btnSalvarUrl">Salvar</button>
+            <button class="btnGhost" id="btnTestarUrl">Testar</button>
+          </div>
+
+          <div class="hint">
+            Endpoints usados:
+            <div>GET: <b>?action=status</b> • <b>?action=ops</b> • <b>?action=list</b> • <b>?action=report</b> • <b>?action=range</b></div>
+            <div>POST: <b>action=open</b> • <b>action=close</b> • <b>action=add</b> • <b>action=del</b></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Modal: Report -->
+      <div class="modalBack" id="modalReportBack" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true">
+          <div class="modalHeader">
+            <h3 id="relTitle">Relatório</h3>
+            <div class="row">
+              <button class="btnGhost btnSmall" id="btnPrint">Imprimir</button>
+              <button class="btnGhost btnSmall" id="btnCloseReport">✕</button>
+            </div>
+          </div>
+          <div class="modalBody">
+            <div class="muted" style="font-size:12px;" id="relInfo">—</div>
+
+            <div class="sep"></div>
+
+            <div class="summary">
+              <div class="kpi"><div class="label">VENDAS (TOTAL)</div><div class="val brand" id="rVendas">R$ 0,00</div></div>
+              <div class="kpi"><div class="label">DINHEIRO</div><div class="val" id="rDinheiro">R$ 0,00</div></div>
+              <div class="kpi"><div class="label">PIX</div><div class="val" id="rPix">R$ 0,00</div></div>
+              <div class="kpi"><div class="label">CARTÃO</div><div class="val" id="rCartao">R$ 0,00</div></div>
+              <div class="kpi"><div class="label">FIADO</div><div class="val" id="rFiado">R$ 0,00</div></div>
+              <div class="kpi"><div class="label">SUPRIMENTO</div><div class="val" id="rSup">R$ 0,00</div></div>
+              <div class="kpi"><div class="label">SANGRIA</div><div class="val" id="rSang">R$ 0,00</div></div>
+              <div class="kpi"><div class="label">DESPESA</div><div class="val" id="rDesp">R$ 0,00</div></div>
+            </div>
+
+            <div class="sep"></div>
+
+            <div class="rowBetween">
+              <div class="muted" style="font-size:12px;">DELETADOS aparecem em vermelho e não contam.</div>
+              <div class="pill">SALDO: <b id="rSaldo">R$ 0,00</b></div>
+            </div>
+
+            <div class="sep"></div>
+
+            <div class="tableWrap" style="max-height: 260px;">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width:170px;">Data/Hora</th>
+                    <th>Operador</th>
+                    <th style="width:140px;">Tipo</th>
+                    <th style="width:120px;">Forma</th>
+                    <th class="tRight" style="width:140px;">Valor</th>
+                    <th style="width:140px;">Status</th>
+                  </tr>
+                </thead>
+                <tbody id="relBody"></tbody>
+              </table>
+            </div>
+
+          </div>
+          <div class="modalFooter">
+            <button class="btnGhost" id="btnCloseReport2">Fechar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal: Delete -->
+      <div class="modalBack" id="modalDelBack" aria-hidden="true">
+        <div class="modal" role="dialog" aria-modal="true">
+          <div class="modalHeader">
+            <h3>Excluir Movimento</h3>
+            <button class="btnGhost btnSmall" id="btnCloseDel">✕</button>
+          </div>
+          <div class="modalBody">
+            <div class="muted" style="font-size:12px;">
+              Para excluir, selecione o <b>operador autorizador</b> e digite o <b>PIN</b>.
+            </div>
+
+            <div class="sep"></div>
+
+            <div class="row">
+              <div style="flex:1;">
+                <div class="muted" style="font-size:12px; margin-bottom:6px;">Operador autorizador</div>
+                <select class="select" id="delAuth" style="width:100%;"></select>
+              </div>
+              <div style="flex:1;">
+                <div class="muted" style="font-size:12px; margin-bottom:6px;">PIN</div>
+                <input class="input" id="delPin" type="password" inputmode="numeric" placeholder="PIN" style="width:100%;" />
+              </div>
+            </div>
+
+            <div class="sep"></div>
+
+            <div class="card" style="margin:0; padding:12px;">
+              <div class="muted" style="font-size:12px;">Movimento selecionado:</div>
+              <div style="margin-top:6px; font-weight:900;" id="delInfo">—</div>
+            </div>
+
+            <div class="hint" id="delErr" style="color:#ffd0d0;"></div>
+          </div>
+          <div class="modalFooter">
+            <button class="btnGhost" id="btnCancelDel">Cancelar</button>
+            <button class="btnDanger" id="btnConfirmDel">Confirmar Exclusão</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Print area -->
+      <div id="printArea"></div>
+
+    </main>
   </div>
-</div>
 
-<script>
-  // ✅ SEU WEB APP
-  const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
+  <script>
+    /***********************
+     * CONFIG
+     ***********************/
+    const LS_API = "CAIXA_ROCHA_API_URL";
+    const DEFAULT_API_URL = localStorage.getItem(LS_API) || ""; // você pode colar fixo aqui também
 
-  // Utils
-  const norm = (s)=> String(s||"").trim().toUpperCase();
-  const pad2 = n => String(n).padStart(2,"0");
-  const todayISO = () => {
-    const d = new Date();
-    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
-  };
-  const nowTime = () => {
-    const d = new Date();
-    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
-  };
-  const brl = n => (n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-  const parseMoney = s => {
-    if(typeof s !== "string") return 0;
-    const cleaned = s.trim().replace(/\s/g,"").replace(/\./g,"").replace(",",".");
-    const v = Number(cleaned);
-    return Number.isFinite(v) ? v : 0;
-  };
-  const isTypingField = (el) => {
-    if(!el) return false;
-    const tag = (el.tagName || "").toUpperCase();
-    return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
-  };
+    let API_URL = DEFAULT_API_URL;
 
-  // ✅ Normaliza tipo (ABERTURA antigo vira SUPRIMENTO)
-  function normalizeTipo(tipo){
-    const t = norm(tipo);
-    if(t === "ABERTURA") return "SUPRIMENTO";
-    if(t === "FECHAMENTO") return "SANGRIA";
-    return t;
-  }
+    /***********************
+     * ELEMENTS
+     ***********************/
+    const menu = document.getElementById("menu");
+    const screens = [...document.querySelectorAll(".screen")];
 
-  function toBRDate(iso){
-    if(!iso) return "";
-    const [y,m,d] = String(iso).split("-");
-    if(!y || !m || !d) return "";
-    return `${d}/${m}/${y}`;
-  }
-  function fmtDataHoraCurta(rawHora, rawData){
-    const h = String(rawHora ?? "").trim();
-    const onlyTime = h.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
-    if(onlyTime){
-      const hh = String(onlyTime[1]).padStart(2,"0");
-      const mm = onlyTime[2];
-      return `${toBRDate(rawData || todayISO())} ${hh}:${mm}`;
+    const lblOnline = document.getElementById("lblOnline");
+    const lblLoja = document.getElementById("lblLoja");
+    const lblStatus = document.getElementById("lblStatus");
+    const lblSessao = document.getElementById("lblSessao");
+    const pillStatus = document.getElementById("pillStatus");
+    const lblDia = document.getElementById("lblDia");
+
+    const selLoja = document.getElementById("selLoja");
+    const selOperador = document.getElementById("selOperador");
+
+    const btnAtualizar = document.getElementById("btnAtualizar");
+
+    // Abertura / Fechamento
+    const openOperador = document.getElementById("openOperador");
+    const closeOperador = document.getElementById("closeOperador");
+    const openFundo = document.getElementById("openFundo");
+    const btnAbrir = document.getElementById("btnAbrir");
+    const btnAbrirSemFundo = document.getElementById("btnAbrirSemFundo");
+    const btnFechar = document.getElementById("btnFechar");
+
+    // Movimentos
+    const chips = [...document.querySelectorAll(".chip[data-type]")];
+    const movValor = document.getElementById("movValor");
+    const movForma = document.getElementById("movForma");
+    const movOperador = document.getElementById("movOperador");
+    const movVendedor = document.getElementById("movVendedor");
+    const wrapForma = document.getElementById("wrapForma");
+    const wrapVendedor = document.getElementById("wrapVendedor");
+    const btnLancar = document.getElementById("btnLancar");
+    const btnLimpar = document.getElementById("btnLimpar");
+    const btnRefreshMov = document.getElementById("btnRefreshMov");
+    const btnRelatorioSessao = document.getElementById("btnRelatorioSessao");
+    const hintSessao = document.getElementById("hintSessao");
+
+    const tabs = [...document.querySelectorAll(".tab")];
+    const lblFiltro = document.getElementById("lblFiltro");
+    const tbodyMov = document.getElementById("tbodyMov");
+    const lblEmpty = document.getElementById("lblEmpty");
+
+    const kVendas = document.getElementById("kVendas");
+    const kSup = document.getElementById("kSup");
+    const kSaidas = document.getElementById("kSaidas");
+    const kSaldo = document.getElementById("kSaldo");
+
+    // Relatórios
+    const btnOpenReport = document.getElementById("btnOpenReport");
+    const btnReportSessao = document.getElementById("btnReportSessao");
+    const btnReportDia = document.getElementById("btnReportDia");
+    const btnReportSemana = document.getElementById("btnReportSemana");
+    const btnReportMes = document.getElementById("btnReportMes");
+
+    const repDia = document.getElementById("repDia");
+    const repIni = document.getElementById("repIni");
+    const repFim = document.getElementById("repFim");
+    const repMes = document.getElementById("repMes");
+
+    // Modal report
+    const modalReportBack = document.getElementById("modalReportBack");
+    const btnCloseReport = document.getElementById("btnCloseReport");
+    const btnCloseReport2 = document.getElementById("btnCloseReport2");
+    const btnPrint = document.getElementById("btnPrint");
+    const relTitle = document.getElementById("relTitle");
+    const relInfo = document.getElementById("relInfo");
+
+    const rVendas = document.getElementById("rVendas");
+    const rDinheiro = document.getElementById("rDinheiro");
+    const rPix = document.getElementById("rPix");
+    const rCartao = document.getElementById("rCartao");
+    const rFiado = document.getElementById("rFiado");
+    const rSup = document.getElementById("rSup");
+    const rSang = document.getElementById("rSang");
+    const rDesp = document.getElementById("rDesp");
+    const rSaldo = document.getElementById("rSaldo");
+    const relBody = document.getElementById("relBody");
+
+    // Modal delete
+    const modalDelBack = document.getElementById("modalDelBack");
+    const btnCloseDel = document.getElementById("btnCloseDel");
+    const btnCancelDel = document.getElementById("btnCancelDel");
+    const btnConfirmDel = document.getElementById("btnConfirmDel");
+    const delAuth = document.getElementById("delAuth");
+    const delPin = document.getElementById("delPin");
+    const delInfo = document.getElementById("delInfo");
+    const delErr = document.getElementById("delErr");
+
+    // Config
+    const apiUrl = document.getElementById("apiUrl");
+    const btnSalvarUrl = document.getElementById("btnSalvarUrl");
+    const btnTestarUrl = document.getElementById("btnTestarUrl");
+
+    /***********************
+     * STATE
+     ***********************/
+    let operators = [];
+    let currentSessaoId = "";
+    let isOnline = false;
+    let caixaAberto = false;
+
+    let currentType = "VENDA";
+    let currentFilter = "TODOS";
+    let cacheRows = [];
+
+    let delTarget = null; // {row, ...}
+
+    /***********************
+     * HELPERS
+     ***********************/
+    function norm(s){ return String(s ?? "").trim().toUpperCase(); }
+
+    function brl(n){
+      const v = Number(n || 0);
+      return v.toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
     }
-    const d = new Date(h);
-    if(!isNaN(d) && d.getFullYear() > 2005){
+
+    function parseMoney(s){
+      // aceita 49,90 / 49.90 / 49
+      const t = String(s || "").trim()
+        .replace(/\./g, "")
+        .replace(",", ".");
+      const n = Number(t);
+      return Number.isFinite(n) ? n : 0;
+    }
+
+    function todayISO(){
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
       const dd = String(d.getDate()).padStart(2,"0");
-      const mm = String(d.getMonth()+1).padStart(2,"0");
-      const yyyy = d.getFullYear();
+      return `${y}-${m}-${dd}`;
+    }
+
+    function timeHHMMSS(){
+      const d = new Date();
       const hh = String(d.getHours()).padStart(2,"0");
-      const mi = String(d.getMinutes()).padStart(2,"0");
-      return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
-    }
-    return `${toBRDate(rawData || todayISO())} ${String(rawHora||nowTime()).slice(0,5)}`;
-  }
-
-  // Header
-  const dot = document.getElementById("dot");
-  const statusEl = document.getElementById("status");
-  const lblLoja = document.getElementById("lblLoja");
-  const lblStatusCaixa = document.getElementById("lblStatusCaixa");
-  const lblDay = document.getElementById("lblDay");
-  const lblFilter = document.getElementById("lblFilter");
-  const tagTime = document.getElementById("tagTime");
-  const menuHint = document.getElementById("menuHint");
-  const msgGlobal = document.getElementById("msgGlobal");
-
-  // Menu screens
-  const menu = document.getElementById("menu");
-  const screenTitle = document.getElementById("screenTitle");
-  const screens = {
-    sAbertura: document.getElementById("sAbertura"),
-    sVenda: document.getElementById("sVenda"),
-    sOutros: document.getElementById("sOutros"),
-    sMovimentos: document.getElementById("sMovimentos"),
-    sRelatorios: document.getElementById("sRelatorios"),
-    sConfig: document.getElementById("sConfig"),
-  };
-  const titles = {
-    sAbertura: "Abertura do caixa",
-    sVenda: "Venda",
-    sOutros: "Outros lançamentos",
-    sMovimentos: "Movimentos",
-    sRelatorios: "Relatórios",
-    sConfig: "Config",
-  };
-
-  // Abertura/base
-  const selLoja = document.getElementById("selLoja");
-  const dayEl = document.getElementById("day");
-  const selOperador = document.getElementById("selOperador");
-  const btnReloadOps = document.getElementById("btnReloadOps");
-  const fundo = document.getElementById("fundo");
-  const btnAbrir = document.getElementById("btnAbrir");
-  const btnFechar = document.getElementById("btnFechar");
-  const msgAbertura = document.getElementById("msgAbertura");
-
-  // Venda
-  const boxVenda = document.getElementById("boxVenda");
-  const selVendedor = document.getElementById("selVendedor");
-  const formaVenda = document.getElementById("formaVenda");
-  const valorVenda = document.getElementById("valorVenda");
-  const btnAddVenda = document.getElementById("btnAddVenda");
-  const msgVenda = document.getElementById("msgVenda");
-
-  // Outros
-  const boxOutros = document.getElementById("boxOutros");
-  const tipoOutros = document.getElementById("tipoOutros");
-  const valorOutros = document.getElementById("valorOutros");
-  const btnAddOutros = document.getElementById("btnAddOutros");
-  const btnLimpar = document.getElementById("btnLimpar");
-  const msgOutros = document.getElementById("msgOutros");
-
-  // Movimentos
-  const kpiSaldo = document.getElementById("kpiSaldo");
-  const kpiFilterName = document.getElementById("kpiFilterName");
-  const kpiFilterTotal = document.getElementById("kpiFilterTotal");
-  const tabs = document.getElementById("tabs");
-  const tb = document.getElementById("tb");
-
-  // Relatórios
-  const relDayPick = document.getElementById("relDayPick");
-  const relWeekDay = document.getElementById("relWeekDay");
-  const relMonthPick = document.getElementById("relMonthPick");
-  const btnRelDia = document.getElementById("btnRelDia");
-  const btnRelSemana = document.getElementById("btnRelSemana");
-  const btnRelMes = document.getElementById("btnRelMes");
-
-  // Modal relatório
-  const relBack = document.getElementById("relBack");
-  const btnCloseRel = document.getElementById("btnCloseRel");
-  const btnPrintRel = document.getElementById("btnPrintRel");
-  const relTitle = document.getElementById("relTitle");
-  const relInfo = document.getElementById("relInfo");
-  const relVendas = document.getElementById("relVendas");
-  const relDinheiro = document.getElementById("relDinheiro");
-  const relPix = document.getElementById("relPix");
-  const relCartao = document.getElementById("relCartao");
-  const relFiado = document.getElementById("relFiado");
-  const relSupr = document.getElementById("relSupr");
-  const relSang = document.getElementById("relSang");
-  const relDesp = document.getElementById("relDesp");
-  const relSaldo = document.getElementById("relSaldo");
-
-  // Modal delete
-  const delBack = document.getElementById("delBack");
-  const btnCloseDel = document.getElementById("btnCloseDel");
-  const btnCancelDel = document.getElementById("btnCancelDel");
-  const btnConfirmDel = document.getElementById("btnConfirmDel");
-  const delOperador = document.getElementById("delOperador");
-  const delPin = document.getElementById("delPin");
-  let pendingDeleteRow = null;
-
-  const btnRefreshAll = document.getElementById("btnRefreshAll");
-
-  // State
-  let caixaAberto = false;
-  let cacheRows = [];
-  let activeFilter = "TODOS";
-  let opsCache = [];
-
-  const currentDay = () => dayEl.value || todayISO();
-  const currentLoja = () => selLoja.value || "LOJA 1";
-
-  function setOnline(ok){
-    if(ok){ dot.classList.add("ok"); statusEl.textContent="Online"; }
-    else { dot.classList.remove("ok"); statusEl.textContent="Offline"; }
-  }
-
-  function syncHeader(){
-    lblLoja.textContent = currentLoja();
-    lblDay.textContent = currentDay().split("-").reverse().join("/");
-    tagTime.textContent = nowTime();
-  }
-
-  function setCaixaUI(open){
-    caixaAberto = !!open;
-    lblStatusCaixa.textContent = caixaAberto ? "ABERTO" : "FECHADO";
-    if(caixaAberto){
-      boxVenda.classList.remove("disabled");
-      boxOutros.classList.remove("disabled");
-      msgGlobal.textContent = `${currentLoja()} ABERTA.`;
-      msgAbertura.textContent = `${currentLoja()} ABERTA. Pode vender e lançar.`;
-      msgVenda.textContent = "Pronto para lançar venda.";
-      msgOutros.textContent = "Pronto para lançar outros.";
-    }else{
-      boxVenda.classList.add("disabled");
-      boxOutros.classList.add("disabled");
-      msgGlobal.textContent = `${currentLoja()} FECHADA. Abra o caixa primeiro.`;
-      msgAbertura.textContent = `${currentLoja()} FECHADA. Abra o caixa.`;
-      msgVenda.textContent = "Caixa fechado. Abra o caixa na tela de Abertura.";
-      msgOutros.textContent = "Caixa fechado. Abra o caixa na tela de Abertura.";
-    }
-    menuHint.textContent = caixaAberto ? "ABERTO" : "FECHADO";
-  }
-
-  function showScreen(id){
-    Object.entries(screens).forEach(([k, el])=> el.classList.toggle("active", k === id));
-    screenTitle.textContent = titles[id] || "Sistema";
-    [...menu.querySelectorAll(".mitem")].forEach(b=> b.classList.toggle("active", b.getAttribute("data-screen") === id));
-    if(id === "sVenda") setTimeout(()=>{ valorVenda.focus(); valorVenda.select?.(); }, 60);
-    if(id === "sOutros") setTimeout(()=>{ valorOutros.focus(); valorOutros.select?.(); }, 60);
-  }
-
-  menu.addEventListener("click", (e)=>{
-    const btn = e.target.closest("button[data-screen]");
-    if(!btn) return;
-    showScreen(btn.getAttribute("data-screen"));
-  });
-
-  async function loadStatus(){
-    try{
-      const url = `${API_URL}?action=status&loja=${encodeURIComponent(currentLoja())}`;
-      const r = await fetch(url);
-      const data = await r.json();
-      if(!data.ok) throw new Error(data.error || "status error");
-      setOnline(true);
-      setCaixaUI(norm(data.status)==="ABERTO");
-    }catch(e){
-      setOnline(false);
-      lblStatusCaixa.textContent = "—";
-      msgGlobal.textContent = "Offline (não conectou no Apps Script).";
-    }
-  }
-
-  function fillOpsSelects(ops){
-    selOperador.innerHTML = "";
-    selVendedor.innerHTML = "";
-    delOperador.innerHTML = "";
-
-    if(!ops || ops.length === 0){
-      const mk = (text)=>{
-        const o = document.createElement("option");
-        o.value=""; o.textContent=text;
-        return o;
-      };
-      selOperador.appendChild(mk("— cadastre na planilha —"));
-      selVendedor.appendChild(mk("— cadastre na planilha —"));
-      delOperador.appendChild(mk("— cadastre na planilha —"));
-      return;
+      const mm = String(d.getMinutes()).padStart(2,"0");
+      const ss = String(d.getSeconds()).padStart(2,"0");
+      return `${hh}:${mm}:${ss}`;
     }
 
-    for(const name of ops){
-      const a = document.createElement("option");
-      a.value = name; a.textContent = name;
-      selOperador.appendChild(a);
-
-      const b = document.createElement("option");
-      b.value = name; b.textContent = name;
-      selVendedor.appendChild(b);
-
-      const c = document.createElement("option");
-      c.value = name; c.textContent = name;
-      delOperador.appendChild(c);
+    function formatShortDateTime(dataIso, hora){
+      // dataIso: YYYY-MM-DD; hora: HH:MM:SS
+      if(!dataIso) return "—";
+      const [y,m,d] = String(dataIso).split("-");
+      const hhmm = (hora || "").slice(0,5) || "00:00";
+      return `${d}/${m}/${y} ${hhmm}`;
     }
 
-    if(selOperador.value) selVendedor.value = selOperador.value;
-  }
+    function currentLoja(){ return selLoja.value; }
+    function currentOperator(){ return selOperador.value; }
 
-  async function loadOperators(){
-    try{
-      const r = await fetch(`${API_URL}?action=ops`);
-      const data = await r.json();
-      if(!data.ok) throw new Error();
-      setOnline(true);
-      opsCache = (data.ops || []).slice();
-      fillOpsSelects(opsCache);
-    }catch(e){
-      setOnline(false);
-    }
-  }
-
-  selOperador.addEventListener("change", ()=>{
-    if(selOperador.value) selVendedor.value = selOperador.value;
-  });
-
-  function badgeTipo(t){
-    const type = normalizeTipo(t);
-    if(type==="VENDA") return `<span class="badge b-venda">VENDA</span>`;
-    if(type==="SUPRIMENTO") return `<span class="badge b-supr">SUPRIMENTO</span>`;
-    if(type==="SANGRIA") return `<span class="badge b-sang">SANGRIA</span>`;
-    if(type==="DESPESA") return `<span class="badge b-desp">DESPESA</span>`;
-    return `<span class="badge">${type}</span>`;
-  }
-  function chipForma(type, form){
-    const t = normalizeTipo(type);
-    const f = norm(form);
-    if(t !== "VENDA") return `<span class="chip">—</span>`;
-    if(!f) return `<span class="chip">—</span>`;
-    const label = (f==="CARTAO") ? "CARTÃO" : f;
-    return `<span class="chip">${label}</span>`;
-  }
-
-  function applyFilter(rows){
-    const f = norm(activeFilter);
-    if (f === "TODOS") return rows;
-    if (["SUPRIMENTO","SANGRIA","DESPESA","VENDA"].includes(f)){
-      return rows.filter(r => normalizeTipo(r.tipo) === f);
-    }
-    if (["DINHEIRO","PIX","CARTAO","FIADO"].includes(f)){
-      return rows.filter(r => normalizeTipo(r.tipo) === "VENDA" && norm(r.forma) === f);
-    }
-    return rows;
-  }
-
-  function computeSaldoSessao(rows){
-    let entradas=0, saidas=0;
-    for(const r of rows){
-      if(r.deletado) continue;
-      const t = normalizeTipo(r.tipo);
-      const v = Number(r.valor||0);
-      const isSaida = (t==="SANGRIA" || t==="DESPESA");
-      if(isSaida) saidas += v; else entradas += v;
-    }
-    kpiSaldo.textContent = brl(entradas - saidas);
-  }
-
-  function computeTotalDoFiltro(filteredRows){
-    let total = 0;
-    for(const r of filteredRows){
-      if(r.deletado) continue;
-      total += Number(r.valor||0);
-    }
-    const f = norm(activeFilter);
-    const label = (f==="CARTAO") ? "CARTÃO" : f;
-    kpiFilterName.textContent = `${label} — ${currentLoja()}`;
-    kpiFilterTotal.textContent = brl(total);
-    lblFilter.textContent = label;
-  }
-
-  function renderTable(){
-    const filtered = applyFilter([...cacheRows]);
-    computeTotalDoFiltro(filtered);
-
-    tb.innerHTML = "";
-    if(filtered.length === 0){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="6" style="color:#64748b">Sem lançamentos (sessão atual).</td>`;
-      tb.appendChild(tr);
-      return;
+    function setOnline(v){
+      isOnline = !!v;
+      lblOnline.textContent = isOnline ? "SIM" : "NÃO";
     }
 
-    filtered.sort((a,b)=> String(a.hora||"").localeCompare(String(b.hora||"")));
+    function setStatusUI(statusText){
+      const st = norm(statusText);
+      lblStatus.textContent = st || "—";
+      pillStatus.classList.remove("ok","bad");
+      if(st === "ABERTO"){ pillStatus.classList.add("ok"); }
+      if(st === "FECHADO"){ pillStatus.classList.add("bad"); }
+    }
 
-    for(const r of filtered){
-      const t = normalizeTipo(r.tipo);
-      const v = Number(r.valor||0);
-      const del = !!r.deletado;
-      const isSaida = (t==="SANGRIA" || t==="DESPESA");
+    function setCaixaUI(open){
+      caixaAberto = !!open;
+      btnAbrir.disabled = caixaAberto;
+      btnAbrirSemFundo.disabled = caixaAberto;
+      btnFechar.disabled = !caixaAberto;
 
-      const tr = document.createElement("tr");
-      if(del) tr.classList.add("deleted");
+      btnAbrir.classList.toggle("btnDisabled", caixaAberto);
+      btnAbrirSemFundo.classList.toggle("btnDisabled", caixaAberto);
+      btnFechar.classList.toggle("btnDisabled", !caixaAberto);
 
-      tr.innerHTML = `
-        <td class="mono">${fmtDataHoraCurta(r.hora, r.data)}</td>
-        <td>${r.operador || ""}</td>
-        <td>${del ? `<span class="badge b-sang">DELETADO</span>` : badgeTipo(t)}</td>
-        <td>${chipForma(t, r.forma)}</td>
-        <td class="mono ${(!del && isSaida) ? "neg" : "pos"}">${brl(v)}</td>
-        <td>
-          ${
-            del
-              ? `<span class="chip">DELETADO</span>`
-              : `<button type="button" class="trash" title="Apagar" data-row="${r.row}">🗑️</button>`
+      // lançar só se aberto
+      btnLancar.disabled = !caixaAberto;
+      btnLancar.classList.toggle("btnDisabled", !caixaAberto);
+
+      hintSessao.textContent = `Sessão atual: ${currentSessaoId || "—"}`;
+      document.getElementById("lblLoja").textContent = currentLoja();
+    }
+
+    function showScreen(id){
+      screens.forEach(s => s.classList.toggle("active", s.id === id));
+      [...menu.querySelectorAll(".item")].forEach(b => b.classList.toggle("active", b.dataset.screen === id));
+    }
+
+    function toggleVendaFields(){
+      const isVenda = currentType === "VENDA";
+      wrapForma.style.display = isVenda ? "" : "none";
+      wrapVendedor.style.display = isVenda ? "" : "none";
+    }
+
+    function postForm(url, data){
+      const body = new URLSearchParams();
+      Object.entries(data).forEach(([k,v]) => body.append(k, String(v ?? "")));
+      return fetch(url, {
+        method:"POST",
+        headers: { "Content-Type":"application/x-www-form-urlencoded;charset=UTF-8" },
+        body
+      });
+    }
+
+    function canUseAPI(){
+      return !!(API_URL && API_URL.startsWith("http"));
+    }
+
+    /***********************
+     * API CALLS
+     ***********************/
+    async function apiGet(params){
+      if(!canUseAPI()) throw new Error("Configure a URL do WebApp em Config.");
+      const u = new URL(API_URL);
+      Object.entries(params).forEach(([k,v]) => u.searchParams.set(k, v));
+      const r = await fetch(u.toString());
+      return r.json();
+    }
+
+    async function apiPost(params){
+      if(!canUseAPI()) throw new Error("Configure a URL do WebApp em Config.");
+      const r = await postForm(API_URL, params);
+      return r.json();
+    }
+
+    async function loadOperators(){
+      try{
+        const data = await apiGet({ action:"ops" });
+        if(!data.ok) throw new Error(data.error || "ops error");
+
+        operators = Array.isArray(data.ops) ? data.ops : (data.ops?.ops || []);
+        if(!Array.isArray(operators)) operators = [];
+
+        // Preenche selects
+        const all = [selOperador, openOperador, closeOperador, movOperador, movVendedor, delAuth];
+        all.forEach(s => {
+          s.innerHTML = "";
+          operators.forEach(name => {
+            const o = document.createElement("option");
+            o.textContent = name;
+            o.value = name;
+            s.appendChild(o);
+          });
+        });
+
+        // Defaults
+        if(operators.length){
+          selOperador.value = operators[0];
+          openOperador.value = operators[0];
+          closeOperador.value = operators[0];
+          movOperador.value = operators[0];
+          movVendedor.value = operators[0];
+          delAuth.value = operators[0];
+        }
+      }catch(e){
+        operators = [];
+        [selOperador, openOperador, closeOperador, movOperador, movVendedor, delAuth].forEach(s => s.innerHTML = "");
+        setOnline(false);
+      }
+    }
+
+    async function loadStatus(){
+      try{
+        const data = await apiGet({ action:"status", loja: currentLoja() });
+        if(!data.ok) throw new Error(data.error || "status error");
+
+        setOnline(true);
+        const st = norm(data.status || data.STATUS || "");
+        currentSessaoId = data.sessaoId || data.SESSAO_ID || "";
+        lblSessao.textContent = currentSessaoId ? currentSessaoId : "—";
+        setStatusUI(st || "—");
+        setCaixaUI(st === "ABERTO");
+      }catch(e){
+        setOnline(false);
+        currentSessaoId = "";
+        lblSessao.textContent = "—";
+        setStatusUI("—");
+        setCaixaUI(false);
+      }
+    }
+
+    async function listSession(){
+      // lista SOMENTE a sessão atual
+      if(!currentSessaoId){
+        cacheRows = [];
+        renderTable();
+        renderSummary();
+        lblEmpty.style.display = "";
+        return;
+      }
+
+      try{
+        const data = await apiGet({ action:"list", loja: currentLoja(), sessao: currentSessaoId });
+        if(!data.ok) throw new Error(data.error || "list error");
+
+        setOnline(true);
+        const rows = Array.isArray(data.rows) ? data.rows : [];
+        cacheRows = rows.map(x => ({
+          row: Number(x.row ?? 0),
+          loja: x.loja ?? "",
+          data: x.data ?? "",
+          hora: x.hora ?? "",
+          operador: x.operador ?? "",
+          tipo: norm(x.tipo ?? ""),
+          forma: norm(x.forma ?? ""),
+          valor: Number(x.valor ?? 0),
+          deletado: !!x.deletado
+        }));
+
+        renderTable();
+        renderSummary();
+      }catch(e){
+        setOnline(false);
+      }
+    }
+
+    /***********************
+     * FILTERS / SUMMARY / TABLE
+     ***********************/
+    function filterRows(rows){
+      const f = currentFilter;
+      if(f === "TODOS") return rows;
+
+      if(f === "VENDAS") return rows.filter(r => r.tipo === "VENDA");
+      if(["DINHEIRO","PIX","CARTÃO","FIADO"].includes(f)) {
+        return rows.filter(r => r.tipo === "VENDA" && r.forma === f);
+      }
+      if(f === "SUPRIMENTOS") return rows.filter(r => r.tipo === "SUPRIMENTO");
+      if(f === "SANGRIAS") return rows.filter(r => r.tipo === "SANGRIA");
+      if(f === "DESPESAS") return rows.filter(r => r.tipo === "DESPESA");
+
+      return rows;
+    }
+
+    function calc(rows){
+      // DELETADOS não contam
+      const valid = rows.filter(r => !r.deletado);
+
+      const vendas = valid.filter(r => r.tipo === "VENDA").reduce((a,r)=>a+r.valor,0);
+      const dinheiro = valid.filter(r => r.tipo === "VENDA" && r.forma === "DINHEIRO").reduce((a,r)=>a+r.valor,0);
+      const pix = valid.filter(r => r.tipo === "VENDA" && r.forma === "PIX").reduce((a,r)=>a+r.valor,0);
+      const cartao = valid.filter(r => r.tipo === "VENDA" && r.forma === "CARTÃO").reduce((a,r)=>a+r.valor,0);
+      const fiado = valid.filter(r => r.tipo === "VENDA" && r.forma === "FIADO").reduce((a,r)=>a+r.valor,0);
+
+      const supr = valid.filter(r => r.tipo === "SUPRIMENTO").reduce((a,r)=>a+r.valor,0);
+      const sang = valid.filter(r => r.tipo === "SANGRIA").reduce((a,r)=>a+r.valor,0);
+      const desp = valid.filter(r => r.tipo === "DESPESA").reduce((a,r)=>a+r.valor,0);
+
+      const saldo = (vendas + supr) - (sang + desp);
+
+      return { vendas, dinheiro, pix, cartao, fiado, supr, sang, desp, saldo };
+    }
+
+    function renderSummary(){
+      const data = calc(cacheRows);
+
+      kVendas.textContent = brl(data.vendas);
+      kSup.textContent = brl(data.supr);
+      kSaidas.textContent = brl(data.sang + data.desp);
+      kSaldo.textContent = brl(data.saldo);
+      kSaldo.classList.toggle("ok", data.saldo >= 0);
+    }
+
+    function renderTable(){
+      const rows = filterRows(cacheRows);
+
+      lblFiltro.textContent = currentFilter;
+      tbodyMov.innerHTML = "";
+
+      lblEmpty.style.display = rows.length ? "none" : "";
+
+      rows
+        .sort((a,b) => (a.data+a.hora).localeCompare(b.data+b.hora))
+        .forEach(r => {
+          const tr = document.createElement("tr");
+          if(r.deletado) tr.classList.add("deleted");
+
+          const statusBadge = r.deletado
+            ? `<span class="badge bDel">DELETADO</span>`
+            : `<span class="badge">OK</span>`;
+
+          tr.innerHTML = `
+            <td>${formatShortDateTime(r.data, r.hora)}</td>
+            <td><strong>${escapeHtml(r.operador || "")}</strong></td>
+            <td>${escapeHtml(r.tipo || "")}</td>
+            <td>${escapeHtml(r.forma || "—")}</td>
+            <td class="tRight"><strong>${brl(r.valor)}</strong></td>
+            <td>
+              ${statusBadge}
+              <button class="btnDanger btnSmall" data-del="${r.row}" ${r.deletado ? "disabled class='btnDanger btnSmall btnDisabled'" : ""} style="margin-left:8px;">
+                Excluir
+              </button>
+            </td>
+          `;
+
+          const btn = tr.querySelector("button[data-del]");
+          if(btn && !r.deletado){
+            btn.addEventListener("click", () => openDeleteModal(r));
           }
-        </td>
-      `;
-      tb.appendChild(tr);
-    }
-  }
+          tbodyMov.appendChild(tr);
+        });
 
-  async function listSession(){
-    syncHeader();
-    try{
-      const d = currentDay();
-      const loja = currentLoja();
-
-      const url =
-        `${API_URL}?action=list` +
-        `&data=${encodeURIComponent(d)}` +
-        `&day=${encodeURIComponent(d)}` +
-        `&loja=${encodeURIComponent(loja)}`;
-
-      const r = await fetch(url);
-      const data = await r.json();
-      if(!data.ok) throw new Error(data.error || "list error");
-      setOnline(true);
-
-      const rowsRaw = Array.isArray(data.rows) ? data.rows : [];
-
-      cacheRows = rowsRaw.map(x => ({
-        row: Number(x.row ?? x.Row ?? x.linha ?? x.id ?? 0),
-        data: (x.data ?? x.Data ?? x.day ?? x.dia ?? ""),
-        hora: (x.hora ?? x.Hora ?? x.time ?? x.timestamp ?? ""),
-        operador: String(x.operador ?? x.Operador ?? x.op ?? x.vendedor ?? ""),
-        tipo: normalizeTipo(x.tipo ?? x.Tipo ?? x.movimento ?? x.categoria ?? ""),
-        forma: norm(x.forma ?? x.Forma ?? x.pagamento ?? x.meio ?? ""),
-        valor: Number(x.valor ?? x.Valor ?? x.amount ?? 0),
-        deletado: Boolean(x.deletado ?? x.Deletado ?? x.deleted ?? false),
-      }));
-
-      computeSaldoSessao(cacheRows);
-      renderTable();
-    }catch(e){
-      setOnline(false);
-    }
-  }
-
-  async function abrirCaixa(){
-    const op = selOperador.value;
-    if(!op) return alert("Selecione o operador do caixa.");
-    const f = parseMoney(fundo.value);
-    if(f < 0) return alert("Fundo inválido.");
-    if(!confirm(`Abrir ${currentLoja()} com fundo ${brl(f)}?\n\nObs: esse fundo entra em SUPRIMENTO.`)) return;
-
-    const body = new URLSearchParams();
-    body.set("action","open");
-    body.set("loja", currentLoja());
-    body.set("data", currentDay());
-    body.set("hora", nowTime());
-    body.set("operador", op);
-    body.set("fundo", String(f));
-
-    const r = await fetch(API_URL, { method:"POST", body });
-    const data = await r.json();
-    if(!data.ok) return alert(data.error || "Erro ao abrir.");
-
-    await loadStatus();
-    await listSession();
-    showScreen("sVenda");
-  }
-
-  async function fecharCaixa(){
-    const op = selOperador.value;
-    if(!op) return alert("Selecione o operador do caixa.");
-    if(!confirm(`Fechar ${currentLoja()}?`)) return;
-
-    const body = new URLSearchParams();
-    body.set("action","close");
-    body.set("loja", currentLoja());
-    body.set("data", currentDay());
-    body.set("hora", nowTime());
-    body.set("operador", op);
-
-    const r = await fetch(API_URL, { method:"POST", body });
-    const data = await r.json();
-    if(!data.ok) return alert(data.error || "Erro ao fechar.");
-
-    await loadStatus();
-    await listSession();
-    showScreen("sAbertura");
-  }
-
-  async function addMovement({tipo, forma, valor, operador}){
-    const op = operador || selOperador.value;
-    if(!op) return alert("Selecione o operador/vendedor.");
-
-    const v = parseMoney(String(valor || ""));
-    if(v <= 0) return alert("Informe um valor maior que zero.");
-
-    const body = new URLSearchParams();
-    body.set("action","add");
-    body.set("loja", currentLoja());
-    body.set("data", currentDay());
-    body.set("hora", nowTime());
-    body.set("operador", op);
-    body.set("tipo", tipo);
-    body.set("forma", (normalizeTipo(tipo) === "VENDA") ? forma : "");
-    body.set("valor", String(v));
-
-    const r = await fetch(API_URL, { method:"POST", body });
-    const data = await r.json();
-    if(!data.ok) return alert(data.error || "Erro ao salvar.");
-
-    await listSession();
-    return true;
-  }
-
-  async function addVenda(){
-    const vendedor = selVendedor.value;
-    if(!vendedor) return alert("Selecione o vendedor.");
-
-    const ok = await addMovement({
-      tipo:"VENDA",
-      forma: formaVenda.value,
-      valor: valorVenda.value,
-      operador: vendedor
-    });
-
-    if(ok){
-      msgVenda.textContent = "Venda salva ✅";
-      valorVenda.value = "";
-      setTimeout(()=> { valorVenda.focus(); msgVenda.textContent = "Pronto para lançar venda."; }, 350);
-    }
-  }
-
-  async function addOutros(){
-    const ok = await addMovement({
-      tipo: tipoOutros.value,
-      forma:"",
-      valor: valorOutros.value
-    });
-    if(ok){
-      msgOutros.textContent = "Lançamento salvo ✅";
-      valorOutros.value = "";
-      setTimeout(()=> { valorOutros.focus(); msgOutros.textContent = "Pronto para lançar outros."; }, 350);
-    }
-  }
-
-  // ======== DELETE MODAL ========
-  function openDelModal(row){
-    pendingDeleteRow = row;
-    delPin.value = "";
-    if(delOperador.options.length && !delOperador.value){
-      delOperador.selectedIndex = 0;
-    }
-    delBack.style.display = "flex";
-    delBack.setAttribute("aria-hidden","false");
-    setTimeout(()=> delPin.focus(), 60);
-  }
-  function closeDelModal(){
-    pendingDeleteRow = null;
-    delBack.style.display = "none";
-    delBack.setAttribute("aria-hidden","true");
-  }
-
-  btnCloseDel.addEventListener("click", closeDelModal);
-  btnCancelDel.addEventListener("click", closeDelModal);
-  delBack.addEventListener("click", (e)=>{ if(e.target === delBack) closeDelModal(); });
-
-  async function confirmDelete(){
-    const row = pendingDeleteRow;
-    if(!row) return closeDelModal();
-
-    const opAuth = delOperador.value;
-    if(!opAuth) return alert("Selecione o operador autorizador.");
-
-    const pin = delPin.value.trim();
-    if(!pin) return alert("Digite o PIN.");
-
-    if(!confirm("Confirmar exclusão? Vai marcar como DELETADO.")) return;
-
-    const body = new URLSearchParams();
-    body.set("action","del");
-    body.set("row", String(row));
-    body.set("operador", opAuth);
-    body.set("pin", pin);
-
-    const r = await fetch(API_URL, { method:"POST", body });
-    const data = await r.json();
-    if(!data.ok) return alert(data.error || "Erro ao apagar.");
-
-    closeDelModal();
-    await listSession();
-  }
-  btnConfirmDel.addEventListener("click", confirmDelete);
-  delPin.addEventListener("keydown", (e)=>{ if(e.key==="Enter") confirmDelete(); });
-
-  tb.addEventListener("click", (e)=>{
-    const b = e.target.closest("button[data-row]");
-    if(!b) return;
-    openDelModal(Number(b.getAttribute("data-row")));
-  });
-
-  // Tabs
-  tabs.addEventListener("click", (e)=>{
-    const btn = e.target.closest("button[data-filter]");
-    if(!btn) return;
-    activeFilter = btn.getAttribute("data-filter") || "TODOS";
-    [...tabs.querySelectorAll(".tab")].forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    renderTable();
-  });
-
-  // Relatório modal
-  function openRel(){ relBack.style.display = "flex"; relBack.setAttribute("aria-hidden","false"); }
-  function closeRel(){ relBack.style.display = "none"; relBack.setAttribute("aria-hidden","true"); }
-  btnCloseRel.addEventListener("click", closeRel);
-  relBack.addEventListener("click", (e)=>{ if(e.target === relBack) closeRel(); });
-  btnPrintRel.addEventListener("click", ()=> window.print());
-
-  function getWeekRange(isoDay){
-    const d = new Date(isoDay + "T00:00:00");
-    const day = d.getDay();
-    const diffToMon = (day === 0 ? -6 : 1 - day);
-    const mon = new Date(d); mon.setDate(d.getDate() + diffToMon);
-    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-    const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
-    return { from: toISO(mon), to: toISO(sun) };
-  }
-
-  function getMonthRange(baseIso){
-    const d = new Date(baseIso + "T00:00:00");
-    const y = d.getFullYear(), m = d.getMonth();
-    const first = new Date(y, m, 1);
-    const last = new Date(y, m+1, 0);
-    const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
-    return { from: toISO(first), to: toISO(last) };
-  }
-
-  async function fetchRange(from, to){
-    const loja = currentLoja();
-    const url =
-      `${API_URL}?action=range` +
-      `&loja=${encodeURIComponent(loja)}` +
-      `&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}` +
-      `&inicio=${encodeURIComponent(from)}&fim=${encodeURIComponent(to)}` +
-      `&start=${encodeURIComponent(from)}&end=${encodeURIComponent(to)}`;
-    const r = await fetch(url);
-    const data = await r.json();
-    if(!data.ok) throw new Error(data.error || "Erro no relatório");
-    return Array.isArray(data.rows) ? data.rows : [];
-  }
-
-  // ✅ relatório ignora deletados e ABERTURA vira SUPRIMENTO
-  function calcReport(rows){
-    let dinheiro=0, pix=0, cartao=0, fiado=0;
-    let supr=0, sang=0, desp=0;
-
-    for(const rr of rows){
-      const deletado = Boolean(rr.deletado ?? rr.Deletado ?? rr.deleted ?? false);
-      if(deletado) continue;
-
-      const tipo = normalizeTipo(rr.tipo ?? rr.Tipo ?? rr.movimento ?? rr.categoria ?? "");
-      const forma = norm(rr.forma ?? rr.Forma ?? rr.pagamento ?? rr.meio ?? "");
-      const v = Number(rr.valor ?? rr.Valor ?? rr.amount ?? 0);
-
-      if(tipo === "VENDA"){
-        if(forma === "DINHEIRO") dinheiro += v;
-        else if(forma === "PIX") pix += v;
-        else if(forma === "CARTAO") cartao += v;
-        else if(forma === "FIADO") fiado += v;
-      } else if(tipo === "SUPRIMENTO") supr += v;
-      else if(tipo === "SANGRIA") sang += v;
-      else if(tipo === "DESPESA") desp += v;
+      // Atualiza KPIs do total (não do filtro)
+      renderSummary();
     }
 
-    const vendas = dinheiro + pix + cartao + fiado;
-    const entradas = vendas + supr;
-    const saidas = sang + desp;
-    const saldo = entradas - saidas;
-
-    return { vendas, dinheiro, pix, cartao, fiado, supr, sang, desp, saldo };
-  }
-
-  function paintReport(title, from, to, rows){
-    const r = calcReport(rows);
-    relTitle.textContent = title;
-    relInfo.textContent = `Loja: ${currentLoja()} • Período: ${from} até ${to} • Registros: ${rows.length} (DELETADOS não contam)`;
-    relVendas.textContent = brl(r.vendas);
-    relDinheiro.textContent = brl(r.dinheiro);
-    relPix.textContent = brl(r.pix);
-    relCartao.textContent = brl(r.cartao);
-    relFiado.textContent = brl(r.fiado);
-    relSupr.textContent = brl(r.supr);
-    relSang.textContent = brl(r.sang);
-    relDesp.textContent = brl(r.desp);
-    relSaldo.textContent = brl(r.saldo);
-    openRel();
-  }
-
-  btnRelDia.addEventListener("click", async ()=>{
-    try{
-      const d = relDayPick.value || currentDay();
-      const rows = await fetchRange(d, d);
-      paintReport(`Relatório Diário (${d})`, d, d, rows);
-    }catch(e){ alert(String(e.message || e)); }
-  });
-
-  btnRelSemana.addEventListener("click", async ()=>{
-    try{
-      const base = relWeekDay.value || currentDay();
-      const {from, to} = getWeekRange(base);
-      const rows = await fetchRange(from, to);
-      paintReport(`Relatório Semanal`, from, to, rows);
-    }catch(e){ alert(String(e.message || e)); }
-  });
-
-  btnRelMes.addEventListener("click", async ()=>{
-    try{
-      const m = relMonthPick.value;
-      const base = m ? (m + "-01") : currentDay();
-      const {from, to} = getMonthRange(base);
-      const rows = await fetchRange(from, to);
-      paintReport(`Relatório Mensal`, from, to, rows);
-    }catch(e){ alert(String(e.message || e)); }
-  });
-
-  // Botões
-  btnAbrir.addEventListener("click", abrirCaixa);
-  btnFechar.addEventListener("click", fecharCaixa);
-  btnReloadOps.addEventListener("click", loadOperators);
-  btnAddVenda.addEventListener("click", addVenda);
-  btnAddOutros.addEventListener("click", addOutros);
-
-  valorVenda.addEventListener("keydown", (e)=>{ if(e.key==="Enter") addVenda(); });
-  valorOutros.addEventListener("keydown", (e)=>{ if(e.key==="Enter") addOutros(); });
-
-  btnLimpar.addEventListener("click", ()=>{
-    valorVenda.value = "";
-    valorOutros.value = "";
-    valorVenda.focus();
-  });
-
-  btnRefreshAll.addEventListener("click", async ()=>{
-    await loadStatus();
-    await listSession();
-  });
-
-  selLoja.addEventListener("change", async ()=>{
-    syncHeader();
-    await loadStatus();
-    await listSession();
-  });
-
-  dayEl.addEventListener("change", async ()=>{
-    syncHeader();
-    relDayPick.value = dayEl.value;
-    relWeekDay.value = dayEl.value;
-    relMonthPick.value = dayEl.value.slice(0,7);
-    await listSession();
-  });
-
-  // Atalhos
-  document.addEventListener("keydown", (e)=>{
-    const allow = (e.key.startsWith("F") || e.key === "Escape");
-    if(!allow && isTypingField(document.activeElement)) return;
-
-    if(e.key === "F2"){ e.preventDefault(); showScreen("sVenda"); }
-    else if(e.key === "F3"){ e.preventDefault(); showScreen("sOutros"); }
-    else if(e.key === "F4"){ e.preventDefault(); showScreen("sMovimentos"); }
-    else if(e.key === "F5"){ e.preventDefault(); showScreen("sRelatorios"); }
-    else if(e.key === "F6"){ e.preventDefault(); showScreen("sAbertura"); }
-    else if(e.key === "F7"){ e.preventDefault(); showScreen("sConfig"); }
-    else if(e.key === "Escape"){
-      if(relBack.style.display === "flex") closeRel();
-      if(delBack.style.display === "flex") closeDelModal();
+    function escapeHtml(s){
+      return String(s ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
     }
-  });
 
-  // Init
-  dayEl.value = todayISO();
-  relDayPick.value = dayEl.value;
-  relWeekDay.value = dayEl.value;
-  relMonthPick.value = dayEl.value.slice(0,7);
-  syncHeader();
+    /***********************
+     * ACTIONS: OPEN / CLOSE / ADD / DELETE
+     ***********************/
+    async function abrirCaixa(fundo){
+      try{
+        const op = openOperador.value || currentOperator();
+        const data = todayISO();
+        const hora = timeHHMMSS();
 
-  (async ()=>{
-    await loadOperators();
-    await loadStatus();
-    await listSession();
-    showScreen("sAbertura");
-  })();
+        const res = await apiPost({
+          action:"open",
+          loja: currentLoja(),
+          data, hora,
+          operador: op,
+          fundo: fundo
+        });
 
-  setInterval(()=>{ tagTime.textContent = nowTime(); }, 1000);
-  setInterval(async ()=>{ await loadStatus(); await listSession(); }, 12000);
-</script>
+        if(!res.ok) throw new Error(res.error || "Falha ao abrir caixa.");
+
+        await loadStatus();
+        await listSession();
+        alert("Caixa aberto com sucesso!");
+        showScreen("scrMov");
+      }catch(e){
+        alert(String(e.message || e));
+      }
+    }
+
+    async function fecharCaixa(){
+      try{
+        const op = closeOperador.value || currentOperator();
+        const data = todayISO();
+        const hora = timeHHMMSS();
+
+        const res = await apiPost({
+          action:"close",
+          loja: currentLoja(),
+          data, hora,
+          operador: op
+        });
+
+        if(!res.ok) throw new Error(res.error || "Falha ao fechar caixa.");
+
+        // limpa visão da sessão
+        currentSessaoId = "";
+        lblSessao.textContent = "—";
+        cacheRows = [];
+        renderTable();
+        renderSummary();
+
+        await loadStatus();
+        alert("Caixa fechado!");
+        showScreen("scrAbertura");
+      }catch(e){
+        alert(String(e.message || e));
+      }
+    }
+
+    async function lancar(){
+      try{
+        if(!caixaAberto) return alert("Caixa está FECHADO. Abra antes de lançar.");
+        if(!currentSessaoId) return alert("Sessão não encontrada. Abra o caixa.");
+
+        const valor = parseMoney(movValor.value);
+        if(!(valor > 0)) return alert("Digite um valor válido.");
+
+        const data = todayISO();
+        const hora = timeHHMMSS();
+
+        // Operador de lançamento
+        const opCaixa = movOperador.value || currentOperator();
+
+        // Para VENDA, obedecer "Vendedor"
+        const vendedor = movVendedor.value || opCaixa;
+
+        const tipo = currentType;
+        const forma = (tipo === "VENDA") ? movForma.value : "";
+
+        // Regra: em venda, usa OPERADOR = vendedor (como você pediu)
+        // Em outros tipos, usa OPERADOR = operador do caixa
+        const operadorFinal = (tipo === "VENDA") ? vendedor : opCaixa;
+
+        const res = await apiPost({
+          action:"add",
+          loja: currentLoja(),
+          data, hora,
+          operador: operadorFinal,
+          tipo: tipo,
+          forma: forma,
+          valor: valor
+        });
+
+        if(!res.ok) throw new Error(res.error || "Falha ao lançar.");
+
+        movValor.value = "";
+        await listSession();
+      }catch(e){
+        alert(String(e.message || e));
+      }
+    }
+
+    function openDeleteModal(r){
+      delTarget = r;
+      delPin.value = "";
+      delErr.textContent = "";
+      delInfo.textContent = `${formatShortDateTime(r.data, r.hora)} • ${r.operador} • ${r.tipo} ${r.forma ? "(" + r.forma + ")" : ""} • ${brl(r.valor)} • Linha ${r.row}`;
+      modalDelBack.classList.add("show");
+      delPin.focus();
+    }
+
+    function closeDeleteModal(){
+      modalDelBack.classList.remove("show");
+      delTarget = null;
+      delErr.textContent = "";
+    }
+
+    async function confirmDelete(){
+      try{
+        if(!delTarget) return;
+
+        const auth = delAuth.value;
+        const pin = delPin.value.trim();
+        if(!auth) return (delErr.textContent = "Selecione o operador autorizador.");
+        if(!pin) return (delErr.textContent = "Digite o PIN.");
+
+        const res = await apiPost({
+          action:"del",
+          row: delTarget.row,
+          operador: auth,
+          pin: pin
+        });
+
+        if(!res.ok) throw new Error(res.error || "Falha ao excluir.");
+
+        closeDeleteModal();
+        await listSession();
+      }catch(e){
+        delErr.textContent = String(e.message || e);
+      }
+    }
+
+    /***********************
+     * REPORTS
+     ***********************/
+    function openReportModal(){
+      modalReportBack.classList.add("show");
+    }
+    function closeReportModal(){
+      modalReportBack.classList.remove("show");
+    }
+
+    function paintReport(title, rows, infoExtra){
+      const c = calc(rows);
+
+      relTitle.textContent = title;
+      relInfo.textContent = `Loja: ${currentLoja()} • ${infoExtra} • Registros: ${rows.length} (DELETADOS não contam)`;
+
+      rVendas.textContent = brl(c.vendas);
+      rDinheiro.textContent = brl(c.dinheiro);
+      rPix.textContent = brl(c.pix);
+      rCartao.textContent = brl(c.cartao);
+      rFiado.textContent = brl(c.fiado);
+      rSup.textContent = brl(c.supr);
+      rSang.textContent = brl(c.sang);
+      rDesp.textContent = brl(c.desp);
+      rSaldo.textContent = brl(c.saldo);
+
+      // rows no modal
+      relBody.innerHTML = "";
+      rows
+        .slice()
+        .sort((a,b) => (a.data+a.hora).localeCompare(b.data+b.hora))
+        .forEach(r => {
+          const tr = document.createElement("tr");
+          if(r.deletado) tr.classList.add("deleted");
+          tr.innerHTML = `
+            <td>${formatShortDateTime(r.data, r.hora)}</td>
+            <td><strong>${escapeHtml(r.operador||"")}</strong></td>
+            <td>${escapeHtml(r.tipo||"")}</td>
+            <td>${escapeHtml(r.forma||"—")}</td>
+            <td class="tRight"><strong>${brl(r.valor)}</strong></td>
+            <td>${r.deletado ? "<span class='badge bDel'>DELETADO</span>" : "<span class='badge'>OK</span>"}</td>
+          `;
+          relBody.appendChild(tr);
+        });
+
+      openReportModal();
+    }
+
+    async function reportSessaoAtual(){
+      try{
+        if(!currentSessaoId) return alert("Sessão não encontrada. Abra o caixa.");
+        const data = await apiGet({ action:"report", loja: currentLoja(), sessao: currentSessaoId });
+        if(!data.ok) throw new Error(data.error || "Falha no relatório.");
+
+        const rows = Array.isArray(data.rows) ? data.rows : [];
+        const mapped = rows.map(x => ({
+          data: x.data ?? "",
+          hora: x.hora ?? "",
+          operador: x.operador ?? "",
+          tipo: norm(x.tipo ?? ""),
+          forma: norm(x.forma ?? ""),
+          valor: Number(x.valor ?? 0),
+          deletado: !!x.deletado
+        }));
+
+        paintReport("Relatório da Sessão", mapped, `Sessão: ${currentSessaoId}`);
+      }catch(e){
+        alert(String(e.message || e));
+      }
+    }
+
+    async function reportRange(from, to, titulo){
+      try{
+        if(!from || !to) return alert("Informe as datas.");
+        const data = await apiGet({ action:"range", loja: currentLoja(), from, to });
+        if(!data.ok) throw new Error(data.error || "Falha no histórico.");
+
+        const rows = Array.isArray(data.rows) ? data.rows : [];
+        const mapped = rows.map(x => ({
+          data: x.data ?? "",
+          hora: x.hora ?? "",
+          operador: x.operador ?? "",
+          tipo: norm(x.tipo ?? ""),
+          forma: norm(x.forma ?? ""),
+          valor: Number(x.valor ?? 0),
+          deletado: !!x.deletado
+        }));
+
+        paintReport(titulo, mapped, `Período: ${from} até ${to} (Histórico)`);
+      }catch(e){
+        alert(String(e.message || e));
+      }
+    }
+
+    function printReport(){
+      // Usa print CSS; só imprime o modal? Simples: janela inteira, mas UI some no print.
+      window.print();
+    }
+
+    /***********************
+     * INIT / EVENTS
+     ***********************/
+    function bindMenu(){
+      menu.addEventListener("click", (ev) => {
+        const btn = ev.target.closest(".item");
+        if(!btn) return;
+        showScreen(btn.dataset.screen);
+      });
+    }
+
+    function bindHotkeys(){
+      window.addEventListener("keydown", (e) => {
+        if(e.key === "F5"){ e.preventDefault(); showScreen("scrRel"); openReportModal(); }
+        if(e.key === "F6"){ e.preventDefault(); showScreen("scrAbertura"); }
+        if(e.key === "F7"){ e.preventDefault(); showScreen("scrConfig"); }
+        if(e.key === "Escape"){
+          closeReportModal();
+          closeDeleteModal();
+        }
+      });
+    }
+
+    function bindMovType(){
+      chips.forEach(c => {
+        c.addEventListener("click", () => {
+          chips.forEach(x => x.classList.remove("active"));
+          c.classList.add("active");
+          currentType = c.dataset.type;
+          toggleVendaFields();
+        });
+      });
+      toggleVendaFields();
+    }
+
+    function bindTabs(){
+      tabs.forEach(t => {
+        t.addEventListener("click", () => {
+          tabs.forEach(x => x.classList.remove("active"));
+          t.classList.add("active");
+          currentFilter = t.dataset.filter;
+          renderTable();
+        });
+      });
+    }
+
+    function bindButtons(){
+      btnAtualizar.addEventListener("click", async () => {
+        await loadStatus();
+        await listSession();
+      });
+
+      btnAbrir.addEventListener("click", () => abrirCaixa(parseMoney(openFundo.value)));
+      btnAbrirSemFundo.addEventListener("click", () => abrirCaixa(0));
+      btnFechar.addEventListener("click", fecharCaixa);
+
+      btnLancar.addEventListener("click", lancar);
+      btnLimpar.addEventListener("click", () => { movValor.value=""; movForma.value="DINHEIRO"; });
+
+      btnRefreshMov.addEventListener("click", listSession);
+      btnRelatorioSessao.addEventListener("click", reportSessaoAtual);
+
+      btnOpenReport.addEventListener("click", openReportModal);
+      btnReportSessao.addEventListener("click", reportSessaoAtual);
+
+      btnReportDia.addEventListener("click", () => {
+        const d = repDia.value;
+        if(!d) return alert("Escolha o dia.");
+        reportRange(d, d, `Histórico do Dia (${d})`);
+      });
+
+      btnReportSemana.addEventListener("click", () => {
+        const a = repIni.value;
+        const b = repFim.value;
+        if(!a || !b) return alert("Escolha início e fim.");
+        if(a > b) return alert("Início não pode ser maior que fim.");
+        reportRange(a, b, `Histórico Semanal (${a} até ${b})`);
+      });
+
+      btnReportMes.addEventListener("click", () => {
+        const m = repMes.value; // YYYY-MM
+        if(!m) return alert("Escolha o mês.");
+        const [yy, mm] = m.split("-");
+        const from = `${yy}-${mm}-01`;
+        const toDate = new Date(Number(yy), Number(mm), 0); // último dia do mês
+        const to = `${yy}-${mm}-${String(toDate.getDate()).padStart(2,"0")}`;
+        reportRange(from, to, `Histórico Mensal (${m})`);
+      });
+
+      // Modal report
+      btnCloseReport.addEventListener("click", closeReportModal);
+      btnCloseReport2.addEventListener("click", closeReportModal);
+      modalReportBack.addEventListener("click", (e)=>{ if(e.target === modalReportBack) closeReportModal(); });
+      btnPrint.addEventListener("click", printReport);
+
+      // Modal delete
+      btnCloseDel.addEventListener("click", closeDeleteModal);
+      btnCancelDel.addEventListener("click", closeDeleteModal);
+      modalDelBack.addEventListener("click", (e)=>{ if(e.target === modalDelBack) closeDeleteModal(); });
+      btnConfirmDel.addEventListener("click", confirmDelete);
+      delPin.addEventListener("keydown", (e)=>{ if(e.key==="Enter") confirmDelete(); });
+
+      // Relatórios (atalho da tela movimentos)
+      btnRelatorioSessao.addEventListener("click", reportSessaoAtual);
+
+      // Config
+      apiUrl.value = API_URL || "";
+      btnSalvarUrl.addEventListener("click", async () => {
+        API_URL = apiUrl.value.trim();
+        localStorage.setItem(LS_API, API_URL);
+        alert("URL salva!");
+        await hardRefresh();
+      });
+      btnTestarUrl.addEventListener("click", async () => {
+        try{
+          API_URL = apiUrl.value.trim();
+          const data = await apiGet({ action:"status", loja: currentLoja() });
+          if(!data.ok) throw new Error(data.error || "Erro ao testar.");
+          alert("OK! WebApp respondeu.");
+        }catch(e){
+          alert("Falhou: " + String(e.message || e));
+        }
+      });
+    }
+
+    function bindLojaChange(){
+      selLoja.addEventListener("change", async () => {
+        lblLoja.textContent = currentLoja();
+        await loadStatus();
+        await listSession();
+      });
+    }
+
+    function fillDates(){
+      lblDia.textContent = todayISO();
+      repDia.value = todayISO();
+
+      // semana padrão: hoje - 6 dias
+      const end = new Date();
+      const start = new Date();
+      start.setDate(start.getDate() - 6);
+
+      repFim.value = toISO(end);
+      repIni.value = toISO(start);
+
+      // mês atual
+      const m = String(end.getMonth()+1).padStart(2,"0");
+      repMes.value = `${end.getFullYear()}-${m}`;
+    }
+
+    function toISO(d){
+      const y = d.getFullYear();
+      const m = String(d.getMonth()+1).padStart(2,"0");
+      const dd = String(d.getDate()).padStart(2,"0");
+      return `${y}-${m}-${dd}`;
+    }
+
+    async function hardRefresh(){
+      if(!canUseAPI()){
+        setOnline(false);
+        alert("Abra Config e cole a URL do WebApp.");
+        showScreen("scrConfig");
+        return;
+      }
+      await loadOperators();
+      await loadStatus();
+      await listSession();
+
+      // espelha operador principal nos outros selects
+      if(selOperador.value){
+        movOperador.value = selOperador.value;
+        openOperador.value = selOperador.value;
+        closeOperador.value = selOperador.value;
+      }
+    }
+
+    // Auto refresh leve
+    let timer = null;
+    function startAuto(){
+      if(timer) clearInterval(timer);
+      timer = setInterval(async () => {
+        await loadStatus();
+        if(caixaAberto) await listSession();
+      }, 15000);
+    }
+
+    /***********************
+     * INIT
+     ***********************/
+    (async function init(){
+      bindMenu();
+      bindHotkeys();
+      bindMovType();
+      bindTabs();
+      bindButtons();
+      bindLojaChange();
+      fillDates();
+
+      lblLoja.textContent = currentLoja();
+
+      if(!canUseAPI()){
+        setOnline(false);
+        showScreen("scrConfig");
+      }else{
+        await hardRefresh();
+        showScreen("scrAbertura");
+      }
+
+      startAuto();
+    })();
+  </script>
 </body>
 </html>
