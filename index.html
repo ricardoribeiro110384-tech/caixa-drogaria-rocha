@@ -73,7 +73,6 @@
     .mright{ font-size:12px; opacity:.75; }
 
     .disabled{ opacity:.55; pointer-events:none; filter:grayscale(0.1); }
-
     .screen{ display:none; }
     .screen.active{ display:block; }
 
@@ -92,13 +91,6 @@
       background:linear-gradient(90deg,var(--orange),#ff8a2a);
       color:#111;
       box-shadow:0 12px 28px rgba(255,106,0,.22);
-    }
-
-    .flashOk{ animation: flashOk 380ms ease-in-out; }
-    @keyframes flashOk{
-      0%{ box-shadow:0 0 0 0 rgba(22,163,74,.0); }
-      40%{ box-shadow:0 0 0 8px rgba(22,163,74,.18); }
-      100%{ box-shadow:0 0 0 0 rgba(22,163,74,.0); }
     }
 
     .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
@@ -138,6 +130,16 @@
       font-weight:900;
     }
     .trash:hover{ border-color:rgba(220,38,38,.4); box-shadow:0 0 0 4px rgba(220,38,38,.12); }
+
+    /* ✅ Deletado em vermelho (aparece na lista, mas não entra em totais/relatórios) */
+    tr.deleted td{
+      color:#dc2626 !important;
+      background: rgba(220,38,38,.06) !important;
+    }
+    tr.deleted td .badge, tr.deleted td .chip{
+      border-color: rgba(220,38,38,.35) !important;
+      color:#dc2626 !important;
+    }
 
     .modalBack{
       position:fixed; inset:0; background:rgba(0,0,0,.35);
@@ -214,6 +216,7 @@
     </div>
     <div class="bd">
 
+      <!-- ABERTURA -->
       <div class="screen active" id="sAbertura">
         <div class="grid2">
           <div>
@@ -261,6 +264,7 @@
         <div class="note" id="msgAbertura">—</div>
       </div>
 
+      <!-- VENDA -->
       <div class="screen" id="sVenda">
         <div class="saleBox" id="boxVenda">
           <div class="grid2">
@@ -295,6 +299,7 @@
         </div>
       </div>
 
+      <!-- OUTROS -->
       <div class="screen" id="sOutros">
         <div id="boxOutros">
           <div class="grid2">
@@ -323,6 +328,7 @@
         </div>
       </div>
 
+      <!-- MOVIMENTOS -->
       <div class="screen" id="sMovimentos">
         <div class="kpiBox">
           <div>
@@ -358,7 +364,7 @@
           <table>
             <thead>
               <tr>
-                <th>Hora</th>
+                <th>Data/Hora</th>
                 <th>Operador</th>
                 <th>Tipo</th>
                 <th>Forma</th>
@@ -371,27 +377,40 @@
         </div>
       </div>
 
+      <!-- RELATÓRIOS -->
       <div class="screen" id="sRelatorios">
         <div class="kpiBox">
           <div>
             <div class="t">RELATÓRIOS</div>
-            <div class="small">Abre em modal discreto e permite imprimir</div>
+            <div class="small">Escolha o dia/semana/mês e imprima</div>
           </div>
-          <div class="btnrow noPrint" style="gap:8px;">
+          <div class="btnrow noPrint" style="gap:8px; align-items:flex-end;">
+            <!-- ✅ Diário com dia escolhido -->
+            <div style="min-width:170px;">
+              <label style="margin:0 0 6px;">Dia (diário)</label>
+              <input id="relDayPick" type="date"/>
+            </div>
             <button type="button" class="ghost" id="btnRelDia">Diário</button>
 
-            <input id="relWeekDay" type="date" style="max-width:160px;" title="Escolha um dia da semana desejada"/>
+            <div style="min-width:170px;">
+              <label style="margin:0 0 6px;">Semana (escolha um dia)</label>
+              <input id="relWeekDay" type="date"/>
+            </div>
             <button type="button" class="ghost" id="btnRelSemana">Semanal</button>
 
-            <input id="relMonthPick" type="month" style="max-width:150px;" title="Escolha o mês desejado"/>
+            <div style="min-width:160px;">
+              <label style="margin:0 0 6px;">Mês</label>
+              <input id="relMonthPick" type="month"/>
+            </div>
             <button type="button" class="ghost" id="btnRelMes">Mensal</button>
           </div>
         </div>
         <div class="note">
-          Dica: escolha a semana (qualquer dia dela) e o mês que você quiser.
+          Importante: lançamentos <b>DELETADOS</b> aparecem em vermelho nos movimentos e <b>não entram</b> no relatório.
         </div>
       </div>
 
+      <!-- CONFIG -->
       <div class="screen" id="sConfig">
         <div class="note">
           Operadores/vendedores são cadastrados direto na planilha (aba <b>operadores</b>).
@@ -402,6 +421,7 @@
   </section>
 </main>
 
+<!-- Modal Relatório -->
 <div class="modalBack" id="relBack" aria-hidden="true">
   <div class="modal" id="relModal">
     <div class="hd">
@@ -445,9 +465,9 @@
 </div>
 
 <script>
+  // ✅ Troque se mudar seu Web App
   const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
 
-  // Utils
   const norm = (s)=> String(s||"").trim().toUpperCase();
   const pad2 = n => String(n).padStart(2,"0");
   const todayISO = () => {
@@ -471,58 +491,33 @@
     return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
   };
 
-  // ======= ✅ ALTERAÇÃO SOLICITADA (FORMATAR DATA/HORA) =======
-  function toBRDate(iso){ // "2026-03-03" -> "03/03/2026"
+  function toBRDate(iso){
     if(!iso) return "";
     const [y,m,d] = String(iso).split("-");
     if(!y || !m || !d) return "";
     return `${d}/${m}/${y}`;
   }
-  function parseAnyDate(v){
-    if(v instanceof Date) return v;
-    if(typeof v === "number"){
-      const d = new Date(v);
-      return isNaN(d) ? null : d;
-    }
-    if(typeof v === "string"){
-      const d = new Date(v);
-      if(!isNaN(d)) return d;
-      return null;
-    }
-    return null;
-  }
-  // Retorna: "DD/MM/AAAA HH:MM" (sem descrição longa)
   function fmtDataHoraCurta(rawHora, rawData){
     const h = String(rawHora ?? "").trim();
-
-    // se vier só hora "HH:MM" ou "HH:MM:SS"
     const onlyTime = h.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
     if(onlyTime){
       const hh = String(onlyTime[1]).padStart(2,"0");
       const mm = onlyTime[2];
       return `${toBRDate(currentDay())} ${hh}:${mm}`;
     }
-
-    // se vier Date gigante/objeto/string do GAS
-    const d = parseAnyDate(rawHora) || parseAnyDate(rawData);
-    if(d){
-      const yyyy = d.getFullYear();
-      // evita 1899/1900 (bug)
-      if(yyyy < 2005){
-        return `${toBRDate(currentDay())} ${nowTime().slice(0,5)}`;
-      }
+    // tenta parsear ISO (caso venha timestamp)
+    const d = new Date(h);
+    if(!isNaN(d) && d.getFullYear() > 2005){
       const dd = String(d.getDate()).padStart(2,"0");
       const mm = String(d.getMonth()+1).padStart(2,"0");
+      const yyyy = d.getFullYear();
       const hh = String(d.getHours()).padStart(2,"0");
       const mi = String(d.getMinutes()).padStart(2,"0");
       return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
     }
-
-    return `${toBRDate(currentDay())} ${nowTime().slice(0,5)}`;
+    return `${toBRDate(rawData || currentDay())} ${String(rawHora||nowTime()).slice(0,5)}`;
   }
-  // ===========================================================
 
-  // Header
   const dot = document.getElementById("dot");
   const statusEl = document.getElementById("status");
   const lblLoja = document.getElementById("lblLoja");
@@ -533,7 +528,6 @@
   const menuHint = document.getElementById("menuHint");
   const msgGlobal = document.getElementById("msgGlobal");
 
-  // Menu & screens
   const menu = document.getElementById("menu");
   const screenTitle = document.getElementById("screenTitle");
   const screens = {
@@ -553,7 +547,6 @@
     sConfig: "Config",
   };
 
-  // Abertura / base
   const selLoja = document.getElementById("selLoja");
   const dayEl = document.getElementById("day");
   const selOperador = document.getElementById("selOperador");
@@ -563,7 +556,6 @@
   const btnFechar = document.getElementById("btnFechar");
   const msgAbertura = document.getElementById("msgAbertura");
 
-  // Venda
   const boxVenda = document.getElementById("boxVenda");
   const selVendedor = document.getElementById("selVendedor");
   const formaVenda = document.getElementById("formaVenda");
@@ -571,7 +563,6 @@
   const btnAddVenda = document.getElementById("btnAddVenda");
   const msgVenda = document.getElementById("msgVenda");
 
-  // Outros
   const boxOutros = document.getElementById("boxOutros");
   const tipoOutros = document.getElementById("tipoOutros");
   const valorOutros = document.getElementById("valorOutros");
@@ -579,21 +570,20 @@
   const btnLimpar = document.getElementById("btnLimpar");
   const msgOutros = document.getElementById("msgOutros");
 
-  // Movimentos
   const kpiSaldo = document.getElementById("kpiSaldo");
   const kpiFilterName = document.getElementById("kpiFilterName");
   const kpiFilterTotal = document.getElementById("kpiFilterTotal");
   const tabs = document.getElementById("tabs");
   const tb = document.getElementById("tb");
 
-  // Relatórios
+  // ✅ relatório diário com escolha de dia
+  const relDayPick = document.getElementById("relDayPick");
   const relWeekDay = document.getElementById("relWeekDay");
   const relMonthPick = document.getElementById("relMonthPick");
   const btnRelDia = document.getElementById("btnRelDia");
   const btnRelSemana = document.getElementById("btnRelSemana");
   const btnRelMes = document.getElementById("btnRelMes");
 
-  // Modal relatório
   const relBack = document.getElementById("relBack");
   const btnCloseRel = document.getElementById("btnCloseRel");
   const btnPrintRel = document.getElementById("btnPrintRel");
@@ -611,11 +601,9 @@
 
   const btnRefreshAll = document.getElementById("btnRefreshAll");
 
-  // State
   let caixaAberto = false;
   let cacheRows = [];
   let activeFilter = "TODOS";
-  let activeScreenId = "sAbertura";
 
   const currentDay = () => dayEl.value || todayISO();
   const currentLoja = () => selLoja.value || "LOJA 1";
@@ -634,7 +622,6 @@
   function setCaixaUI(open){
     caixaAberto = !!open;
     lblStatusCaixa.textContent = caixaAberto ? "ABERTO" : "FECHADO";
-
     if(caixaAberto){
       boxVenda.classList.remove("disabled");
       boxOutros.classList.remove("disabled");
@@ -654,20 +641,11 @@
   }
 
   function showScreen(id){
-    activeScreenId = id;
-    Object.entries(screens).forEach(([k, el])=>{
-      el.classList.toggle("active", k === id);
-    });
+    Object.entries(screens).forEach(([k, el])=> el.classList.toggle("active", k === id));
     screenTitle.textContent = titles[id] || "Sistema";
-    [...menu.querySelectorAll(".mitem")].forEach(b=>{
-      b.classList.toggle("active", b.getAttribute("data-screen") === id);
-    });
-    if(id === "sVenda"){
-      setTimeout(()=>{ valorVenda.focus(); valorVenda.select?.(); }, 60);
-    }
-    if(id === "sOutros"){
-      setTimeout(()=>{ valorOutros.focus(); valorOutros.select?.(); }, 60);
-    }
+    [...menu.querySelectorAll(".mitem")].forEach(b=> b.classList.toggle("active", b.getAttribute("data-screen") === id));
+    if(id === "sVenda") setTimeout(()=>{ valorVenda.focus(); valorVenda.select?.(); }, 60);
+    if(id === "sOutros") setTimeout(()=>{ valorOutros.focus(); valorOutros.select?.(); }, 60);
   }
 
   menu.addEventListener("click", (e)=>{
@@ -732,16 +710,16 @@
     if(selOperador.value) selVendedor.value = selOperador.value;
   });
 
-  function badgeTipo(t){
+  function badgeTipo(t, deletado){
+    if(deletado) return `<span class="badge b-sang">DELETADO</span>`;
     const type = norm(t);
     if(type==="VENDA") return `<span class="badge b-venda">VENDA</span>`;
     if(type==="SUPRIMENTO") return `<span class="badge b-supr">SUPRIMENTO</span>`;
     if(type==="SANGRIA") return `<span class="badge b-sang">SANGRIA</span>`;
     if(type==="DESPESA") return `<span class="badge b-desp">DESPESA</span>`;
-    if(type==="ABERTURA") return `<span class="badge b-supr">ABERTURA</span>`;
-    if(type==="FECHAMENTO") return `<span class="badge b-desp">FECHAMENTO</span>`;
     return `<span class="badge">${type}</span>`;
   }
+
   function chipForma(type, form){
     const t = norm(type);
     const f = norm(form);
@@ -754,7 +732,7 @@
   function applyFilter(rows){
     const f = norm(activeFilter);
     if (f === "TODOS") return rows;
-    if (["SUPRIMENTO","SANGRIA","DESPESA","VENDA","ABERTURA","FECHAMENTO"].includes(f)){
+    if (["SUPRIMENTO","SANGRIA","DESPESA","VENDA"].includes(f)){
       return rows.filter(r => norm(r.tipo) === f);
     }
     if (["DINHEIRO","PIX","CARTAO","FIADO"].includes(f)){
@@ -763,9 +741,11 @@
     return rows;
   }
 
+  // ✅ não conta deletados
   function computeSaldoSessao(rows){
     let entradas=0, saidas=0;
     for(const r of rows){
+      if(r.deletado) continue;
       const t = norm(r.tipo);
       const v = Number(r.valor||0);
       const isSaida = (t==="SANGRIA" || t==="DESPESA");
@@ -774,9 +754,13 @@
     kpiSaldo.textContent = brl(entradas - saidas);
   }
 
+  // ✅ não conta deletados
   function computeTotalDoFiltro(filteredRows){
     let total = 0;
-    for(const r of filteredRows) total += Number(r.valor||0);
+    for(const r of filteredRows){
+      if(r.deletado) continue;
+      total += Number(r.valor||0);
+    }
     const f = norm(activeFilter);
     const label = (f==="CARTAO") ? "CARTÃO" : f;
     kpiFilterName.textContent = `${label} — ${currentLoja()}`;
@@ -796,21 +780,31 @@
       return;
     }
 
+    // ordena por hora (mais antigo -> mais novo)
     filtered.sort((a,b)=> String(a.hora||"").localeCompare(String(b.hora||"")));
+
     for(const r of filtered){
       const t = norm(r.tipo);
       const v = Number(r.valor||0);
+      const del = !!r.deletado;
       const isSaida = (t==="SANGRIA" || t==="DESPESA");
 
       const tr = document.createElement("tr");
+      if(del) tr.classList.add("deleted");
+
       tr.innerHTML = `
-        <!-- ✅ ALTERAÇÃO: agora mostra só "DD/MM/AAAA HH:MM" -->
         <td class="mono">${fmtDataHoraCurta(r.hora, r.data)}</td>
         <td>${r.operador || ""}</td>
-        <td>${badgeTipo(t)}</td>
+        <td>${badgeTipo(t, del)}</td>
         <td>${chipForma(t, r.forma)}</td>
-        <td class="mono ${isSaida ? "neg" : "pos"}">${brl(v)}</td>
-        <td><button type="button" class="trash" title="Apagar" data-row="${r.row}">🗑️</button></td>
+        <td class="mono ${(!del && isSaida) ? "neg" : "pos"}">${brl(v)}</td>
+        <td>
+          ${
+            del
+              ? `<span class="chip">DELETADO</span>`
+              : `<button type="button" class="trash" title="Apagar" data-row="${r.row}">🗑️</button>`
+          }
+        </td>
       `;
       tb.appendChild(tr);
     }
@@ -837,12 +831,17 @@
 
       cacheRows = rowsRaw.map(x => ({
         row: Number(x.row ?? x.Row ?? x.linha ?? x.id ?? 0),
-        data: (x.data ?? x.Data ?? x.day ?? x.dia ?? ""),  // ✅ usado no fmt
+        data: (x.data ?? x.Data ?? x.day ?? x.dia ?? ""),
         hora: (x.hora ?? x.Hora ?? x.time ?? x.timestamp ?? ""),
         operador: String(x.operador ?? x.Operador ?? x.op ?? x.vendedor ?? ""),
         tipo: norm(x.tipo ?? x.Tipo ?? x.movimento ?? x.categoria ?? ""),
         forma: norm(x.forma ?? x.Forma ?? x.pagamento ?? x.meio ?? ""),
-        valor: Number(x.valor ?? x.Valor ?? x.amount ?? 0)
+        valor: Number(x.valor ?? x.Valor ?? x.amount ?? 0),
+
+        // ✅ deletado vindo do Apps Script (recomendado: boolean)
+        deletado: Boolean(x.deletado ?? x.Deletado ?? x.deleted ?? false),
+        deletado_em: String(x.deletado_em ?? x.deleted_at ?? ""),
+        deletado_por: String(x.deletado_por ?? x.deleted_by ?? "")
       }));
 
       computeSaldoSessao(cacheRows);
@@ -857,7 +856,7 @@
     if(!op) return alert("Selecione o operador do caixa.");
     const f = parseMoney(fundo.value);
     if(f < 0) return alert("Fundo inválido.");
-    if(!confirm(`Abrir ${currentLoja()} com fundo ${brl(f)}?`)) return;
+    if(!confirm(`Abrir ${currentLoja()} com fundo ${brl(f)}?\n\nObs: esse fundo vai entrar como SUPRIMENTO.`)) return;
 
     const body = new URLSearchParams();
     body.set("action","open");
@@ -865,7 +864,7 @@
     body.set("data", currentDay());
     body.set("hora", nowTime());
     body.set("operador", op);
-    body.set("fundo", String(f));
+    body.set("fundo", String(f)); // ✅ Apps Script lança SUPRIMENTO
 
     const r = await fetch(API_URL, { method:"POST", body });
     const data = await r.json();
@@ -935,15 +934,8 @@
 
     if(ok){
       msgVenda.textContent = "Venda salva ✅";
-      boxVenda.classList.remove("flashOk");
-      void boxVenda.offsetWidth;
-      boxVenda.classList.add("flashOk");
       valorVenda.value = "";
-      setTimeout(()=> {
-        valorVenda.focus();
-        valorVenda.select?.();
-        msgVenda.textContent = "Pronto para lançar venda.";
-      }, 450);
+      setTimeout(()=> { valorVenda.focus(); msgVenda.textContent = "Pronto para lançar venda."; }, 350);
     }
   }
 
@@ -953,26 +945,21 @@
       forma:"",
       valor: valorOutros.value
     });
-
     if(ok){
       msgOutros.textContent = "Lançamento salvo ✅";
       valorOutros.value = "";
-      setTimeout(()=> {
-        valorOutros.focus();
-        valorOutros.select?.();
-        msgOutros.textContent = "Pronto para lançar outros.";
-      }, 350);
+      setTimeout(()=> { valorOutros.focus(); msgOutros.textContent = "Pronto para lançar outros."; }, 350);
     }
   }
 
   async function deleteMovement(row){
     const op = selOperador.value;
-    if(!op) return alert("Selecione o operador do caixa (Abertura).");
+    if(!op) return alert("Selecione o operador do caixa (na Abertura).");
 
     const pin = prompt("Digite o PIN para apagar:");
     if(pin === null) return;
 
-    if(!confirm("Apagar esse lançamento?")) return;
+    if(!confirm("Marcar como DELETADO? (não entra no relatório)")) return;
 
     const body = new URLSearchParams();
     body.set("action","del");
@@ -1002,11 +989,12 @@
     renderTable();
   });
 
+  // Modal relatório
   function openRel(){ relBack.style.display = "flex"; relBack.setAttribute("aria-hidden","false"); }
   function closeRel(){ relBack.style.display = "none"; relBack.setAttribute("aria-hidden","true"); }
-  document.getElementById("btnCloseRel").addEventListener("click", closeRel);
+  btnCloseRel.addEventListener("click", closeRel);
   relBack.addEventListener("click", (e)=>{ if(e.target === relBack) closeRel(); });
-  document.getElementById("btnPrintRel").addEventListener("click", ()=> window.print());
+  btnPrintRel.addEventListener("click", ()=> window.print());
 
   function getWeekRange(isoDay){
     const d = new Date(isoDay + "T00:00:00");
@@ -1017,8 +1005,9 @@
     const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
     return { from: toISO(mon), to: toISO(sun) };
   }
-  function getMonthRange(isoDay){
-    const d = new Date(isoDay + "T00:00:00");
+
+  function getMonthRange(baseIso){
+    const d = new Date(baseIso + "T00:00:00");
     const y = d.getFullYear(), m = d.getMonth();
     const first = new Date(y, m, 1);
     const last = new Date(y, m+1, 0);
@@ -1034,21 +1023,24 @@
       `&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}` +
       `&inicio=${encodeURIComponent(from)}&fim=${encodeURIComponent(to)}` +
       `&start=${encodeURIComponent(from)}&end=${encodeURIComponent(to)}`;
-
     const r = await fetch(url);
     const data = await r.json();
     if(!data.ok) throw new Error(data.error || "Erro no relatório");
     return Array.isArray(data.rows) ? data.rows : [];
   }
 
+  // ✅ relatório ignora deletados
   function calcReport(rows){
     let dinheiro=0, pix=0, cartao=0, fiado=0;
-    let supr=0, sang=0, desp=0, abertura=0;
+    let supr=0, sang=0, desp=0;
 
-    for(const r of rows){
-      const tipo = norm(r.tipo ?? r.Tipo ?? r.movimento ?? r.categoria ?? "");
-      const forma = norm(r.forma ?? r.Forma ?? r.pagamento ?? r.meio ?? "");
-      const v = Number(r.valor ?? r.Valor ?? r.amount ?? 0);
+    for(const rr of rows){
+      const deletado = Boolean(rr.deletado ?? rr.Deletado ?? rr.deleted ?? false);
+      if(deletado) continue; // ✅ não conta
+
+      const tipo = norm(rr.tipo ?? rr.Tipo ?? rr.movimento ?? rr.categoria ?? "");
+      const forma = norm(rr.forma ?? rr.Forma ?? rr.pagamento ?? rr.meio ?? "");
+      const v = Number(rr.valor ?? rr.Valor ?? rr.amount ?? 0);
 
       if(tipo === "VENDA"){
         if(forma === "DINHEIRO") dinheiro += v;
@@ -1058,21 +1050,20 @@
       } else if(tipo === "SUPRIMENTO") supr += v;
       else if(tipo === "SANGRIA") sang += v;
       else if(tipo === "DESPESA") desp += v;
-      else if(tipo === "ABERTURA") abertura += v;
     }
 
     const vendas = dinheiro + pix + cartao + fiado;
-    const entradas = vendas + supr + abertura;
+    const entradas = vendas + supr;
     const saidas = sang + desp;
     const saldo = entradas - saidas;
 
-    return { vendas, dinheiro, pix, cartao, fiado, supr, sang, desp, abertura, saldo };
+    return { vendas, dinheiro, pix, cartao, fiado, supr, sang, desp, saldo };
   }
 
   function paintReport(title, from, to, rows){
     const r = calcReport(rows);
     relTitle.textContent = title;
-    relInfo.textContent = `Loja: ${currentLoja()} • Período: ${from} até ${to} • Registros: ${rows.length}`;
+    relInfo.textContent = `Loja: ${currentLoja()} • Período: ${from} até ${to} • Registros: ${rows.length} (DELETADOS não contam)`;
     relVendas.textContent = brl(r.vendas);
     relDinheiro.textContent = brl(r.dinheiro);
     relPix.textContent = brl(r.pix);
@@ -1087,7 +1078,7 @@
 
   btnRelDia.addEventListener("click", async ()=>{
     try{
-      const d = currentDay();
+      const d = relDayPick.value || currentDay(); // ✅ escolhe qualquer dia
       const rows = await fetchRange(d, d);
       paintReport(`Relatório Diário (${d})`, d, d, rows);
     }catch(e){ alert(String(e.message || e)); }
@@ -1112,6 +1103,7 @@
     }catch(e){ alert(String(e.message || e)); }
   });
 
+  // Botões
   btnAbrir.addEventListener("click", abrirCaixa);
   btnFechar.addEventListener("click", fecharCaixa);
   btnReloadOps.addEventListener("click", loadOperators);
@@ -1140,11 +1132,14 @@
 
   dayEl.addEventListener("change", async ()=>{
     syncHeader();
+    // espelha seleção para relatórios
+    relDayPick.value = dayEl.value;
     relWeekDay.value = dayEl.value;
     relMonthPick.value = dayEl.value.slice(0,7);
     await listSession();
   });
 
+  // Atalhos
   document.addEventListener("keydown", (e)=>{
     const allow = (e.key.startsWith("F") || e.key === "Escape");
     if(!allow && isTypingField(document.activeElement)) return;
@@ -1156,14 +1151,11 @@
     else if(e.key === "F6"){ e.preventDefault(); showScreen("sAbertura"); }
     else if(e.key === "F7"){ e.preventDefault(); showScreen("sConfig"); }
     else if(e.key === "Escape"){ if(relBack.style.display === "flex") closeRel(); }
-    else if(e.key === "Enter"){
-      if(relBack.style.display === "flex") return;
-      if(activeScreenId === "sVenda") { e.preventDefault(); addVenda(); }
-      if(activeScreenId === "sOutros") { e.preventDefault(); addOutros(); }
-    }
   });
 
+  // Init
   dayEl.value = todayISO();
+  relDayPick.value = dayEl.value;      // ✅ diário com dia escolhido
   relWeekDay.value = dayEl.value;
   relMonthPick.value = dayEl.value.slice(0,7);
   syncHeader();
@@ -1176,11 +1168,7 @@
   })();
 
   setInterval(()=>{ tagTime.textContent = nowTime(); }, 1000);
-
-  setInterval(async ()=>{
-    await loadStatus();
-    await listSession();
-  }, 12000);
+  setInterval(async ()=>{ await loadStatus(); await listSession(); }, 12000);
 </script>
 </body>
 </html>
