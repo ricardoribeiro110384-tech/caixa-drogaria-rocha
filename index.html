@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Caixa — Drogaria Rocha (2 Lojas)</title>
+  <title>Caixa — Drogaria Rocha</title>
   <style>
     :root{
       --orange:#ff6a00; --black:#111; --line:#e5e7eb; --bg:#f3f4f6;
@@ -25,7 +25,7 @@
 
     .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh); overflow:hidden; }
     .hd{ padding:12px 14px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px;}
-    .bd{ padding:12px 14px; }
+    .bd{ padding:12px 14px; position:relative; z-index:0; }
     label{ font-size:12px; font-weight:900; display:block; margin-bottom:6px; }
     input,select{ width:100%; padding:10px; border-radius:12px; border:1px solid var(--line); font-size:14px; outline:none; }
     .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
@@ -38,11 +38,13 @@
     .note{ margin-top:10px; padding:10px 12px; border-radius:14px; background:rgba(255,106,0,.08); border:1px solid rgba(255,106,0,.25); color:#5a2300; font-size:12px; line-height:1.35; }
     .disabled{ opacity:.55; pointer-events:none; }
 
-    /* ===== Menu compacto ===== */
+    /* ===== Menu compacto (FIX: sempre clicável) ===== */
     .menu{
       display:flex; gap:8px; flex-wrap:wrap;
       padding:12px 14px; border-bottom:1px solid var(--line);
       background:linear-gradient(180deg,#fff,#fafafa);
+      position:sticky; top:0; z-index:50;  /* FIX */
+      pointer-events:auto;                 /* FIX */
     }
     .mitem{
       padding:8px 10px; border-radius:999px;
@@ -51,6 +53,7 @@
       font-weight:950; font-size:12px;
       cursor:pointer;
       display:inline-flex; align-items:center; gap:8px;
+      pointer-events:auto; /* FIX */
     }
     .mitem.active{
       border-color:rgba(255,106,0,.55);
@@ -59,7 +62,7 @@
     .sec{ display:none; }
     .sec.active{ display:block; }
 
-    /* Venda destaque, mas enxuta */
+    /* Venda destaque (enxuto) */
     .saleBox{
       border:2px solid rgba(255,106,0,.32);
       border-radius:16px;
@@ -113,7 +116,7 @@
     .kpiBox .t{ font-size:12px; font-weight:900; color:#475569; }
     .kpiBox .v{ font-size:18px; font-weight:950; font-family:ui-monospace,Consolas,monospace; }
 
-    /* ===== Modal relatório ===== */
+    /* Modal relatório */
     .modalBack{
       position:fixed; inset:0; background:rgba(0,0,0,.35);
       display:none; align-items:center; justify-content:center; padding:16px;
@@ -130,7 +133,6 @@
       width:40px; height:40px; border-radius:14px; border:1px solid var(--line);
       background:#fff; font-weight:900; cursor:pointer;
     }
-
     @media print{
       body *{ visibility:hidden; }
       #relModal, #relModal *{ visibility:visible; }
@@ -162,7 +164,7 @@
 </header>
 
 <main>
-  <!-- ESQUERDA (menu + seções) -->
+  <!-- ESQUERDA -->
   <section class="card">
     <div class="hd">
       <b>🧾 Lançamentos</b>
@@ -170,17 +172,18 @@
     </div>
 
     <div class="menu" id="leftMenu">
-      <button class="mitem active" data-sec="secVenda">🟧 Venda</button>
-      <button class="mitem" data-sec="secOutros">🧩 Outros</button>
-      <button class="mitem" data-sec="secCaixa">🔒 Caixa</button>
-      <button class="mitem" data-sec="secConfig">⚙️ Config</button>
+      <button type="button" class="mitem active" data-sec="secVenda">🟧 Venda</button>
+      <button type="button" class="mitem" data-sec="secOutros">🧩 Outros</button>
+      <button type="button" class="mitem" data-sec="secCaixa">🔒 Caixa</button>
+      <button type="button" class="mitem" data-sec="secConfig">⚙️ Config</button>
     </div>
 
     <div class="bd">
 
-      <!-- VENDA (agora com VENDEDOR) -->
+      <!-- VENDA -->
       <div class="sec active" id="secVenda">
         <div id="boxVenda" class="saleBox">
+
           <div class="grid2">
             <div>
               <label>Vendedor</label>
@@ -199,15 +202,14 @@
 
           <div style="height:10px"></div>
 
-          <div class="grid2">
-            <div style="grid-column:1 / -1">
-              <label>Valor</label>
-              <input id="valorVenda" inputmode="decimal" placeholder="Ex.: 35,90" />
-            </div>
+          <div>
+            <label>Valor</label>
+            <input id="valorVenda" inputmode="decimal" placeholder="Ex.: 35,90" />
           </div>
 
           <div style="height:10px"></div>
-          <button class="bigBtn" id="btnAddVenda">Salvar Venda</button>
+          <button type="button" class="bigBtn" id="btnAddVenda">Salvar Venda</button>
+
           <div class="note" id="msgVenda" style="margin-top:10px;">—</div>
         </div>
       </div>
@@ -231,8 +233,8 @@
           </div>
           <div style="height:10px"></div>
           <div class="btnrow">
-            <button class="pri" id="btnAddOutros">Salvar</button>
-            <button class="ghost" id="btnLimpar">Limpar</button>
+            <button type="button" class="pri" id="btnAddOutros">Salvar</button>
+            <button type="button" class="ghost" id="btnLimpar">Limpar</button>
           </div>
           <div class="note" id="msgOutros">—</div>
         </div>
@@ -249,8 +251,8 @@
             <div>
               <label>Ações</label>
               <div class="btnrow">
-                <button class="okbtn" id="btnAbrir">Abrir</button>
-                <button class="danger" id="btnFechar">Fechar</button>
+                <button type="button" class="okbtn" id="btnAbrir">Abrir</button>
+                <button type="button" class="danger" id="btnFechar">Fechar</button>
               </div>
             </div>
           </div>
@@ -278,22 +280,22 @@
 
         <div class="grid2">
           <div>
-            <label>Operador (caixa)</label>
+            <label>Operador do Caixa</label>
             <select id="selOperador"></select>
           </div>
           <div>
             <label>&nbsp;</label>
-            <button class="ghost" id="btnReloadOps" style="width:100%;">Recarregar operadores</button>
+            <button type="button" class="ghost" id="btnReloadOps" style="width:100%;">Recarregar operadores</button>
           </div>
         </div>
 
         <div style="height:10px"></div>
         <div class="btnrow">
-          <button class="ghost" id="btnRefresh">Atualizar</button>
+          <button type="button" class="ghost" id="btnRefresh">Atualizar</button>
         </div>
 
         <div class="note" id="msgConfig">
-          Operadores/vendedores são cadastrados direto na planilha (aba <b>operadores</b>).
+          Operadores/Vendedores são cadastrados direto na planilha (aba <b>operadores</b>).
         </div>
       </div>
 
@@ -315,13 +317,13 @@
           <div class="small">Escolha semana/mês e abra no modal (imprimir)</div>
         </div>
         <div class="btnrow noPrint" style="gap:8px;">
-          <button class="ghost" id="btnRelDia">Diário</button>
+          <button type="button" class="ghost" id="btnRelDia">Diário</button>
 
           <input id="relWeekDay" type="date" style="max-width:160px;" title="Escolha um dia da semana desejada" />
-          <button class="ghost" id="btnRelSemana">Semanal</button>
+          <button type="button" class="ghost" id="btnRelSemana">Semanal</button>
 
           <input id="relMonthPick" type="month" style="max-width:150px;" title="Escolha o mês desejado" />
-          <button class="ghost" id="btnRelMes">Mensal</button>
+          <button type="button" class="ghost" id="btnRelMes">Mensal</button>
         </div>
       </div>
 
@@ -336,15 +338,15 @@
 
       <!-- Tabs filtro -->
       <div class="tabs" id="tabs">
-        <button class="tab active" data-filter="TODOS">TODOS</button>
-        <button class="tab" data-filter="VENDA">VENDAS</button>
-        <button class="tab" data-filter="DINHEIRO">DINHEIRO</button>
-        <button class="tab" data-filter="PIX">PIX</button>
-        <button class="tab" data-filter="CARTAO">CARTÃO</button>
-        <button class="tab" data-filter="FIADO">FIADO</button>
-        <button class="tab" data-filter="SUPRIMENTO">SUPRIMENTOS</button>
-        <button class="tab" data-filter="SANGRIA">SANGRIAS</button>
-        <button class="tab" data-filter="DESPESA">DESPESAS</button>
+        <button type="button" class="tab active" data-filter="TODOS">TODOS</button>
+        <button type="button" class="tab" data-filter="VENDA">VENDAS</button>
+        <button type="button" class="tab" data-filter="DINHEIRO">DINHEIRO</button>
+        <button type="button" class="tab" data-filter="PIX">PIX</button>
+        <button type="button" class="tab" data-filter="CARTAO">CARTÃO</button>
+        <button type="button" class="tab" data-filter="FIADO">FIADO</button>
+        <button type="button" class="tab" data-filter="SUPRIMENTO">SUPRIMENTOS</button>
+        <button type="button" class="tab" data-filter="SANGRIA">SANGRIAS</button>
+        <button type="button" class="tab" data-filter="DESPESA">DESPESAS</button>
       </div>
 
       <div style="height:12px"></div>
@@ -355,7 +357,7 @@
           <thead>
             <tr>
               <th>Hora</th>
-              <th>Operador/Vendedor</th>
+              <th>Operador</th>
               <th>Tipo</th>
               <th>Forma</th>
               <th class="mono">Valor</th>
@@ -375,8 +377,8 @@
     <div class="hd">
       <b id="relTitle">Relatório</b>
       <div class="btnrow">
-        <button class="ghost noPrint" id="btnPrintRel">Imprimir</button>
-        <button class="closeX noPrint" id="btnCloseRel">✕</button>
+        <button type="button" class="ghost noPrint" id="btnPrintRel">Imprimir</button>
+        <button type="button" class="closeX noPrint" id="btnCloseRel">✕</button>
       </div>
     </div>
     <div class="bd">
@@ -399,4 +401,49 @@
       </div>
 
       <div class="grid2" style="margin-bottom:10px;">
-        <div class="kpiBox" style="margin:0;"><div><div class="t">SUPRIMENTO</div></div><div class
+        <div class="kpiBox" style="margin:0;"><div><div class="t">SUPRIMENTO</div></div><div class="v" id="relSupr">R$ 0,00</div></div>
+        <div class="kpiBox" style="margin:0;"><div><div class="t">SANGRIA</div></div><div class="v" id="relSang">R$ 0,00</div></div>
+      </div>
+
+      <div class="kpiBox">
+        <div><div class="t">DESPESA</div></div>
+        <div class="v" id="relDesp">R$ 0,00</div>
+      </div>
+
+      <div class="kpiBox">
+        <div><div class="t">SALDO</div><div class="small">Entradas - Saídas</div></div>
+        <div class="v" id="relSaldo">R$ 0,00</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
+  const norm = (s)=> String(s||"").trim().toUpperCase();
+
+  // Header
+  const dot = document.getElementById("dot");
+  const statusEl = document.getElementById("status");
+  const lblLoja = document.getElementById("lblLoja");
+  const lblStatusCaixa = document.getElementById("lblStatusCaixa");
+  const lblDay = document.getElementById("lblDay");
+  const lblFilter = document.getElementById("lblFilter");
+  const tagTime = document.getElementById("tagTime");
+
+  // Menu
+  const leftMenu = document.getElementById("leftMenu");
+  const secVenda = document.getElementById("secVenda");
+  const secOutros = document.getElementById("secOutros");
+  const secCaixa = document.getElementById("secCaixa");
+  const secConfig = document.getElementById("secConfig");
+
+  // Venda
+  const boxVenda = document.getElementById("boxVenda");
+  const selVendedor = document.getElementById("selVendedor");
+  const formaVenda = document.getElementById("formaVenda");
+  const valorVenda = document.getElementById("valorVenda");
+  const btnAddVenda = document.getElementById("btnAddVenda");
+  const msgVenda = document.getElementById("msgVenda");
+
+  // Outros
