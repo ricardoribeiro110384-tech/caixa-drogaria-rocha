@@ -1,17 +1,23 @@
 <!doctype html>
 <html lang="pt-BR">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Caixa — Drogaria Rocha</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Caixa — Drogaria Rocha (2 lojas)</title>
   <style>
     :root{
       --orange:#ff6a00; --black:#111; --line:#e5e7eb; --bg:#f3f4f6;
       --ok:#16a34a; --bad:#dc2626; --blue:#2563eb; --amber:#f59e0b;
       --r:16px; --sh:0 10px 30px rgba(0,0,0,.10);
     }
+    *{ box-sizing:border-box; }
     body{ margin:0; font-family:system-ui,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#fff,var(--bg)); color:#111; }
-    header{ background:linear-gradient(90deg,var(--black),#1b1b1b); color:#fff; padding:14px 16px; border-bottom:3px solid var(--orange); }
+
+    header{
+      background:linear-gradient(90deg,var(--black),#1b1b1b);
+      color:#fff; padding:14px 16px; border-bottom:3px solid var(--orange);
+      position:sticky; top:0; z-index:10;
+    }
     .wrap{ max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
     .logo{ width:44px;height:44px;border-radius:14px;background:radial-gradient(circle at 30% 30%,#ff8a2a,var(--orange)); display:flex; align-items:center; justify-content:center; color:#111; font-weight:900; }
     .pill{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); padding:7px 10px; border-radius:999px; font-size:12px; display:flex; gap:8px; align-items:center; }
@@ -20,49 +26,72 @@
     .small{ font-size:12px; opacity:.85; }
     .mono{ font-family:ui-monospace,Consolas,monospace; }
 
-    main{ max-width:1200px; margin:12px auto; padding:0 16px 20px; display:grid; grid-template-columns:400px 1fr; gap:12px; }
+    main{
+      max-width:1200px; margin:12px auto; padding:0 16px 20px;
+      display:grid; grid-template-columns:260px 1fr; gap:12px;
+    }
     @media(max-width:980px){ main{ grid-template-columns:1fr; } }
 
     .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh); overflow:hidden; }
     .hd{ padding:12px 14px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px;}
-    .bd{ padding:12px 14px; position:relative; z-index:0; }
+    .bd{ padding:12px 14px; }
+
     label{ font-size:12px; font-weight:900; display:block; margin-bottom:6px; }
-    input,select{ width:100%; padding:10px; border-radius:12px; border:1px solid var(--line); font-size:14px; outline:none; }
+    input,select{
+      width:100%; padding:10px; border-radius:12px; border:1px solid var(--line);
+      font-size:14px; outline:none;
+    }
     .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
     .btnrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-    button{ border:none; cursor:pointer; padding:10px 12px; border-radius:12px; font-weight:900; font-size:13px; }
+
+    button{
+      border:none; cursor:pointer; padding:10px 12px; border-radius:12px;
+      font-weight:900; font-size:13px;
+    }
     .pri{ background:linear-gradient(90deg,var(--orange),#ff8a2a); color:#111; }
     .ghost{ background:#fff; border:1px solid var(--line); }
     .danger{ background:var(--bad); color:#fff; }
     .okbtn{ background:var(--ok); color:#fff; }
-    .note{ margin-top:10px; padding:10px 12px; border-radius:14px; background:rgba(255,106,0,.08); border:1px solid rgba(255,106,0,.25); color:#5a2300; font-size:12px; line-height:1.35; }
-    .disabled{ opacity:.55; pointer-events:none; }
 
-    /* ===== Menu compacto (FIX: sempre clicável) ===== */
+    .note{
+      margin-top:10px; padding:10px 12px; border-radius:14px;
+      background:rgba(255,106,0,.08); border:1px solid rgba(255,106,0,.25);
+      color:#5a2300; font-size:12px; line-height:1.35;
+    }
+
+    /* MENU */
     .menu{
-      display:flex; gap:8px; flex-wrap:wrap;
-      padding:12px 14px; border-bottom:1px solid var(--line);
-      background:linear-gradient(180deg,#fff,#fafafa);
-      position:sticky; top:0; z-index:50;  /* FIX */
-      pointer-events:auto;                 /* FIX */
+      padding:12px; display:flex; flex-direction:column; gap:8px;
     }
     .mitem{
-      padding:8px 10px; border-radius:999px;
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      border-radius:14px;
       border:1px solid var(--line);
       background:#fff;
-      font-weight:950; font-size:12px;
+      font-weight:950;
       cursor:pointer;
-      display:inline-flex; align-items:center; gap:8px;
-      pointer-events:auto; /* FIX */
+      display:flex; align-items:center; justify-content:space-between;
     }
     .mitem.active{
       border-color:rgba(255,106,0,.55);
       box-shadow:0 0 0 4px rgba(255,106,0,.12);
     }
-    .sec{ display:none; }
-    .sec.active{ display:block; }
+    .mright{ font-size:12px; opacity:.75; }
 
-    /* Venda destaque (enxuto) */
+    .disabled{
+      opacity:.55;
+      pointer-events:none;
+      filter:grayscale(0.1);
+    }
+
+    /* TELAS */
+    .screen{ display:none; }
+    .screen.active{ display:block; }
+
+    /* Destaque venda */
     .saleBox{
       border:2px solid rgba(255,106,0,.32);
       border-radius:16px;
@@ -80,10 +109,28 @@
       box-shadow:0 12px 28px rgba(255,106,0,.22);
     }
 
-    /* Direita */
+    /* Flash ok na venda */
+    .flashOk{ animation: flashOk 380ms ease-in-out; }
+    @keyframes flashOk{
+      0%{ box-shadow:0 0 0 0 rgba(22,163,74,.0); }
+      40%{ box-shadow:0 0 0 8px rgba(22,163,74,.18); }
+      100%{ box-shadow:0 0 0 0 rgba(22,163,74,.0); }
+    }
+
+    /* Movimentos */
     .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
-    .tab{ padding:8px 10px; border-radius:999px; border:1px solid var(--line); background:#fff; font-weight:900; font-size:12px; cursor:pointer; }
+    .tab{
+      padding:8px 10px; border-radius:999px; border:1px solid var(--line);
+      background:#fff; font-weight:900; font-size:12px; cursor:pointer;
+    }
     .tab.active{ border-color:rgba(255,106,0,.55); box-shadow:0 0 0 4px rgba(255,106,0,.12); }
+
+    .kpiBox{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:12px;
+    }
+    .kpiBox .t{ font-size:12px; font-weight:900; color:#475569; }
+    .kpiBox .v{ font-size:18px; font-weight:950; font-family:ui-monospace,Consolas,monospace; }
 
     .tablewrap{ overflow:auto; border:1px solid var(--line); border-radius:14px; }
     table{ width:100%; border-collapse:collapse; min-width:980px; background:#fff; }
@@ -108,13 +155,6 @@
       font-weight:900;
     }
     .trash:hover{ border-color:rgba(220,38,38,.4); box-shadow:0 0 0 4px rgba(220,38,38,.12); }
-
-    .kpiBox{
-      display:flex; align-items:center; justify-content:space-between; gap:10px;
-      border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:12px;
-    }
-    .kpiBox .t{ font-size:12px; font-weight:900; color:#475569; }
-    .kpiBox .v{ font-size:18px; font-weight:950; font-family:ui-monospace,Consolas,monospace; }
 
     /* Modal relatório */
     .modalBack{
@@ -150,7 +190,7 @@
       <div class="logo">DR</div>
       <div>
         <div style="font-weight:900">Caixa — <span style="color:var(--orange)">Drogaria Rocha</span></div>
-        <div class="small">Menu enxuto: Venda / Outros / Caixa / Config</div>
+        <div class="small">F2 Venda • F3 Outros • F4 Movimentos • F5 Relatórios • F6 Abertura • F7 Config</div>
       </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -159,31 +199,92 @@
       <div class="pill">Status: <b id="lblStatusCaixa">—</b></div>
       <div class="pill">Dia: <b id="lblDay">—</b></div>
       <div class="pill">Filtro: <b id="lblFilter">TODOS</b></div>
+      <div class="pill">Hora: <b class="mono" id="tagTime">—</b></div>
     </div>
   </div>
 </header>
 
 <main>
-  <!-- ESQUERDA -->
+  <!-- MENU -->
   <section class="card">
     <div class="hd">
-      <b>🧾 Lançamentos</b>
-      <span class="mono" id="tagTime">—</span>
+      <b>📌 Menu</b>
+      <span class="mright mono" id="menuHint">—</span>
     </div>
-
-    <div class="menu" id="leftMenu">
-      <button type="button" class="mitem active" data-sec="secVenda">🟧 Venda</button>
-      <button type="button" class="mitem" data-sec="secOutros">🧩 Outros</button>
-      <button type="button" class="mitem" data-sec="secCaixa">🔒 Caixa</button>
-      <button type="button" class="mitem" data-sec="secConfig">⚙️ Config</button>
+    <div class="menu" id="menu">
+      <button type="button" class="mitem active" data-screen="sAbertura">Abertura do caixa <span class="mright">F6</span></button>
+      <button type="button" class="mitem" data-screen="sVenda">Venda <span class="mright">F2</span></button>
+      <button type="button" class="mitem" data-screen="sOutros">Outros <span class="mright">F3</span></button>
+      <button type="button" class="mitem" data-screen="sMovimentos">Movimentos <span class="mright">F4</span></button>
+      <button type="button" class="mitem" data-screen="sRelatorios">Relatórios <span class="mright">F5</span></button>
+      <button type="button" class="mitem" data-screen="sConfig">Config <span class="mright">F7</span></button>
     </div>
+    <div class="bd">
+      <div class="note" id="msgGlobal">Conectando…</div>
+    </div>
+  </section>
 
+  <!-- TELAS -->
+  <section class="card">
+    <div class="hd">
+      <b id="screenTitle">Abertura do caixa</b>
+      <div class="btnrow">
+        <button type="button" class="ghost" id="btnRefreshAll">Atualizar</button>
+      </div>
+    </div>
     <div class="bd">
 
-      <!-- VENDA -->
-      <div class="sec active" id="secVenda">
-        <div id="boxVenda" class="saleBox">
+      <!-- 1) ABERTURA -->
+      <div class="screen active" id="sAbertura">
+        <div class="grid2">
+          <div>
+            <label>Loja</label>
+            <select id="selLoja">
+              <option>LOJA 1</option>
+              <option>LOJA 2</option>
+            </select>
+          </div>
+          <div>
+            <label>Data</label>
+            <input id="day" type="date"/>
+          </div>
+        </div>
 
+        <div style="height:10px"></div>
+
+        <div class="grid2">
+          <div>
+            <label>Operador do caixa</label>
+            <select id="selOperador"></select>
+          </div>
+          <div>
+            <label>&nbsp;</label>
+            <button type="button" class="ghost" id="btnReloadOps" style="width:100%;">Recarregar operadores</button>
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="grid2">
+          <div>
+            <label>Fundo (ao abrir)</label>
+            <input id="fundo" inputmode="decimal" placeholder="Ex.: 200,00"/>
+          </div>
+          <div>
+            <label>Ações</label>
+            <div class="btnrow">
+              <button type="button" class="okbtn" id="btnAbrir">Abrir caixa</button>
+              <button type="button" class="danger" id="btnFechar">Fechar caixa</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="note" id="msgAbertura">—</div>
+      </div>
+
+      <!-- 2) VENDA -->
+      <div class="screen" id="sVenda">
+        <div class="saleBox" id="boxVenda">
           <div class="grid2">
             <div>
               <label>Vendedor</label>
@@ -202,20 +303,22 @@
 
           <div style="height:10px"></div>
 
-          <div>
-            <label>Valor</label>
-            <input id="valorVenda" inputmode="decimal" placeholder="Ex.: 35,90" />
+          <div class="grid2">
+            <div style="grid-column:1 / -1">
+              <label>Valor</label>
+              <input id="valorVenda" inputmode="decimal" placeholder="Ex.: 35,90"/>
+            </div>
           </div>
 
           <div style="height:10px"></div>
-          <button type="button" class="bigBtn" id="btnAddVenda">Salvar Venda</button>
 
-          <div class="note" id="msgVenda" style="margin-top:10px;">—</div>
+          <button type="button" class="bigBtn" id="btnAddVenda">Salvar Venda</button>
+          <div class="note" id="msgVenda">—</div>
         </div>
       </div>
 
-      <!-- OUTROS -->
-      <div class="sec" id="secOutros">
+      <!-- 3) OUTROS -->
+      <div class="screen" id="sOutros">
         <div id="boxOutros">
           <div class="grid2">
             <div>
@@ -228,145 +331,99 @@
             </div>
             <div>
               <label>Valor</label>
-              <input id="valorOutros" inputmode="decimal" placeholder="Ex.: 50,00" />
+              <input id="valorOutros" inputmode="decimal" placeholder="Ex.: 50,00"/>
             </div>
           </div>
+
           <div style="height:10px"></div>
+
           <div class="btnrow">
             <button type="button" class="pri" id="btnAddOutros">Salvar</button>
             <button type="button" class="ghost" id="btnLimpar">Limpar</button>
           </div>
+
           <div class="note" id="msgOutros">—</div>
         </div>
       </div>
 
-      <!-- CAIXA -->
-      <div class="sec" id="secCaixa">
-        <div id="boxCaixa">
-          <div class="grid2">
-            <div>
-              <label>Fundo (ao abrir)</label>
-              <input id="fundo" inputmode="decimal" placeholder="Ex.: 200,00" />
-            </div>
-            <div>
-              <label>Ações</label>
-              <div class="btnrow">
-                <button type="button" class="okbtn" id="btnAbrir">Abrir</button>
-                <button type="button" class="danger" id="btnFechar">Fechar</button>
-              </div>
-            </div>
+      <!-- 4) MOVIMENTOS -->
+      <div class="screen" id="sMovimentos">
+        <div class="kpiBox">
+          <div>
+            <div class="t">SALDO DA SESSÃO</div>
+            <div class="small">Entradas - Saídas</div>
           </div>
-          <div class="note" id="msgCaixa">—</div>
+          <div class="v" id="kpiSaldo">R$ 0,00</div>
+        </div>
+
+        <div class="kpiBox">
+          <div>
+            <div class="t">TOTAL DO FILTRO</div>
+            <div class="small" id="kpiFilterName">TODOS</div>
+          </div>
+          <div class="v" id="kpiFilterTotal">R$ 0,00</div>
+        </div>
+
+        <div class="tabs" id="tabs">
+          <button type="button" class="tab active" data-filter="TODOS">TODOS</button>
+          <button type="button" class="tab" data-filter="VENDA">VENDAS</button>
+          <button type="button" class="tab" data-filter="DINHEIRO">DINHEIRO</button>
+          <button type="button" class="tab" data-filter="PIX">PIX</button>
+          <button type="button" class="tab" data-filter="CARTAO">CARTÃO</button>
+          <button type="button" class="tab" data-filter="FIADO">FIADO</button>
+          <button type="button" class="tab" data-filter="SUPRIMENTO">SUPRIMENTOS</button>
+          <button type="button" class="tab" data-filter="SANGRIA">SANGRIAS</button>
+          <button type="button" class="tab" data-filter="DESPESA">DESPESAS</button>
+        </div>
+
+        <div style="height:12px"></div>
+
+        <div class="tablewrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>Operador</th>
+                <th>Tipo</th>
+                <th>Forma</th>
+                <th class="mono">Valor</th>
+                <th>Apagar</th>
+              </tr>
+            </thead>
+            <tbody id="tb"></tbody>
+          </table>
         </div>
       </div>
 
-      <!-- CONFIG -->
-      <div class="sec" id="secConfig">
-        <div class="grid2">
+      <!-- 5) RELATÓRIOS -->
+      <div class="screen" id="sRelatorios">
+        <div class="kpiBox">
           <div>
-            <label>Loja</label>
-            <select id="selLoja">
-              <option>LOJA 1</option>
-              <option>LOJA 2</option>
-            </select>
+            <div class="t">RELATÓRIOS</div>
+            <div class="small">Abre em modal discreto e permite imprimir</div>
           </div>
-          <div>
-            <label>Data</label>
-            <input id="day" type="date" />
-          </div>
-        </div>
+          <div class="btnrow noPrint" style="gap:8px;">
+            <button type="button" class="ghost" id="btnRelDia">Diário</button>
 
-        <div style="height:10px"></div>
+            <input id="relWeekDay" type="date" style="max-width:160px;" title="Escolha um dia da semana desejada"/>
+            <button type="button" class="ghost" id="btnRelSemana">Semanal</button>
 
-        <div class="grid2">
-          <div>
-            <label>Operador do Caixa</label>
-            <select id="selOperador"></select>
-          </div>
-          <div>
-            <label>&nbsp;</label>
-            <button type="button" class="ghost" id="btnReloadOps" style="width:100%;">Recarregar operadores</button>
+            <input id="relMonthPick" type="month" style="max-width:150px;" title="Escolha o mês desejado"/>
+            <button type="button" class="ghost" id="btnRelMes">Mensal</button>
           </div>
         </div>
-
-        <div style="height:10px"></div>
-        <div class="btnrow">
-          <button type="button" class="ghost" id="btnRefresh">Atualizar</button>
+        <div class="note">
+          Dica: escolha a semana (qualquer dia dela) e o mês que você quiser.
         </div>
+      </div>
 
+      <!-- 6) CONFIG -->
+      <div class="screen" id="sConfig">
         <div class="note" id="msgConfig">
-          Operadores/Vendedores são cadastrados direto na planilha (aba <b>operadores</b>).
+          Operadores/vendedores são cadastrados direto na planilha (aba <b>operadores</b>).
         </div>
       </div>
 
-    </div>
-  </section>
-
-  <!-- DIREITA -->
-  <section class="card">
-    <div class="hd">
-      <b>📋 Movimentos</b>
-      <span class="mono" id="kpiSaldo">—</span>
-    </div>
-
-    <div class="bd">
-      <!-- Relatórios -->
-      <div class="kpiBox">
-        <div>
-          <div class="t">RELATÓRIOS</div>
-          <div class="small">Escolha semana/mês e abra no modal (imprimir)</div>
-        </div>
-        <div class="btnrow noPrint" style="gap:8px;">
-          <button type="button" class="ghost" id="btnRelDia">Diário</button>
-
-          <input id="relWeekDay" type="date" style="max-width:160px;" title="Escolha um dia da semana desejada" />
-          <button type="button" class="ghost" id="btnRelSemana">Semanal</button>
-
-          <input id="relMonthPick" type="month" style="max-width:150px;" title="Escolha o mês desejado" />
-          <button type="button" class="ghost" id="btnRelMes">Mensal</button>
-        </div>
-      </div>
-
-      <!-- KPI filtro -->
-      <div class="kpiBox">
-        <div>
-          <div class="t">TOTAL DO FILTRO (sessão atual)</div>
-          <div class="small" id="kpiFilterName">TODOS</div>
-        </div>
-        <div class="v" id="kpiFilterTotal">R$ 0,00</div>
-      </div>
-
-      <!-- Tabs filtro -->
-      <div class="tabs" id="tabs">
-        <button type="button" class="tab active" data-filter="TODOS">TODOS</button>
-        <button type="button" class="tab" data-filter="VENDA">VENDAS</button>
-        <button type="button" class="tab" data-filter="DINHEIRO">DINHEIRO</button>
-        <button type="button" class="tab" data-filter="PIX">PIX</button>
-        <button type="button" class="tab" data-filter="CARTAO">CARTÃO</button>
-        <button type="button" class="tab" data-filter="FIADO">FIADO</button>
-        <button type="button" class="tab" data-filter="SUPRIMENTO">SUPRIMENTOS</button>
-        <button type="button" class="tab" data-filter="SANGRIA">SANGRIAS</button>
-        <button type="button" class="tab" data-filter="DESPESA">DESPESAS</button>
-      </div>
-
-      <div style="height:12px"></div>
-
-      <!-- Tabela -->
-      <div class="tablewrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Hora</th>
-              <th>Operador</th>
-              <th>Tipo</th>
-              <th>Forma</th>
-              <th class="mono">Valor</th>
-              <th>Apagar</th>
-            </tr>
-          </thead>
-          <tbody id="tb"></tbody>
-        </table>
-      </div>
     </div>
   </section>
 </main>
@@ -400,14 +457,10 @@
         <div class="kpiBox" style="margin:0;"><div><div class="t">FIADO</div></div><div class="v" id="relFiado">R$ 0,00</div></div>
       </div>
 
-      <div class="grid2" style="margin-bottom:10px;">
+      <div class="grid3" style="margin-bottom:10px;">
         <div class="kpiBox" style="margin:0;"><div><div class="t">SUPRIMENTO</div></div><div class="v" id="relSupr">R$ 0,00</div></div>
         <div class="kpiBox" style="margin:0;"><div><div class="t">SANGRIA</div></div><div class="v" id="relSang">R$ 0,00</div></div>
-      </div>
-
-      <div class="kpiBox">
-        <div><div class="t">DESPESA</div></div>
-        <div class="v" id="relDesp">R$ 0,00</div>
+        <div class="kpiBox" style="margin:0;"><div><div class="t">DESPESA</div></div><div class="v" id="relDesp">R$ 0,00</div></div>
       </div>
 
       <div class="kpiBox">
@@ -420,7 +473,30 @@
 
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
+
+  // Utils
   const norm = (s)=> String(s||"").trim().toUpperCase();
+  const pad2 = n => String(n).padStart(2,"0");
+  const todayISO = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  };
+  const nowTime = () => {
+    const d = new Date();
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+  };
+  const brl = n => (n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  const parseMoney = s => {
+    if(typeof s !== "string") return 0;
+    const cleaned = s.trim().replace(/\s/g,"").replace(/\./g,"").replace(",",".");
+    const v = Number(cleaned);
+    return Number.isFinite(v) ? v : 0;
+  };
+  const isTypingField = (el) => {
+    if(!el) return false;
+    const tag = (el.tagName || "").toUpperCase();
+    return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
+  };
 
   // Header
   const dot = document.getElementById("dot");
@@ -430,13 +506,40 @@
   const lblDay = document.getElementById("lblDay");
   const lblFilter = document.getElementById("lblFilter");
   const tagTime = document.getElementById("tagTime");
+  const menuHint = document.getElementById("menuHint");
 
-  // Menu
-  const leftMenu = document.getElementById("leftMenu");
-  const secVenda = document.getElementById("secVenda");
-  const secOutros = document.getElementById("secOutros");
-  const secCaixa = document.getElementById("secCaixa");
-  const secConfig = document.getElementById("secConfig");
+  const msgGlobal = document.getElementById("msgGlobal");
+
+  // Menu & screens
+  const menu = document.getElementById("menu");
+  const screenTitle = document.getElementById("screenTitle");
+  const screens = {
+    sAbertura: document.getElementById("sAbertura"),
+    sVenda: document.getElementById("sVenda"),
+    sOutros: document.getElementById("sOutros"),
+    sMovimentos: document.getElementById("sMovimentos"),
+    sRelatorios: document.getElementById("sRelatorios"),
+    sConfig: document.getElementById("sConfig"),
+  };
+  const titles = {
+    sAbertura: "Abertura do caixa",
+    sVenda: "Venda",
+    sOutros: "Outros lançamentos",
+    sMovimentos: "Movimentos",
+    sRelatorios: "Relatórios",
+    sConfig: "Config",
+  };
+
+  // Abertura / base
+  const selLoja = document.getElementById("selLoja");
+  const dayEl = document.getElementById("day");
+  const selOperador = document.getElementById("selOperador");
+  const btnReloadOps = document.getElementById("btnReloadOps");
+  const fundo = document.getElementById("fundo");
+  const btnAbrir = document.getElementById("btnAbrir");
+  const btnFechar = document.getElementById("btnFechar");
+  const msgAbertura = document.getElementById("msgAbertura");
+  const msgConfig = document.getElementById("msgConfig");
 
   // Venda
   const boxVenda = document.getElementById("boxVenda");
@@ -447,3 +550,636 @@
   const msgVenda = document.getElementById("msgVenda");
 
   // Outros
+  const boxOutros = document.getElementById("boxOutros");
+  const tipoOutros = document.getElementById("tipoOutros");
+  const valorOutros = document.getElementById("valorOutros");
+  const btnAddOutros = document.getElementById("btnAddOutros");
+  const btnLimpar = document.getElementById("btnLimpar");
+  const msgOutros = document.getElementById("msgOutros");
+
+  // Movimentos
+  const kpiSaldo = document.getElementById("kpiSaldo");
+  const kpiFilterName = document.getElementById("kpiFilterName");
+  const kpiFilterTotal = document.getElementById("kpiFilterTotal");
+  const tabs = document.getElementById("tabs");
+  const tb = document.getElementById("tb");
+
+  // Relatórios
+  const relWeekDay = document.getElementById("relWeekDay");
+  const relMonthPick = document.getElementById("relMonthPick");
+  const btnRelDia = document.getElementById("btnRelDia");
+  const btnRelSemana = document.getElementById("btnRelSemana");
+  const btnRelMes = document.getElementById("btnRelMes");
+
+  // Modal relatório
+  const relBack = document.getElementById("relBack");
+  const btnCloseRel = document.getElementById("btnCloseRel");
+  const btnPrintRel = document.getElementById("btnPrintRel");
+  const relTitle = document.getElementById("relTitle");
+  const relInfo = document.getElementById("relInfo");
+  const relVendas = document.getElementById("relVendas");
+  const relDinheiro = document.getElementById("relDinheiro");
+  const relPix = document.getElementById("relPix");
+  const relCartao = document.getElementById("relCartao");
+  const relFiado = document.getElementById("relFiado");
+  const relSupr = document.getElementById("relSupr");
+  const relSang = document.getElementById("relSang");
+  const relDesp = document.getElementById("relDesp");
+  const relSaldo = document.getElementById("relSaldo");
+
+  const btnRefreshAll = document.getElementById("btnRefreshAll");
+
+  // State
+  let caixaAberto = false;
+  let cacheRows = [];
+  let activeFilter = "TODOS";
+  let activeScreenId = "sAbertura";
+
+  const currentDay = () => dayEl.value || todayISO();
+  const currentLoja = () => selLoja.value || "LOJA 1";
+
+  function setOnline(ok){
+    if(ok){ dot.classList.add("ok"); statusEl.textContent="Online"; }
+    else { dot.classList.remove("ok"); statusEl.textContent="Offline"; }
+  }
+
+  function syncHeader(){
+    lblLoja.textContent = currentLoja();
+    lblDay.textContent = currentDay().split("-").reverse().join("/");
+    tagTime.textContent = nowTime();
+  }
+
+  function setCaixaUI(open){
+    caixaAberto = !!open;
+    lblStatusCaixa.textContent = caixaAberto ? "ABERTO" : "FECHADO";
+
+    if(caixaAberto){
+      boxVenda.classList.remove("disabled");
+      boxOutros.classList.remove("disabled");
+      msgGlobal.textContent = `${currentLoja()} ABERTA.`;
+      msgAbertura.textContent = `${currentLoja()} ABERTA. Pode vender e lançar.`;
+      msgVenda.textContent = "Pronto para lançar venda.";
+      msgOutros.textContent = "Pronto para lançar outros.";
+    }else{
+      boxVenda.classList.add("disabled");
+      boxOutros.classList.add("disabled");
+      msgGlobal.textContent = `${currentLoja()} FECHADA. Abra o caixa primeiro.`;
+      msgAbertura.textContent = `${currentLoja()} FECHADA. Abra o caixa.`;
+      msgVenda.textContent = "Caixa fechado. Abra o caixa na tela de Abertura.";
+      msgOutros.textContent = "Caixa fechado. Abra o caixa na tela de Abertura.";
+    }
+    menuHint.textContent = caixaAberto ? "ABERTO" : "FECHADO";
+  }
+
+  // ===== Screens =====
+  function showScreen(id){
+    activeScreenId = id;
+
+    Object.entries(screens).forEach(([k, el])=>{
+      el.classList.toggle("active", k === id);
+    });
+    screenTitle.textContent = titles[id] || "Sistema";
+
+    [...menu.querySelectorAll(".mitem")].forEach(b=>{
+      b.classList.toggle("active", b.getAttribute("data-screen") === id);
+    });
+
+    // foco automático na venda
+    if(id === "sVenda"){
+      setTimeout(()=> {
+        valorVenda.focus();
+        if(typeof valorVenda.select === "function") valorVenda.select();
+      }, 60);
+    }
+    // foco automático em outros
+    if(id === "sOutros"){
+      setTimeout(()=> {
+        valorOutros.focus();
+        if(typeof valorOutros.select === "function") valorOutros.select();
+      }, 60);
+    }
+  }
+
+  menu.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button[data-screen]");
+    if(!btn) return;
+    showScreen(btn.getAttribute("data-screen"));
+  });
+
+  // ===== Load status =====
+  async function loadStatus(){
+    try{
+      const url = `${API_URL}?action=status&loja=${encodeURIComponent(currentLoja())}`;
+      const r = await fetch(url);
+      const data = await r.json();
+      if(!data.ok) throw new Error(data.error || "status error");
+      setOnline(true);
+      setCaixaUI(norm(data.status)==="ABERTO");
+    }catch(e){
+      setOnline(false);
+      lblStatusCaixa.textContent = "—";
+      msgGlobal.textContent = "Offline (não conectou no Apps Script).";
+    }
+  }
+
+  // ===== Operators / Sellers =====
+  async function loadOperators(){
+    try{
+      const r = await fetch(`${API_URL}?action=ops`);
+      const data = await r.json();
+      if(!data.ok) throw new Error();
+      setOnline(true);
+
+      const ops = data.ops || [];
+      selOperador.innerHTML = "";
+      selVendedor.innerHTML = "";
+
+      if(ops.length === 0){
+        const o1 = document.createElement("option");
+        o1.value = ""; o1.textContent = "— cadastre na planilha —";
+        selOperador.appendChild(o1);
+
+        const o2 = document.createElement("option");
+        o2.value = ""; o2.textContent = "— cadastre na planilha —";
+        selVendedor.appendChild(o2);
+      }else{
+        for(const name of ops){
+          const a = document.createElement("option");
+          a.value = name; a.textContent = name;
+          selOperador.appendChild(a);
+
+          const b = document.createElement("option");
+          b.value = name; b.textContent = name;
+          selVendedor.appendChild(b);
+        }
+      }
+
+      // padrão: vendedor igual operador
+      if(selOperador.value) selVendedor.value = selOperador.value;
+
+    }catch(e){
+      setOnline(false);
+    }
+  }
+
+  selOperador.addEventListener("change", ()=>{
+    if(selOperador.value) selVendedor.value = selOperador.value;
+  });
+
+  // ===== Movimentos list =====
+  function badgeTipo(t){
+    const type = norm(t);
+    if(type==="VENDA") return `<span class="badge b-venda">VENDA</span>`;
+    if(type==="SUPRIMENTO") return `<span class="badge b-supr">SUPRIMENTO</span>`;
+    if(type==="SANGRIA") return `<span class="badge b-sang">SANGRIA</span>`;
+    if(type==="DESPESA") return `<span class="badge b-desp">DESPESA</span>`;
+    if(type==="ABERTURA") return `<span class="badge b-supr">ABERTURA</span>`;
+    if(type==="FECHAMENTO") return `<span class="badge b-desp">FECHAMENTO</span>`;
+    return `<span class="badge">${type}</span>`;
+  }
+  function chipForma(type, form){
+    const t = norm(type);
+    const f = norm(form);
+    if(t !== "VENDA") return `<span class="chip">—</span>`;
+    if(!f) return `<span class="chip">—</span>`;
+    const label = (f==="CARTAO") ? "CARTÃO" : f;
+    return `<span class="chip">${label}</span>`;
+  }
+
+  function applyFilter(rows){
+    const f = norm(activeFilter);
+    if (f === "TODOS") return rows;
+    if (["SUPRIMENTO","SANGRIA","DESPESA","VENDA","ABERTURA","FECHAMENTO"].includes(f)){
+      return rows.filter(r => norm(r.tipo) === f);
+    }
+    if (["DINHEIRO","PIX","CARTAO","FIADO"].includes(f)){
+      return rows.filter(r => norm(r.tipo) === "VENDA" && norm(r.forma) === f);
+    }
+    return rows;
+  }
+
+  function computeSaldoSessao(rows){
+    let entradas=0, saidas=0;
+    for(const r of rows){
+      const t = norm(r.tipo);
+      const v = Number(r.valor||0);
+      const isSaida = (t==="SANGRIA" || t==="DESPESA");
+      if(isSaida) saidas += v; else entradas += v;
+    }
+    kpiSaldo.textContent = brl(entradas - saidas);
+  }
+
+  function computeTotalDoFiltro(filteredRows){
+    let total = 0;
+    for(const r of filteredRows) total += Number(r.valor||0);
+
+    const f = norm(activeFilter);
+    const label = (f==="CARTAO") ? "CARTÃO" : f;
+
+    kpiFilterName.textContent = `${label} — ${currentLoja()}`;
+    kpiFilterTotal.textContent = brl(total);
+    lblFilter.textContent = label;
+  }
+
+  function renderTable(){
+    const filtered = applyFilter([...cacheRows]);
+    computeTotalDoFiltro(filtered);
+
+    tb.innerHTML = "";
+    if(filtered.length === 0){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="6" style="color:#64748b">Sem lançamentos (sessão atual).</td>`;
+      tb.appendChild(tr);
+      return;
+    }
+
+    filtered.sort((a,b)=> String(a.hora||"").localeCompare(String(b.hora||"")));
+    for(const r of filtered){
+      const t = norm(r.tipo);
+      const v = Number(r.valor||0);
+      const isSaida = (t==="SANGRIA" || t==="DESPESA");
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">${r.hora || ""}</td>
+        <td>${r.operador || ""}</td>
+        <td>${badgeTipo(t)}</td>
+        <td>${chipForma(t, r.forma)}</td>
+        <td class="mono ${isSaida ? "neg" : "pos"}">${brl(v)}</td>
+        <td><button type="button" class="trash" title="Apagar" data-row="${r.row}">🗑️</button></td>
+      `;
+      tb.appendChild(tr);
+    }
+  }
+
+  async function listSession(){
+    syncHeader();
+    try{
+      const url = `${API_URL}?action=list&day=${encodeURIComponent(currentDay())}&loja=${encodeURIComponent(currentLoja())}`;
+      const r = await fetch(url);
+      const data = await r.json();
+      if(!data.ok) throw new Error(data.error || "list error");
+
+      setOnline(true);
+
+      cacheRows = (data.rows || []).map(x => ({
+        row: Number(x.row || 0),
+        hora: String(x.hora || ""),
+        operador: String(x.operador || ""),
+        tipo: norm(x.tipo),
+        forma: norm(x.forma),
+        valor: Number(x.valor || 0)
+      }));
+
+      computeSaldoSessao(cacheRows);
+      renderTable();
+    }catch(e){
+      setOnline(false);
+    }
+  }
+
+  // ===== Ações caixa =====
+  async function abrirCaixa(){
+    const op = selOperador.value;
+    if(!op) return alert("Selecione o operador do caixa.");
+    const f = parseMoney(fundo.value);
+    if(f < 0) return alert("Fundo inválido.");
+
+    if(!confirm(`Abrir ${currentLoja()} com fundo ${brl(f)}?`)) return;
+
+    const body = new URLSearchParams();
+    body.set("action","open");
+    body.set("loja", currentLoja());
+    body.set("data", currentDay());
+    body.set("hora", nowTime());
+    body.set("operador", op);
+    body.set("fundo", String(f));
+
+    const r = await fetch(API_URL, { method:"POST", body });
+    const data = await r.json();
+    if(!data.ok) return alert(data.error || "Erro ao abrir.");
+
+    await loadStatus();
+    await listSession();
+
+    // ✅ opcional: após abrir, já vai pra venda
+    showScreen("sVenda");
+  }
+
+  async function fecharCaixa(){
+    const op = selOperador.value;
+    if(!op) return alert("Selecione o operador do caixa.");
+    if(!confirm(`Fechar ${currentLoja()}?`)) return;
+
+    const body = new URLSearchParams();
+    body.set("action","close");
+    body.set("loja", currentLoja());
+    body.set("data", currentDay());
+    body.set("hora", nowTime());
+    body.set("operador", op);
+
+    const r = await fetch(API_URL, { method:"POST", body });
+    const data = await r.json();
+    if(!data.ok) return alert(data.error || "Erro ao fechar.");
+
+    await loadStatus();
+    await listSession();
+
+    // volta para abertura
+    showScreen("sAbertura");
+  }
+
+  // ===== Add / Delete =====
+  async function addMovement({tipo, forma, valor, operador}){
+    const op = operador || selOperador.value;
+    if(!op) return alert("Selecione o operador/vendedor.");
+
+    const v = parseMoney(String(valor || ""));
+    if(v <= 0) return alert("Informe um valor maior que zero.");
+
+    const body = new URLSearchParams();
+    body.set("action","add");
+    body.set("loja", currentLoja());
+    body.set("data", currentDay());
+    body.set("hora", nowTime());
+    body.set("operador", op);
+    body.set("tipo", tipo);
+    body.set("forma", (tipo === "VENDA") ? forma : "");
+    body.set("valor", String(v));
+
+    const r = await fetch(API_URL, { method:"POST", body });
+    const data = await r.json();
+    if(!data.ok) return alert(data.error || "Erro ao salvar.");
+
+    await listSession();
+    return true;
+  }
+
+  async function addVenda(){
+    const vendedor = selVendedor.value;
+    if(!vendedor) return alert("Selecione o vendedor.");
+
+    const ok = await addMovement({
+      tipo:"VENDA",
+      forma: formaVenda.value,
+      valor: valorVenda.value,
+      operador: vendedor
+    });
+
+    if(ok){
+      msgVenda.textContent = "Venda salva ✅";
+
+      // flash verde discreto
+      boxVenda.classList.remove("flashOk");
+      void boxVenda.offsetWidth;
+      boxVenda.classList.add("flashOk");
+
+      // prepara próxima
+      valorVenda.value = "";
+      setTimeout(()=> {
+        valorVenda.focus();
+        if(typeof valorVenda.select === "function") valorVenda.select();
+        msgVenda.textContent = "Pronto para lançar venda.";
+      }, 450);
+    }
+  }
+
+  async function addOutros(){
+    const ok = await addMovement({
+      tipo: tipoOutros.value,
+      forma:"",
+      valor: valorOutros.value
+    });
+
+    if(ok){
+      msgOutros.textContent = "Lançamento salvo ✅";
+      valorOutros.value = "";
+      setTimeout(()=> {
+        valorOutros.focus();
+        if(typeof valorOutros.select === "function") valorOutros.select();
+        msgOutros.textContent = "Pronto para lançar outros.";
+      }, 350);
+    }
+  }
+
+  async function deleteMovement(row){
+    const op = selOperador.value;
+    if(!op) return alert("Selecione o operador do caixa (Abertura).");
+
+    const pin = prompt("Digite o PIN para apagar:");
+    if(pin === null) return;
+
+    if(!confirm("Apagar esse lançamento?")) return;
+
+    const body = new URLSearchParams();
+    body.set("action","del");
+    body.set("row", String(row));
+    body.set("operador", op);
+    body.set("pin", String(pin));
+
+    const r = await fetch(API_URL, { method:"POST", body });
+    const data = await r.json();
+    if(!data.ok) return alert(data.error || "Erro ao apagar.");
+
+    await listSession();
+  }
+
+  tb.addEventListener("click", (e)=>{
+    const b = e.target.closest("button[data-row]");
+    if(!b) return;
+    deleteMovement(Number(b.getAttribute("data-row")));
+  });
+
+  // Tabs filtro
+  tabs.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button[data-filter]");
+    if(!btn) return;
+    activeFilter = btn.getAttribute("data-filter") || "TODOS";
+    [...tabs.querySelectorAll(".tab")].forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderTable();
+  });
+
+  // ===== Relatórios =====
+  function openRel(){ relBack.style.display = "flex"; relBack.setAttribute("aria-hidden","false"); }
+  function closeRel(){ relBack.style.display = "none"; relBack.setAttribute("aria-hidden","true"); }
+  btnCloseRel.addEventListener("click", closeRel);
+  relBack.addEventListener("click", (e)=>{ if(e.target === relBack) closeRel(); });
+  btnPrintRel.addEventListener("click", ()=> window.print());
+
+  function getWeekRange(isoDay){
+    const d = new Date(isoDay + "T00:00:00");
+    const day = d.getDay();
+    const diffToMon = (day === 0 ? -6 : 1 - day);
+    const mon = new Date(d); mon.setDate(d.getDate() + diffToMon);
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
+    const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+    return { from: toISO(mon), to: toISO(sun) };
+  }
+  function getMonthRange(isoDay){
+    const d = new Date(isoDay + "T00:00:00");
+    const y = d.getFullYear(), m = d.getMonth();
+    const first = new Date(y, m, 1);
+    const last = new Date(y, m+1, 0);
+    const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+    return { from: toISO(first), to: toISO(last) };
+  }
+
+  async function fetchRange(from, to){
+    const url = `${API_URL}?action=range&loja=${encodeURIComponent(currentLoja())}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+    const r = await fetch(url);
+    const data = await r.json();
+    if(!data.ok) throw new Error(data.error || "Erro no relatório");
+    return data.rows || [];
+  }
+
+  function calcReport(rows){
+    let dinheiro=0, pix=0, cartao=0, fiado=0;
+    let supr=0, sang=0, desp=0, abertura=0;
+
+    for(const r of rows){
+      const tipo = norm(r.tipo);
+      const forma = norm(r.forma);
+      const v = Number(r.valor||0);
+
+      if(tipo === "VENDA"){
+        if(forma === "DINHEIRO") dinheiro += v;
+        else if(forma === "PIX") pix += v;
+        else if(forma === "CARTAO") cartao += v;
+        else if(forma === "FIADO") fiado += v;
+      } else if(tipo === "SUPRIMENTO") supr += v;
+      else if(tipo === "SANGRIA") sang += v;
+      else if(tipo === "DESPESA") desp += v;
+      else if(tipo === "ABERTURA") abertura += v;
+    }
+
+    const vendas = dinheiro + pix + cartao + fiado;
+    const entradas = vendas + supr + abertura;
+    const saidas = sang + desp;
+    const saldo = entradas - saidas;
+
+    return { vendas, dinheiro, pix, cartao, fiado, supr, sang, desp, abertura, saldo };
+  }
+
+  function paintReport(title, from, to, rows){
+    const r = calcReport(rows);
+    relTitle.textContent = title;
+    relInfo.textContent = `Loja: ${currentLoja()} • Período: ${from} até ${to} • Registros: ${rows.length}`;
+    relVendas.textContent = brl(r.vendas);
+    relDinheiro.textContent = brl(r.dinheiro);
+    relPix.textContent = brl(r.pix);
+    relCartao.textContent = brl(r.cartao);
+    relFiado.textContent = brl(r.fiado);
+    relSupr.textContent = brl(r.supr);
+    relSang.textContent = brl(r.sang);
+    relDesp.textContent = brl(r.desp);
+    relSaldo.textContent = brl(r.saldo);
+    openRel();
+  }
+
+  btnRelDia.addEventListener("click", async ()=>{
+    try{
+      const d = currentDay();
+      const rows = await fetchRange(d, d);
+      paintReport(`Relatório Diário (${d})`, d, d, rows);
+    }catch(e){ alert(String(e.message || e)); }
+  });
+
+  btnRelSemana.addEventListener("click", async ()=>{
+    try{
+      const base = relWeekDay.value || currentDay();
+      const {from, to} = getWeekRange(base);
+      const rows = await fetchRange(from, to);
+      paintReport(`Relatório Semanal`, from, to, rows);
+    }catch(e){ alert(String(e.message || e)); }
+  });
+
+  btnRelMes.addEventListener("click", async ()=>{
+    try{
+      const m = relMonthPick.value;
+      const base = m ? (m + "-01") : currentDay();
+      const {from, to} = getMonthRange(base);
+      const rows = await fetchRange(from, to);
+      paintReport(`Relatório Mensal`, from, to, rows);
+    }catch(e){ alert(String(e.message || e)); }
+  });
+
+  // ===== Wire =====
+  btnAbrir.addEventListener("click", abrirCaixa);
+  btnFechar.addEventListener("click", fecharCaixa);
+  btnReloadOps.addEventListener("click", loadOperators);
+  btnAddVenda.addEventListener("click", addVenda);
+  btnAddOutros.addEventListener("click", addOutros);
+
+  valorVenda.addEventListener("keydown", (e)=>{ if(e.key==="Enter") addVenda(); });
+  valorOutros.addEventListener("keydown", (e)=>{ if(e.key==="Enter") addOutros(); });
+
+  btnLimpar.addEventListener("click", ()=>{
+    valorVenda.value = "";
+    valorOutros.value = "";
+    valorVenda.focus();
+  });
+
+  btnRefreshAll.addEventListener("click", async ()=>{
+    await loadStatus();
+    await listSession();
+  });
+
+  selLoja.addEventListener("change", async ()=>{
+    syncHeader();
+    await loadStatus();
+    await listSession();
+  });
+
+  dayEl.addEventListener("change", async ()=>{
+    syncHeader();
+    relWeekDay.value = dayEl.value;
+    relMonthPick.value = dayEl.value.slice(0,7);
+    await listSession();
+  });
+
+  // ===== Keyboard shortcuts =====
+  document.addEventListener("keydown", (e)=>{
+    // não atrapalhar digitação (exceto F-keys e ESC)
+    const allow = (e.key.startsWith("F") || e.key === "Escape");
+    if(!allow && isTypingField(document.activeElement)) return;
+
+    if(e.key === "F2"){ e.preventDefault(); showScreen("sVenda"); }
+    else if(e.key === "F3"){ e.preventDefault(); showScreen("sOutros"); }
+    else if(e.key === "F4"){ e.preventDefault(); showScreen("sMovimentos"); }
+    else if(e.key === "F5"){ e.preventDefault(); showScreen("sRelatorios"); }
+    else if(e.key === "F6"){ e.preventDefault(); showScreen("sAbertura"); }
+    else if(e.key === "F7"){ e.preventDefault(); showScreen("sConfig"); }
+    else if(e.key === "Escape"){ if(relBack.style.display === "flex") closeRel(); }
+    else if(e.key === "Enter"){
+      // Enter salva na tela ativa (se não estiver no modal)
+      if(relBack.style.display === "flex") return;
+      if(activeScreenId === "sVenda") { e.preventDefault(); addVenda(); }
+      if(activeScreenId === "sOutros") { e.preventDefault(); addOutros(); }
+    }
+  });
+
+  // ===== Init =====
+  dayEl.value = todayISO();
+  relWeekDay.value = dayEl.value;
+  relMonthPick.value = dayEl.value.slice(0,7);
+  syncHeader();
+
+  (async ()=>{
+    await loadOperators();
+    await loadStatus();
+    await listSession();
+    showScreen("sAbertura");
+  })();
+
+  // relógio
+  setInterval(()=>{ tagTime.textContent = nowTime(); }, 1000);
+
+  // atualização
+  setInterval(async ()=>{
+    await loadStatus();
+    await listSession();
+  }, 12000);
+</script>
+</body>
+</html>
