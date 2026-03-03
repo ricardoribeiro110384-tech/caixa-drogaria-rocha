@@ -60,19 +60,10 @@
       color:#5a2300; font-size:12px; line-height:1.35;
     }
 
-    /* MENU */
-    .menu{
-      padding:12px; display:flex; flex-direction:column; gap:8px;
-    }
+    .menu{ padding:12px; display:flex; flex-direction:column; gap:8px; }
     .mitem{
-      width:100%;
-      text-align:left;
-      padding:10px 12px;
-      border-radius:14px;
-      border:1px solid var(--line);
-      background:#fff;
-      font-weight:950;
-      cursor:pointer;
+      width:100%; text-align:left; padding:10px 12px; border-radius:14px;
+      border:1px solid var(--line); background:#fff; font-weight:950; cursor:pointer;
       display:flex; align-items:center; justify-content:space-between;
     }
     .mitem.active{
@@ -81,17 +72,11 @@
     }
     .mright{ font-size:12px; opacity:.75; }
 
-    .disabled{
-      opacity:.55;
-      pointer-events:none;
-      filter:grayscale(0.1);
-    }
+    .disabled{ opacity:.55; pointer-events:none; filter:grayscale(0.1); }
 
-    /* TELAS */
     .screen{ display:none; }
     .screen.active{ display:block; }
 
-    /* Destaque venda */
     .saleBox{
       border:2px solid rgba(255,106,0,.32);
       border-radius:16px;
@@ -109,7 +94,6 @@
       box-shadow:0 12px 28px rgba(255,106,0,.22);
     }
 
-    /* Flash ok na venda */
     .flashOk{ animation: flashOk 380ms ease-in-out; }
     @keyframes flashOk{
       0%{ box-shadow:0 0 0 0 rgba(22,163,74,.0); }
@@ -117,7 +101,6 @@
       100%{ box-shadow:0 0 0 0 rgba(22,163,74,.0); }
     }
 
-    /* Movimentos */
     .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
     .tab{
       padding:8px 10px; border-radius:999px; border:1px solid var(--line);
@@ -156,7 +139,6 @@
     }
     .trash:hover{ border-color:rgba(220,38,38,.4); box-shadow:0 0 0 4px rgba(220,38,38,.12); }
 
-    /* Modal relatório */
     .modalBack{
       position:fixed; inset:0; background:rgba(0,0,0,.35);
       display:none; align-items:center; justify-content:center; padding:16px;
@@ -205,7 +187,6 @@
 </header>
 
 <main>
-  <!-- MENU -->
   <section class="card">
     <div class="hd">
       <b>📌 Menu</b>
@@ -224,7 +205,6 @@
     </div>
   </section>
 
-  <!-- TELAS -->
   <section class="card">
     <div class="hd">
       <b id="screenTitle">Abertura do caixa</b>
@@ -234,7 +214,6 @@
     </div>
     <div class="bd">
 
-      <!-- 1) ABERTURA -->
       <div class="screen active" id="sAbertura">
         <div class="grid2">
           <div>
@@ -282,7 +261,6 @@
         <div class="note" id="msgAbertura">—</div>
       </div>
 
-      <!-- 2) VENDA -->
       <div class="screen" id="sVenda">
         <div class="saleBox" id="boxVenda">
           <div class="grid2">
@@ -317,7 +295,6 @@
         </div>
       </div>
 
-      <!-- 3) OUTROS -->
       <div class="screen" id="sOutros">
         <div id="boxOutros">
           <div class="grid2">
@@ -346,7 +323,6 @@
         </div>
       </div>
 
-      <!-- 4) MOVIMENTOS -->
       <div class="screen" id="sMovimentos">
         <div class="kpiBox">
           <div>
@@ -395,7 +371,6 @@
         </div>
       </div>
 
-      <!-- 5) RELATÓRIOS -->
       <div class="screen" id="sRelatorios">
         <div class="kpiBox">
           <div>
@@ -417,9 +392,8 @@
         </div>
       </div>
 
-      <!-- 6) CONFIG -->
       <div class="screen" id="sConfig">
-        <div class="note" id="msgConfig">
+        <div class="note">
           Operadores/vendedores são cadastrados direto na planilha (aba <b>operadores</b>).
         </div>
       </div>
@@ -428,7 +402,6 @@
   </section>
 </main>
 
-<!-- Modal Relatório -->
 <div class="modalBack" id="relBack" aria-hidden="true">
   <div class="modal" id="relModal">
     <div class="hd">
@@ -497,6 +470,57 @@
     const tag = (el.tagName || "").toUpperCase();
     return tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT";
   };
+
+  // ======= ✅ ALTERAÇÃO SOLICITADA (FORMATAR DATA/HORA) =======
+  function toBRDate(iso){ // "2026-03-03" -> "03/03/2026"
+    if(!iso) return "";
+    const [y,m,d] = String(iso).split("-");
+    if(!y || !m || !d) return "";
+    return `${d}/${m}/${y}`;
+  }
+  function parseAnyDate(v){
+    if(v instanceof Date) return v;
+    if(typeof v === "number"){
+      const d = new Date(v);
+      return isNaN(d) ? null : d;
+    }
+    if(typeof v === "string"){
+      const d = new Date(v);
+      if(!isNaN(d)) return d;
+      return null;
+    }
+    return null;
+  }
+  // Retorna: "DD/MM/AAAA HH:MM" (sem descrição longa)
+  function fmtDataHoraCurta(rawHora, rawData){
+    const h = String(rawHora ?? "").trim();
+
+    // se vier só hora "HH:MM" ou "HH:MM:SS"
+    const onlyTime = h.match(/^(\d{1,2}):(\d{2})(?::(\d{2}))?$/);
+    if(onlyTime){
+      const hh = String(onlyTime[1]).padStart(2,"0");
+      const mm = onlyTime[2];
+      return `${toBRDate(currentDay())} ${hh}:${mm}`;
+    }
+
+    // se vier Date gigante/objeto/string do GAS
+    const d = parseAnyDate(rawHora) || parseAnyDate(rawData);
+    if(d){
+      const yyyy = d.getFullYear();
+      // evita 1899/1900 (bug)
+      if(yyyy < 2005){
+        return `${toBRDate(currentDay())} ${nowTime().slice(0,5)}`;
+      }
+      const dd = String(d.getDate()).padStart(2,"0");
+      const mm = String(d.getMonth()+1).padStart(2,"0");
+      const hh = String(d.getHours()).padStart(2,"0");
+      const mi = String(d.getMinutes()).padStart(2,"0");
+      return `${dd}/${mm}/${yyyy} ${hh}:${mi}`;
+    }
+
+    return `${toBRDate(currentDay())} ${nowTime().slice(0,5)}`;
+  }
+  // ===========================================================
 
   // Header
   const dot = document.getElementById("dot");
@@ -629,19 +653,15 @@
     menuHint.textContent = caixaAberto ? "ABERTO" : "FECHADO";
   }
 
-  // Screens
   function showScreen(id){
     activeScreenId = id;
-
     Object.entries(screens).forEach(([k, el])=>{
       el.classList.toggle("active", k === id);
     });
     screenTitle.textContent = titles[id] || "Sistema";
-
     [...menu.querySelectorAll(".mitem")].forEach(b=>{
       b.classList.toggle("active", b.getAttribute("data-screen") === id);
     });
-
     if(id === "sVenda"){
       setTimeout(()=>{ valorVenda.focus(); valorVenda.select?.(); }, 60);
     }
@@ -656,7 +676,6 @@
     showScreen(btn.getAttribute("data-screen"));
   });
 
-  // Status
   async function loadStatus(){
     try{
       const url = `${API_URL}?action=status&loja=${encodeURIComponent(currentLoja())}`;
@@ -672,7 +691,6 @@
     }
   }
 
-  // Operators
   async function loadOperators(){
     try{
       const r = await fetch(`${API_URL}?action=ops`);
@@ -714,7 +732,6 @@
     if(selOperador.value) selVendedor.value = selOperador.value;
   });
 
-  // Movimentos helpers
   function badgeTipo(t){
     const type = norm(t);
     if(type==="VENDA") return `<span class="badge b-venda">VENDA</span>`;
@@ -787,7 +804,8 @@
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td class="mono">${r.hora || ""}</td>
+        <!-- ✅ ALTERAÇÃO: agora mostra só "DD/MM/AAAA HH:MM" -->
+        <td class="mono">${fmtDataHoraCurta(r.hora, r.data)}</td>
         <td>${r.operador || ""}</td>
         <td>${badgeTipo(t)}</td>
         <td>${chipForma(t, r.forma)}</td>
@@ -798,7 +816,6 @@
     }
   }
 
-  // ✅ LISTA (CORRIGIDO: manda data e day)
   async function listSession(){
     syncHeader();
     try{
@@ -814,15 +831,14 @@
       const r = await fetch(url);
       const data = await r.json();
       if(!data.ok) throw new Error(data.error || "list error");
-
       setOnline(true);
 
       const rowsRaw = Array.isArray(data.rows) ? data.rows : [];
 
-      // ✅ map compatível com vários scripts (chaves diferentes)
       cacheRows = rowsRaw.map(x => ({
         row: Number(x.row ?? x.Row ?? x.linha ?? x.id ?? 0),
-        hora: String(x.hora ?? x.Hora ?? x.time ?? x.timestamp ?? ""),
+        data: (x.data ?? x.Data ?? x.day ?? x.dia ?? ""),  // ✅ usado no fmt
+        hora: (x.hora ?? x.Hora ?? x.time ?? x.timestamp ?? ""),
         operador: String(x.operador ?? x.Operador ?? x.op ?? x.vendedor ?? ""),
         tipo: norm(x.tipo ?? x.Tipo ?? x.movimento ?? x.categoria ?? ""),
         forma: norm(x.forma ?? x.Forma ?? x.pagamento ?? x.meio ?? ""),
@@ -833,11 +849,9 @@
       renderTable();
     }catch(e){
       setOnline(false);
-      // mantém a tela, mas não quebra
     }
   }
 
-  // Caixa (abrir/fechar)
   async function abrirCaixa(){
     const op = selOperador.value;
     if(!op) return alert("Selecione o operador do caixa.");
@@ -883,7 +897,6 @@
     showScreen("sAbertura");
   }
 
-  // Add / Delete
   async function addMovement({tipo, forma, valor, operador}){
     const op = operador || selOperador.value;
     if(!op) return alert("Selecione o operador/vendedor.");
@@ -989,12 +1002,11 @@
     renderTable();
   });
 
-  // Relatórios
   function openRel(){ relBack.style.display = "flex"; relBack.setAttribute("aria-hidden","false"); }
   function closeRel(){ relBack.style.display = "none"; relBack.setAttribute("aria-hidden","true"); }
-  btnCloseRel.addEventListener("click", closeRel);
+  document.getElementById("btnCloseRel").addEventListener("click", closeRel);
   relBack.addEventListener("click", (e)=>{ if(e.target === relBack) closeRel(); });
-  btnPrintRel.addEventListener("click", ()=> window.print());
+  document.getElementById("btnPrintRel").addEventListener("click", ()=> window.print());
 
   function getWeekRange(isoDay){
     const d = new Date(isoDay + "T00:00:00");
@@ -1014,7 +1026,6 @@
     return { from: toISO(first), to: toISO(last) };
   }
 
-  // ✅ RANGE (compatível com vários nomes)
   async function fetchRange(from, to){
     const loja = currentLoja();
     const url =
@@ -1101,7 +1112,6 @@
     }catch(e){ alert(String(e.message || e)); }
   });
 
-  // Wire
   btnAbrir.addEventListener("click", abrirCaixa);
   btnFechar.addEventListener("click", fecharCaixa);
   btnReloadOps.addEventListener("click", loadOperators);
@@ -1135,7 +1145,6 @@
     await listSession();
   });
 
-  // Keyboard shortcuts
   document.addEventListener("keydown", (e)=>{
     const allow = (e.key.startsWith("F") || e.key === "Escape");
     if(!allow && isTypingField(document.activeElement)) return;
@@ -1154,7 +1163,6 @@
     }
   });
 
-  // Init
   dayEl.value = todayISO();
   relWeekDay.value = dayEl.value;
   relMonthPick.value = dayEl.value.slice(0,7);
