@@ -1,0 +1,889 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Caixa em Rede — Drogaria Rocha (2 Lojas)</title>
+  <style>
+    :root{
+      --orange:#ff6a00; --black:#111; --line:#e5e7eb; --bg:#f3f4f6;
+      --ok:#16a34a; --bad:#dc2626; --blue:#2563eb; --amber:#f59e0b;
+      --r:16px; --sh:0 10px 30px rgba(0,0,0,.10);
+    }
+    body{ margin:0; font-family:system-ui,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#fff,var(--bg)); color:#111; }
+    header{ background:linear-gradient(90deg,var(--black),#1b1b1b); color:#fff; padding:16px; border-bottom:3px solid var(--orange); }
+    .wrap{ max-width:1200px; margin:0 auto; display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center; }
+    .logo{ width:44px;height:44px;border-radius:14px;background:radial-gradient(circle at 30% 30%,#ff8a2a,var(--orange)); display:flex; align-items:center; justify-content:center; color:#111; font-weight:900; }
+    .pill{ background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); padding:7px 10px; border-radius:999px; font-size:12px; display:flex; gap:8px; align-items:center; }
+    .dot{ width:10px;height:10px;border-radius:50%; background:var(--bad); box-shadow:0 0 0 4px rgba(220,38,38,.15); }
+    .dot.ok{ background:var(--ok); box-shadow:0 0 0 4px rgba(22,163,74,.15); }
+    .small{ font-size:12px; opacity:.85; }
+
+    main{ max-width:1200px; margin:16px auto; padding:0 16px 24px; display:grid; grid-template-columns:420px 1fr; gap:16px; }
+    @media(max-width:980px){ main{ grid-template-columns:1fr; } }
+
+    .card{ background:#fff; border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--sh); overflow:hidden; }
+    .hd{ padding:14px; border-bottom:1px solid var(--line); display:flex; justify-content:space-between; align-items:center; gap:10px;}
+    .bd{ padding:14px; }
+    label{ font-size:12px; font-weight:900; display:block; margin-bottom:6px; }
+    input,select{ width:100%; padding:10px; border-radius:12px; border:1px solid var(--line); font-size:14px; outline:none; }
+    .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+    .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
+    button{ border:none; cursor:pointer; padding:10px 12px; border-radius:12px; font-weight:900; font-size:13px; }
+    .pri{ background:linear-gradient(90deg,var(--orange),#ff8a2a); color:#111; }
+    .ghost{ background:#fff; border:1px solid var(--line); }
+    .danger{ background:var(--bad); color:#fff; }
+    .okbtn{ background:var(--ok); color:#fff; }
+
+    .note{ margin-top:10px; padding:10px 12px; border-radius:14px; background:rgba(255,106,0,.08); border:1px solid rgba(255,106,0,.25); color:#5a2300; font-size:12px; line-height:1.35; }
+    .mono{ font-family:ui-monospace,Consolas,monospace; }
+
+    .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
+    .tab{ padding:8px 10px; border-radius:999px; border:1px solid var(--line); background:#fff; font-weight:900; font-size:12px; cursor:pointer; }
+    .tab.active{ border-color:rgba(255,106,0,.55); box-shadow:0 0 0 4px rgba(255,106,0,.12); }
+
+    .tablewrap{ overflow:auto; border:1px solid var(--line); border-radius:14px; }
+    table{ width:100%; border-collapse:collapse; min-width:980px; background:#fff; }
+    th,td{ padding:10px; border-bottom:1px solid var(--line); font-size:13px; vertical-align:top; }
+    th{ background:#fafafa; position:sticky; top:0; text-align:left; font-size:12px; }
+    tr:hover td{ background:#fff7f0; }
+
+    .badge{ display:inline-flex; align-items:center; padding:6px 10px; border-radius:999px; font-weight:950; font-size:12px; border:1px solid var(--line); }
+    .b-venda{ background:rgba(22,163,74,.10); border-color:rgba(22,163,74,.30); color:var(--ok); }
+    .b-supr{ background:rgba(37,99,235,.10); border-color:rgba(37,99,235,.30); color:var(--blue); }
+    .b-sang{ background:rgba(220,38,38,.10); border-color:rgba(220,38,38,.30); color:var(--bad); }
+    .b-desp{ background:rgba(245,158,11,.12); border-color:rgba(245,158,11,.35); color:#92400e; }
+
+    .chip{ display:inline-flex; padding:6px 10px; border-radius:999px; border:1px solid var(--line); background:#fff; font-weight:900; font-size:12px; color:#334155; }
+
+    .pos{ color:var(--ok); font-weight:900; }
+    .neg{ color:var(--bad); font-weight:900; }
+
+    .trash{
+      width:36px; height:36px; border-radius:12px;
+      display:inline-flex; align-items:center; justify-content:center;
+      background:#fff; border:1px solid var(--line);
+      font-weight:900;
+    }
+    .trash:hover{ border-color:rgba(220,38,38,.4); box-shadow:0 0 0 4px rgba(220,38,38,.12); }
+
+    .kpiBox{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      border:1px solid var(--line); border-radius:14px; padding:12px; margin-bottom:12px;
+    }
+    .kpiBox .t{ font-size:12px; font-weight:900; color:#475569; }
+    .kpiBox .v{ font-size:18px; font-weight:950; font-family:ui-monospace,Consolas,monospace; }
+    .disabled{ opacity:.55; pointer-events:none; }
+
+    /* ✅ Impressão: imprime só o relatório */
+    @media print{
+      body *{ visibility:hidden; }
+      #printBlock, #printBlock *{ visibility:visible; }
+      #printBlock{ position:fixed; left:0; top:0; width:100%; padding:12px; }
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div style="display:flex;gap:12px;align-items:center;">
+      <div class="logo">DR</div>
+      <div>
+        <div style="font-weight:900">Caixa em Rede — <span style="color:var(--orange)">Drogaria Rocha</span></div>
+        <div class="small">2 lojas • Abrir/Fechar por loja • Relatórios • Zera tela ao fechar</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div class="pill"><span class="dot" id="dot"></span><span id="status">Offline</span></div>
+      <div class="pill">Loja: <b id="lblLoja">LOJA 1</b></div>
+      <div class="pill">Status: <b id="lblStatusCaixa">—</b></div>
+      <div class="pill">Dia: <b id="lblDay">—</b></div>
+      <div class="pill">Filtro: <b id="lblFilter">TODOS</b></div>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- Painel esquerdo -->
+  <section class="card">
+    <div class="hd">
+      <b>🧾 Lançar</b>
+      <span class="mono" id="tagTime">—</span>
+    </div>
+
+    <div class="bd">
+      <div class="grid2">
+        <div>
+          <label>Loja</label>
+          <select id="selLoja">
+            <option>LOJA 1</option>
+            <option>LOJA 2</option>
+          </select>
+        </div>
+        <div>
+          <label>Data</label>
+          <input id="day" type="date" />
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <label>Operador</label>
+      <select id="selOperador"></select>
+
+      <div style="height:10px"></div>
+
+      <!-- Abrir/Fechar -->
+      <div class="grid2">
+        <div>
+          <label>Fundo (ao abrir)</label>
+          <input id="fundo" inputmode="decimal" placeholder="Ex.: 200,00" />
+        </div>
+        <div>
+          <label>Caixa</label>
+          <div class="btnrow">
+            <button class="okbtn" id="btnAbrir">Abrir caixa</button>
+            <button class="danger" id="btnFechar">Fechar caixa</button>
+          </div>
+        </div>
+      </div>
+
+      <div style="height:10px"></div>
+
+      <!-- Lançamentos (trava quando FECHADO) -->
+      <div id="boxLancamento">
+        <div class="grid3">
+          <div>
+            <label>Tipo</label>
+            <select id="tipo">
+              <option>VENDA</option>
+              <option>SUPRIMENTO</option>
+              <option>SANGRIA</option>
+              <option>DESPESA</option>
+            </select>
+          </div>
+          <div>
+            <label>Forma (VENDA)</label>
+            <select id="forma">
+              <option>DINHEIRO</option>
+              <option>PIX</option>
+              <option>CARTAO</option>
+              <option>FIADO</option>
+            </select>
+          </div>
+          <div>
+            <label>Valor</label>
+            <input id="valor" inputmode="decimal" placeholder="Ex.: 35,90" />
+          </div>
+        </div>
+
+        <div style="height:10px"></div>
+
+        <div class="btnrow">
+          <button class="pri" id="btnAdd">Salvar</button>
+          <button class="ghost" id="btnRefresh">Atualizar</button>
+          <button class="ghost" id="btnLimpar">Limpar</button>
+        </div>
+      </div>
+
+      <div class="note" id="msg">Conectando…</div>
+    </div>
+
+    <!-- Operadores -->
+    <div class="hd" style="border-top:1px solid var(--line);">
+      <b>👤 Operadores</b>
+      <button class="ghost" id="btnReloadOps">Recarregar</button>
+    </div>
+    <div class="bd">
+      <div class="grid2">
+        <div>
+          <label>Novo operador</label>
+          <input id="inpNovoOperador" placeholder="Ex.: Caixa 1" />
+        </div>
+        <div>
+          <label>Ações</label>
+          <div class="btnrow">
+            <button class="pri" id="btnAddOp">Cadastrar</button>
+            <button class="danger" id="btnDelOp">Excluir</button>
+          </div>
+        </div>
+      </div>
+      <div class="note" id="msgOps">—</div>
+    </div>
+  </section>
+
+  <!-- Painel direito -->
+  <section class="card">
+    <div class="hd">
+      <b>📋 Movimentos e Relatórios</b>
+      <span class="mono" id="kpiSaldo">—</span>
+    </div>
+
+    <div class="bd">
+      <!-- RELATÓRIOS (imprime só isso) -->
+      <div id="printBlock" class="card" style="border:1px solid var(--line);border-radius:14px;box-shadow:none;margin-bottom:12px;">
+        <div class="hd" style="border-bottom:1px solid var(--line);">
+          <b>🖨️ Relatórios (Diário / Semanal / Mensal)</b>
+          <div class="btnrow">
+            <button class="ghost" id="btnRelDia">Diário</button>
+            <button class="ghost" id="btnRelSemana">Semanal</button>
+            <button class="ghost" id="btnRelMes">Mensal</button>
+            <button class="pri" id="btnPrintRel">Imprimir</button>
+          </div>
+        </div>
+        <div class="bd">
+          <div class="small" id="relTitle">Selecione um tipo de relatório.</div>
+          <div style="height:8px"></div>
+
+          <div class="kpiBox">
+            <div>
+              <div class="t">VENDAS (TOTAL)</div>
+              <div class="small">Somente VENDA (DINHEIRO/PIX/CARTÃO/FIADO)</div>
+            </div>
+            <div class="v" id="relVendas">R$ 0,00</div>
+          </div>
+
+          <div class="grid2" style="margin-bottom:10px;">
+            <div class="kpiBox" style="margin:0;">
+              <div><div class="t">DINHEIRO</div></div>
+              <div class="v" id="relDinheiro">R$ 0,00</div>
+            </div>
+            <div class="kpiBox" style="margin:0;">
+              <div><div class="t">PIX</div></div>
+              <div class="v" id="relPix">R$ 0,00</div>
+            </div>
+          </div>
+
+          <div class="grid2" style="margin-bottom:10px;">
+            <div class="kpiBox" style="margin:0;">
+              <div><div class="t">CARTÃO</div></div>
+              <div class="v" id="relCartao">R$ 0,00</div>
+            </div>
+            <div class="kpiBox" style="margin:0;">
+              <div><div class="t">FIADO</div></div>
+              <div class="v" id="relFiado">R$ 0,00</div>
+            </div>
+          </div>
+
+          <div class="grid3" style="margin-bottom:10px;">
+            <div class="kpiBox" style="margin:0;">
+              <div><div class="t">SUPRIMENTO</div></div>
+              <div class="v" id="relSupr">R$ 0,00</div>
+            </div>
+            <div class="kpiBox" style="margin:0;">
+              <div><div class="t">SANGRIA</div></div>
+              <div class="v" id="relSang">R$ 0,00</div>
+            </div>
+            <div class="kpiBox" style="margin:0;">
+              <div><div class="t">DESPESA</div></div>
+              <div class="v" id="relDesp">R$ 0,00</div>
+            </div>
+          </div>
+
+          <div class="kpiBox">
+            <div>
+              <div class="t">SALDO (ENTRADAS - SAÍDAS)</div>
+              <div class="small">Entradas: vendas + suprimentos + abertura</div>
+            </div>
+            <div class="v" id="relSaldo">R$ 0,00</div>
+          </div>
+
+          <div class="note small" id="relInfo">—</div>
+        </div>
+      </div>
+
+      <!-- KPI filtro -->
+      <div class="kpiBox">
+        <div>
+          <div class="t">TOTAL DO FILTRO (sessão atual)</div>
+          <div class="small" id="kpiFilterName">TODOS</div>
+        </div>
+        <div class="v" id="kpiFilterTotal">R$ 0,00</div>
+      </div>
+
+      <!-- Tabs filtro -->
+      <div class="tabs" id="tabs">
+        <button class="tab active" data-filter="TODOS">TODOS</button>
+        <button class="tab" data-filter="VENDA">VENDAS</button>
+        <button class="tab" data-filter="DINHEIRO">DINHEIRO</button>
+        <button class="tab" data-filter="PIX">PIX</button>
+        <button class="tab" data-filter="CARTAO">CARTÃO</button>
+        <button class="tab" data-filter="FIADO">FIADO</button>
+        <button class="tab" data-filter="SUPRIMENTO">SUPRIMENTOS</button>
+        <button class="tab" data-filter="SANGRIA">SANGRIAS</button>
+        <button class="tab" data-filter="DESPESA">DESPESAS</button>
+      </div>
+
+      <div style="height:12px"></div>
+
+      <!-- Tabela -->
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Hora</th>
+              <th>Operador</th>
+              <th>Tipo</th>
+              <th>Forma</th>
+              <th class="mono">Valor</th>
+              <th>Apagar</th>
+            </tr>
+          </thead>
+          <tbody id="tb"></tbody>
+        </table>
+      </div>
+
+    </div>
+  </section>
+</main>
+
+<script>
+  const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
+
+  // Header
+  const dot = document.getElementById("dot");
+  const statusEl = document.getElementById("status");
+  const lblLoja = document.getElementById("lblLoja");
+  const lblStatusCaixa = document.getElementById("lblStatusCaixa");
+  const lblDay = document.getElementById("lblDay");
+  const lblFilter = document.getElementById("lblFilter");
+
+  // Left
+  const selLoja = document.getElementById("selLoja");
+  const dayEl = document.getElementById("day");
+  const selOperador = document.getElementById("selOperador");
+  const fundo = document.getElementById("fundo");
+  const btnAbrir = document.getElementById("btnAbrir");
+  const btnFechar = document.getElementById("btnFechar");
+
+  const boxLancamento = document.getElementById("boxLancamento");
+  const tipo = document.getElementById("tipo");
+  const forma = document.getElementById("forma");
+  const valor = document.getElementById("valor");
+  const tagTime = document.getElementById("tagTime");
+
+  const msg = document.getElementById("msg");
+  const msgOps = document.getElementById("msgOps");
+
+  const inpNovoOperador = document.getElementById("inpNovoOperador");
+
+  // Right
+  const kpiSaldo = document.getElementById("kpiSaldo");
+  const kpiFilterName = document.getElementById("kpiFilterName");
+  const kpiFilterTotal = document.getElementById("kpiFilterTotal");
+  const tabs = document.getElementById("tabs");
+  const tb = document.getElementById("tb");
+
+  // Report
+  const relTitle = document.getElementById("relTitle");
+  const relInfo = document.getElementById("relInfo");
+  const relVendas = document.getElementById("relVendas");
+  const relDinheiro = document.getElementById("relDinheiro");
+  const relPix = document.getElementById("relPix");
+  const relCartao = document.getElementById("relCartao");
+  const relFiado = document.getElementById("relFiado");
+  const relSupr = document.getElementById("relSupr");
+  const relSang = document.getElementById("relSang");
+  const relDesp = document.getElementById("relDesp");
+  const relSaldo = document.getElementById("relSaldo");
+
+  let cacheRows = [];
+  let activeFilter = "TODOS";
+  let caixaAberto = false;
+
+  const pad2 = n => String(n).padStart(2,"0");
+  const todayISO = () => {
+    const d = new Date();
+    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+  };
+  const nowTime = () => {
+    const d = new Date();
+    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
+  };
+  const brl = n => (n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+  const parseMoney = s => {
+    if(typeof s !== "string") return 0;
+    const cleaned = s.trim().replace(/\s/g,"").replace(/\./g,"").replace(",",".");
+    const v = Number(cleaned);
+    return Number.isFinite(v) ? v : 0;
+  };
+  const setOnline = ok => {
+    if(ok){ dot.classList.add("ok"); statusEl.textContent="Online"; }
+    else { dot.classList.remove("ok"); statusEl.textContent="Offline"; }
+  };
+
+  const currentDay = () => dayEl.value || todayISO();
+  const currentLoja = () => selLoja.value || "LOJA 1";
+
+  function syncLabels(){
+    lblLoja.textContent = currentLoja();
+    const d = currentDay();
+    lblDay.textContent = d.split("-").reverse().join("/");
+  }
+
+  function setCaixaUI(open){
+    caixaAberto = !!open;
+    lblStatusCaixa.textContent = caixaAberto ? "ABERTO" : "FECHADO";
+
+    if(caixaAberto){
+      boxLancamento.classList.remove("disabled");
+      msg.textContent = `${currentLoja()} ABERTA. Pode lançar normalmente.`;
+    }else{
+      boxLancamento.classList.add("disabled");
+      msg.textContent = `${currentLoja()} FECHADA. Abra o caixa para lançar.`;
+    }
+  }
+
+  async function loadStatus(){
+    try{
+      const url = `${API_URL}?action=status&loja=${encodeURIComponent(currentLoja())}`;
+      const r = await fetch(url);
+      const data = await r.json();
+      if(!data.ok) throw new Error(data.error || "status error");
+      setOnline(true);
+      setCaixaUI(String(data.status||"FECHADO").toUpperCase()==="ABERTO");
+    }catch(e){
+      setOnline(false);
+      lblStatusCaixa.textContent = "—";
+    }
+  }
+
+  function badgeTipo(t){
+    const type = String(t||"").toUpperCase();
+    if(type==="VENDA") return `<span class="badge b-venda">VENDA</span>`;
+    if(type==="SUPRIMENTO") return `<span class="badge b-supr">SUPRIMENTO</span>`;
+    if(type==="SANGRIA") return `<span class="badge b-sang">SANGRIA</span>`;
+    if(type==="DESPESA") return `<span class="badge b-desp">DESPESA</span>`;
+    if(type==="ABERTURA") return `<span class="badge b-supr">ABERTURA</span>`;
+    if(type==="FECHAMENTO") return `<span class="badge b-desp">FECHAMENTO</span>`;
+    return `<span class="badge">${type}</span>`;
+  }
+  function chipForma(type, form){
+    const t = String(type||"").toUpperCase();
+    const f = String(form||"").toUpperCase();
+    if(t !== "VENDA") return `<span class="chip">—</span>`;
+    if(!f) return `<span class="chip">—</span>`;
+    const label = (f==="CARTAO") ? "CARTÃO" : f;
+    return `<span class="chip">${label}</span>`;
+  }
+
+  function applyFilter(rows){
+    const f = activeFilter;
+    if(f === "TODOS") return rows;
+
+    if(["SUPRIMENTO","SANGRIA","DESPESA","VENDA","ABERTURA","FECHAMENTO"].includes(f)){
+      return rows.filter(r => String(r.tipo||"").toUpperCase() === f);
+    }
+    if(["DINHEIRO","PIX","CARTAO","FIADO"].includes(f)){
+      return rows.filter(r =>
+        String(r.tipo||"").toUpperCase() === "VENDA" &&
+        String(r.forma||"").toUpperCase() === f
+      );
+    }
+    return rows;
+  }
+
+  function computeSaldoSessao(rows){
+    let entradas=0, saidas=0;
+    for(const r of rows){
+      const t = String(r.tipo||"").toUpperCase();
+      const v = Number(r.valor||0);
+      const isSaida = (t==="SANGRIA" || t==="DESPESA");
+      if(isSaida) saidas += v; else entradas += v; // inclui ABERTURA e SUPRIMENTO
+    }
+    kpiSaldo.textContent = `Saldo da sessão: ${brl(entradas - saidas)}`;
+  }
+
+  function computeTotalDoFiltro(filteredRows){
+    let total = 0;
+    for(const r of filteredRows) total += Number(r.valor||0);
+
+    const f = activeFilter;
+    const label = (f==="CARTAO") ? "CARTÃO" : f;
+
+    kpiFilterName.textContent = `${label} — ${currentLoja()}`;
+    kpiFilterTotal.textContent = brl(total);
+    lblFilter.textContent = label;
+  }
+
+  function renderTable(){
+    const filtered = applyFilter([...cacheRows]);
+    computeTotalDoFiltro(filtered);
+
+    tb.innerHTML = "";
+    if(filtered.length === 0){
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="6" style="color:#64748b">Sem lançamentos (sessão atual).</td>`;
+      tb.appendChild(tr);
+      return;
+    }
+
+    filtered.sort((a,b)=> String(a.hora||"").localeCompare(String(b.hora||"")));
+    for(const r of filtered){
+      const t = String(r.tipo||"").toUpperCase();
+      const v = Number(r.valor||0);
+      const isSaida = (t==="SANGRIA" || t==="DESPESA");
+
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td class="mono">${r.hora || ""}</td>
+        <td>${r.operador || ""}</td>
+        <td>${badgeTipo(t)}</td>
+        <td>${chipForma(t, r.forma)}</td>
+        <td class="mono ${isSaida ? "neg" : "pos"}">${brl(v)}</td>
+        <td><button class="trash" title="Apagar" data-row="${r.row}">🗑️</button></td>
+      `;
+      tb.appendChild(tr);
+    }
+  }
+
+  async function loadOperators(){
+    try{
+      const r = await fetch(`${API_URL}?action=ops`);
+      const data = await r.json();
+      if(!data.ok) throw new Error();
+      setOnline(true);
+
+      const ops = data.ops || [];
+      selOperador.innerHTML = "";
+      if(ops.length === 0){
+        const opt = document.createElement("option");
+        opt.value = "";
+        opt.textContent = "— cadastre um operador —";
+        selOperador.appendChild(opt);
+      }else{
+        for(const o of ops){
+          const opt = document.createElement("option");
+          opt.value = o;
+          opt.textContent = o;
+          selOperador.appendChild(opt);
+        }
+      }
+      msgOps.textContent = `Operadores cadastrados: ${ops.length}`;
+    }catch(e){
+      setOnline(false);
+      msgOps.textContent = "Falha ao carregar operadores.";
+    }
+  }
+
+  async function addOperator(){
+    const name = (inpNovoOperador.value || "").trim();
+    if(!name) return alert("Digite o nome do operador.");
+
+    try{
+      const body = new URLSearchParams();
+      body.set("action","op_add");
+      body.set("operador", name);
+
+      const r = await fetch(API_URL, { method:"POST", body });
+      const data = await r.json();
+      if(!data.ok) return alert(data.error || "Erro ao cadastrar.");
+
+      inpNovoOperador.value = "";
+      await loadOperators();
+    }catch(e){
+      setOnline(false);
+      alert("Falha ao cadastrar operador.");
+    }
+  }
+
+  async function deleteOperator(){
+    const op = selOperador.value;
+    if(!op) return alert("Selecione um operador para excluir.");
+    if(!confirm(`Excluir o operador "${op}"?`)) return;
+
+    try{
+      const body = new URLSearchParams();
+      body.set("action","op_del");
+      body.set("operador", op);
+
+      const r = await fetch(API_URL, { method:"POST", body });
+      const data = await r.json();
+      if(!data.ok) return alert(data.error || "Erro ao excluir.");
+
+      await loadOperators();
+    }catch(e){
+      setOnline(false);
+      alert("Falha ao excluir operador.");
+    }
+  }
+
+  async function listSession(){
+    syncLabels();
+    tagTime.textContent = nowTime();
+
+    try{
+      const url = `${API_URL}?action=list&day=${encodeURIComponent(currentDay())}&loja=${encodeURIComponent(currentLoja())}`;
+      const r = await fetch(url);
+      const data = await r.json();
+      if(!data.ok) throw new Error(data.error || "list error");
+
+      setOnline(true);
+
+      cacheRows = (data.rows || []).map(x => ({
+        row: Number(x.row || 0),
+        hora: x.hora,
+        operador: x.operador,
+        tipo: x.tipo,
+        forma: x.forma,
+        valor: Number(x.valor||0)
+      }));
+
+      computeSaldoSessao(cacheRows);
+      renderTable();
+
+      // Se retornar vazio, é porque está fechado (ou não abriu)
+      if(cacheRows.length === 0 && !caixaAberto){
+        kpiSaldo.textContent = "Saldo da sessão: R$ 0,00";
+      }
+    }catch(e){
+      setOnline(false);
+      msg.textContent = "Falha ao carregar sessão.";
+    }
+  }
+
+  async function abrirCaixa(){
+    const op = selOperador.value;
+    if(!op) return alert("Selecione o operador.");
+    const f = parseMoney(fundo.value);
+    if(f < 0) return alert("Fundo inválido.");
+
+    if(!confirm(`Abrir ${currentLoja()} com fundo ${brl(f)}?`)) return;
+
+    const body = new URLSearchParams();
+    body.set("action","open");
+    body.set("loja", currentLoja());
+    body.set("data", currentDay());
+    body.set("hora", nowTime());
+    body.set("operador", op);
+    body.set("fundo", String(f));
+
+    const r = await fetch(API_URL, { method:"POST", body });
+    const data = await r.json();
+    if(!data.ok) return alert(data.error || "Erro ao abrir.");
+
+    await loadStatus();
+    await listSession();
+  }
+
+  async function fecharCaixa(){
+    const op = selOperador.value;
+    if(!op) return alert("Selecione o operador.");
+    if(!confirm(`Fechar ${currentLoja()}? (A tela vai zerar e travar lançamentos)`)) return;
+
+    const body = new URLSearchParams();
+    body.set("action","close");
+    body.set("loja", currentLoja());
+    body.set("data", currentDay());
+    body.set("hora", nowTime());
+    body.set("operador", op);
+
+    const r = await fetch(API_URL, { method:"POST", body });
+    const data = await r.json();
+    if(!data.ok) return alert(data.error || "Erro ao fechar.");
+
+    await loadStatus();
+    await listSession(); // ✅ como FECHOU, o list volta vazio -> some tudo
+  }
+
+  async function addMovement(){
+    const op = selOperador.value;
+    if(!op) return alert("Selecione o operador.");
+
+    const v = parseMoney(valor.value);
+    if(v <= 0) return alert("Informe um valor maior que zero.");
+
+    const body = new URLSearchParams();
+    body.set("action","add");
+    body.set("loja", currentLoja());
+    body.set("data", currentDay());
+    body.set("hora", nowTime());
+    body.set("operador", op);
+    body.set("tipo", tipo.value);
+    body.set("forma", (tipo.value === "VENDA") ? forma.value : "");
+    body.set("valor", String(v));
+
+    const r = await fetch(API_URL, { method:"POST", body });
+    const data = await r.json();
+    if(!data.ok) return alert(data.error || "Erro ao salvar.");
+
+    valor.value = "";
+    await listSession();
+  }
+
+  async function deleteMovement(row){
+    const op = selOperador.value;
+    if(!op) return alert("Selecione o operador (quem está usando).");
+
+    const pin = prompt("Digite o PIN para apagar:");
+    if(pin === null) return;
+
+    if(!confirm("Apagar esse lançamento?")) return;
+
+    const body = new URLSearchParams();
+    body.set("action","del");
+    body.set("row", String(row));
+    body.set("operador", op);
+    body.set("pin", String(pin));
+
+    const r = await fetch(API_URL, { method:"POST", body });
+    const data = await r.json();
+    if(!data.ok) return alert(data.error || "Erro ao apagar.");
+
+    await listSession();
+  }
+
+  // ---------- RELATÓRIOS ----------
+  function getWeekRange(isoDay){
+    const d = new Date(isoDay + "T00:00:00");
+    const day = d.getDay(); // 0 dom .. 6 sab
+    const diffToMon = (day === 0 ? -6 : 1 - day);
+    const mon = new Date(d);
+    mon.setDate(d.getDate() + diffToMon);
+    const sun = new Date(mon);
+    sun.setDate(mon.getDate() + 6);
+
+    const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+    return { from: toISO(mon), to: toISO(sun) };
+  }
+  function getMonthRange(isoDay){
+    const d = new Date(isoDay + "T00:00:00");
+    const y = d.getFullYear(), m = d.getMonth();
+    const first = new Date(y, m, 1);
+    const last = new Date(y, m+1, 0);
+    const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
+    return { from: toISO(first), to: toISO(last) };
+  }
+
+  async function fetchRange(from, to){
+    const url = `${API_URL}?action=range&loja=${encodeURIComponent(currentLoja())}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+    const r = await fetch(url);
+    const data = await r.json();
+    if(!data.ok) throw new Error(data.error || "Erro no relatório");
+    return data.rows || [];
+  }
+
+  function calcReport(rows){
+    let dinheiro=0, pix=0, cartao=0, fiado=0;
+    let supr=0, sang=0, desp=0, abertura=0;
+
+    for(const r of rows){
+      const tipo = String(r.tipo||"").toUpperCase();
+      const forma = String(r.forma||"").toUpperCase();
+      const v = Number(r.valor||0);
+
+      if(tipo === "VENDA"){
+        if(forma === "DINHEIRO") dinheiro += v;
+        else if(forma === "PIX") pix += v;
+        else if(forma === "CARTAO") cartao += v;
+        else if(forma === "FIADO") fiado += v;
+      } else if(tipo === "SUPRIMENTO") supr += v;
+      else if(tipo === "SANGRIA") sang += v;
+      else if(tipo === "DESPESA") desp += v;
+      else if(tipo === "ABERTURA") abertura += v;
+    }
+
+    const vendas = dinheiro + pix + cartao + fiado;
+    const entradas = vendas + supr + abertura;
+    const saidas = sang + desp;
+    const saldo = entradas - saidas;
+
+    return { vendas, dinheiro, pix, cartao, fiado, supr, sang, desp, abertura, saldo };
+  }
+
+  function paintReport(title, from, to, rows){
+    const r = calcReport(rows);
+
+    relTitle.textContent = title;
+    relInfo.textContent = `Loja: ${currentLoja()} • Período: ${from} até ${to} • Registros: ${rows.length}`;
+
+    relVendas.textContent = brl(r.vendas);
+    relDinheiro.textContent = brl(r.dinheiro);
+    relPix.textContent = brl(r.pix);
+    relCartao.textContent = brl(r.cartao);
+    relFiado.textContent = brl(r.fiado);
+
+    relSupr.textContent = brl(r.supr);
+    relSang.textContent = brl(r.sang);
+    relDesp.textContent = brl(r.desp);
+
+    relSaldo.textContent = brl(r.saldo);
+  }
+
+  document.getElementById("btnRelDia").addEventListener("click", async ()=>{
+    try{
+      const d = currentDay();
+      const rows = await fetchRange(d, d);
+      paintReport(`Relatório DIÁRIO (${d})`, d, d, rows);
+    }catch(e){ alert(String(e.message || e)); }
+  });
+  document.getElementById("btnRelSemana").addEventListener("click", async ()=>{
+    try{
+      const d = currentDay();
+      const {from, to} = getWeekRange(d);
+      const rows = await fetchRange(from, to);
+      paintReport(`Relatório SEMANAL`, from, to, rows);
+    }catch(e){ alert(String(e.message || e)); }
+  });
+  document.getElementById("btnRelMes").addEventListener("click", async ()=>{
+    try{
+      const d = currentDay();
+      const {from, to} = getMonthRange(d);
+      const rows = await fetchRange(from, to);
+      paintReport(`Relatório MENSAL`, from, to, rows);
+    }catch(e){ alert(String(e.message || e)); }
+  });
+  document.getElementById("btnPrintRel").addEventListener("click", ()=> window.print());
+
+  // ---------- Eventos UI ----------
+  tabs.addEventListener("click", (e)=>{
+    const btn = e.target.closest("button[data-filter]");
+    if(!btn) return;
+    activeFilter = btn.getAttribute("data-filter") || "TODOS";
+    [...tabs.querySelectorAll(".tab")].forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderTable();
+  });
+
+  tb.addEventListener("click", (e)=>{
+    const b = e.target.closest("button[data-row]");
+    if(!b) return;
+    deleteMovement(Number(b.getAttribute("data-row")));
+  });
+
+  document.getElementById("btnAdd").addEventListener("click", addMovement);
+  document.getElementById("btnRefresh").addEventListener("click", async ()=>{ await loadStatus(); await listSession(); });
+  document.getElementById("btnLimpar").addEventListener("click", ()=>{ valor.value=""; valor.focus(); });
+
+  btnAbrir.addEventListener("click", abrirCaixa);
+  btnFechar.addEventListener("click", fecharCaixa);
+
+  document.getElementById("btnReloadOps").addEventListener("click", loadOperators);
+  document.getElementById("btnAddOp").addEventListener("click", addOperator);
+  document.getElementById("btnDelOp").addEventListener("click", deleteOperator);
+
+  selLoja.addEventListener("change", async ()=>{
+    syncLabels();
+    await loadStatus();
+    await listSession();
+  });
+
+  dayEl.addEventListener("change", async ()=>{ syncLabels(); await listSession(); });
+  tipo.addEventListener("change", ()=>{ forma.disabled = (tipo.value !== "VENDA"); });
+
+  // Init
+  dayEl.value = todayISO();
+  syncLabels();
+  forma.disabled = (tipo.value !== "VENDA");
+
+  (async ()=>{
+    await loadOperators();
+    await loadStatus();
+    await listSession();
+    setInterval(async ()=>{ await loadStatus(); await listSession(); }, 10000);
+  })();
+</script>
+</body>
+</html>
