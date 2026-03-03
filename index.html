@@ -18,6 +18,7 @@
     .dot{ width:10px;height:10px;border-radius:50%; background:var(--bad); box-shadow:0 0 0 4px rgba(220,38,38,.15); }
     .dot.ok{ background:var(--ok); box-shadow:0 0 0 4px rgba(22,163,74,.15); }
     .small{ font-size:12px; opacity:.85; }
+    .mono{ font-family:ui-monospace,Consolas,monospace; }
 
     main{ max-width:1200px; margin:16px auto; padding:0 16px 24px; display:grid; grid-template-columns:420px 1fr; gap:16px; }
     @media(max-width:980px){ main{ grid-template-columns:1fr; } }
@@ -29,15 +30,14 @@
     input,select{ width:100%; padding:10px; border-radius:12px; border:1px solid var(--line); font-size:14px; outline:none; }
     .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:10px; }
     .grid3{ display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; }
-    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; }
+    .btnrow{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
     button{ border:none; cursor:pointer; padding:10px 12px; border-radius:12px; font-weight:900; font-size:13px; }
     .pri{ background:linear-gradient(90deg,var(--orange),#ff8a2a); color:#111; }
     .ghost{ background:#fff; border:1px solid var(--line); }
     .danger{ background:var(--bad); color:#fff; }
     .okbtn{ background:var(--ok); color:#fff; }
-
     .note{ margin-top:10px; padding:10px 12px; border-radius:14px; background:rgba(255,106,0,.08); border:1px solid rgba(255,106,0,.25); color:#5a2300; font-size:12px; line-height:1.35; }
-    .mono{ font-family:ui-monospace,Consolas,monospace; }
+    .disabled{ opacity:.55; pointer-events:none; }
 
     .tabs{ display:flex; gap:8px; flex-wrap:wrap; }
     .tab{ padding:8px 10px; border-radius:999px; border:1px solid var(--line); background:#fff; font-weight:900; font-size:12px; cursor:pointer; }
@@ -74,13 +74,32 @@
     }
     .kpiBox .t{ font-size:12px; font-weight:900; color:#475569; }
     .kpiBox .v{ font-size:18px; font-weight:950; font-family:ui-monospace,Consolas,monospace; }
-    .disabled{ opacity:.55; pointer-events:none; }
 
-    /* ✅ Impressão: imprime só o relatório */
+    /* ===== Modal discreto de relatório ===== */
+    .modalBack{
+      position:fixed; inset:0; background:rgba(0,0,0,.35);
+      display:none; align-items:center; justify-content:center; padding:16px;
+      z-index:9999;
+    }
+    .modal{
+      width:min(720px, 100%);
+      background:#fff; border:1px solid var(--line); border-radius:18px; box-shadow:var(--sh);
+      overflow:hidden;
+    }
+    .modal .hd{ border-bottom:1px solid var(--line); }
+    .modal .bd{ padding:14px; }
+    .closeX{
+      width:40px; height:40px; border-radius:14px; border:1px solid var(--line);
+      background:#fff; font-weight:900; cursor:pointer;
+    }
+
+    /* Impressão: imprime só o conteúdo do modal (relatório) */
     @media print{
       body *{ visibility:hidden; }
-      #printBlock, #printBlock *{ visibility:visible; }
-      #printBlock{ position:fixed; left:0; top:0; width:100%; padding:12px; }
+      #relModal, #relModal *{ visibility:visible; }
+      #relModal{ position:fixed; left:0; top:0; width:100%; border:none; box-shadow:none; }
+      .modalBack{ display:flex !important; background:#fff !important; }
+      .closeX, .noPrint{ display:none !important; }
     }
   </style>
 </head>
@@ -92,7 +111,7 @@
       <div class="logo">DR</div>
       <div>
         <div style="font-weight:900">Caixa em Rede — <span style="color:var(--orange)">Drogaria Rocha</span></div>
-        <div class="small">2 lojas • Abrir/Fechar por loja • Relatórios • Zera tela ao fechar</div>
+        <div class="small">2 lojas • Abrir/Fechar por loja • Relatórios discretos • Zera tela ao fechar</div>
       </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -130,8 +149,20 @@
 
       <div style="height:10px"></div>
 
-      <label>Operador</label>
-      <select id="selOperador"></select>
+      <div class="grid2">
+        <div>
+          <label>Operador</label>
+          <select id="selOperador"></select>
+        </div>
+        <div>
+          <label>&nbsp;</label>
+          <button class="ghost" id="btnReloadOps" style="width:100%;">Recarregar operadores</button>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:10px;">
+        Cadastro de operadores é feito direto na planilha (aba <b>operadores</b>).
+      </div>
 
       <div style="height:10px"></div>
 
@@ -190,107 +221,26 @@
 
       <div class="note" id="msg">Conectando…</div>
     </div>
-
-    <!-- Operadores -->
-    <div class="hd" style="border-top:1px solid var(--line);">
-      <b>👤 Operadores</b>
-      <button class="ghost" id="btnReloadOps">Recarregar</button>
-    </div>
-    <div class="bd">
-      <div class="grid2">
-        <div>
-          <label>Novo operador</label>
-          <input id="inpNovoOperador" placeholder="Ex.: Caixa 1" />
-        </div>
-        <div>
-          <label>Ações</label>
-          <div class="btnrow">
-            <button class="pri" id="btnAddOp">Cadastrar</button>
-            <button class="danger" id="btnDelOp">Excluir</button>
-          </div>
-        </div>
-      </div>
-      <div class="note" id="msgOps">—</div>
-    </div>
   </section>
 
   <!-- Painel direito -->
   <section class="card">
     <div class="hd">
-      <b>📋 Movimentos e Relatórios</b>
+      <b>📋 Movimentos</b>
       <span class="mono" id="kpiSaldo">—</span>
     </div>
 
     <div class="bd">
-      <!-- RELATÓRIOS (imprime só isso) -->
-      <div id="printBlock" class="card" style="border:1px solid var(--line);border-radius:14px;box-shadow:none;margin-bottom:12px;">
-        <div class="hd" style="border-bottom:1px solid var(--line);">
-          <b>🖨️ Relatórios (Diário / Semanal / Mensal)</b>
-          <div class="btnrow">
-            <button class="ghost" id="btnRelDia">Diário</button>
-            <button class="ghost" id="btnRelSemana">Semanal</button>
-            <button class="ghost" id="btnRelMes">Mensal</button>
-            <button class="pri" id="btnPrintRel">Imprimir</button>
-          </div>
+      <!-- Barra discreta de relatórios -->
+      <div class="kpiBox">
+        <div>
+          <div class="t">RELATÓRIOS</div>
+          <div class="small">Abre em janela discreta para imprimir</div>
         </div>
-        <div class="bd">
-          <div class="small" id="relTitle">Selecione um tipo de relatório.</div>
-          <div style="height:8px"></div>
-
-          <div class="kpiBox">
-            <div>
-              <div class="t">VENDAS (TOTAL)</div>
-              <div class="small">Somente VENDA (DINHEIRO/PIX/CARTÃO/FIADO)</div>
-            </div>
-            <div class="v" id="relVendas">R$ 0,00</div>
-          </div>
-
-          <div class="grid2" style="margin-bottom:10px;">
-            <div class="kpiBox" style="margin:0;">
-              <div><div class="t">DINHEIRO</div></div>
-              <div class="v" id="relDinheiro">R$ 0,00</div>
-            </div>
-            <div class="kpiBox" style="margin:0;">
-              <div><div class="t">PIX</div></div>
-              <div class="v" id="relPix">R$ 0,00</div>
-            </div>
-          </div>
-
-          <div class="grid2" style="margin-bottom:10px;">
-            <div class="kpiBox" style="margin:0;">
-              <div><div class="t">CARTÃO</div></div>
-              <div class="v" id="relCartao">R$ 0,00</div>
-            </div>
-            <div class="kpiBox" style="margin:0;">
-              <div><div class="t">FIADO</div></div>
-              <div class="v" id="relFiado">R$ 0,00</div>
-            </div>
-          </div>
-
-          <div class="grid3" style="margin-bottom:10px;">
-            <div class="kpiBox" style="margin:0;">
-              <div><div class="t">SUPRIMENTO</div></div>
-              <div class="v" id="relSupr">R$ 0,00</div>
-            </div>
-            <div class="kpiBox" style="margin:0;">
-              <div><div class="t">SANGRIA</div></div>
-              <div class="v" id="relSang">R$ 0,00</div>
-            </div>
-            <div class="kpiBox" style="margin:0;">
-              <div><div class="t">DESPESA</div></div>
-              <div class="v" id="relDesp">R$ 0,00</div>
-            </div>
-          </div>
-
-          <div class="kpiBox">
-            <div>
-              <div class="t">SALDO (ENTRADAS - SAÍDAS)</div>
-              <div class="small">Entradas: vendas + suprimentos + abertura</div>
-            </div>
-            <div class="v" id="relSaldo">R$ 0,00</div>
-          </div>
-
-          <div class="note small" id="relInfo">—</div>
+        <div class="btnrow noPrint">
+          <button class="ghost" id="btnRelDia">Diário</button>
+          <button class="ghost" id="btnRelSemana">Semanal</button>
+          <button class="ghost" id="btnRelMes">Mensal</button>
         </div>
       </div>
 
@@ -334,15 +284,77 @@
           <tbody id="tb"></tbody>
         </table>
       </div>
-
     </div>
   </section>
 </main>
 
+<!-- Modal Relatório (discreto) -->
+<div class="modalBack" id="relBack" aria-hidden="true">
+  <div class="modal" id="relModal">
+    <div class="hd">
+      <b id="relTitle">Relatório</b>
+      <div class="btnrow">
+        <button class="ghost noPrint" id="btnPrintRel">Imprimir</button>
+        <button class="closeX noPrint" id="btnCloseRel">✕</button>
+      </div>
+    </div>
+    <div class="bd">
+      <div class="small" id="relInfo">—</div>
+      <div style="height:10px"></div>
+
+      <div class="kpiBox">
+        <div><div class="t">VENDAS (TOTAL)</div><div class="small">DINHEIRO + PIX + CARTÃO + FIADO</div></div>
+        <div class="v" id="relVendas">R$ 0,00</div>
+      </div>
+
+      <div class="grid2" style="margin-bottom:10px;">
+        <div class="kpiBox" style="margin:0;">
+          <div><div class="t">DINHEIRO</div></div>
+          <div class="v" id="relDinheiro">R$ 0,00</div>
+        </div>
+        <div class="kpiBox" style="margin:0;">
+          <div><div class="t">PIX</div></div>
+          <div class="v" id="relPix">R$ 0,00</div>
+        </div>
+      </div>
+
+      <div class="grid2" style="margin-bottom:10px;">
+        <div class="kpiBox" style="margin:0;">
+          <div><div class="t">CARTÃO</div></div>
+          <div class="v" id="relCartao">R$ 0,00</div>
+        </div>
+        <div class="kpiBox" style="margin:0;">
+          <div><div class="t">FIADO</div></div>
+          <div class="v" id="relFiado">R$ 0,00</div>
+        </div>
+      </div>
+
+      <div class="grid3" style="margin-bottom:10px;">
+        <div class="kpiBox" style="margin:0;">
+          <div><div class="t">SUPRIMENTO</div></div>
+          <div class="v" id="relSupr">R$ 0,00</div>
+        </div>
+        <div class="kpiBox" style="margin:0;">
+          <div><div class="t">SANGRIA</div></div>
+          <div class="v" id="relSang">R$ 0,00</div>
+        </div>
+        <div class="kpiBox" style="margin:0;">
+          <div><div class="t">DESPESA</div></div>
+          <div class="v" id="relDesp">R$ 0,00</div>
+        </div>
+      </div>
+
+      <div class="kpiBox">
+        <div><div class="t">SALDO</div><div class="small">Entradas (vendas+supr+abertura) - saídas (sang+desp)</div></div>
+        <div class="v" id="relSaldo">R$ 0,00</div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
 
-  // Header
   const dot = document.getElementById("dot");
   const statusEl = document.getElementById("status");
   const lblLoja = document.getElementById("lblLoja");
@@ -350,10 +362,11 @@
   const lblDay = document.getElementById("lblDay");
   const lblFilter = document.getElementById("lblFilter");
 
-  // Left
   const selLoja = document.getElementById("selLoja");
   const dayEl = document.getElementById("day");
   const selOperador = document.getElementById("selOperador");
+  const btnReloadOps = document.getElementById("btnReloadOps");
+
   const fundo = document.getElementById("fundo");
   const btnAbrir = document.getElementById("btnAbrir");
   const btnFechar = document.getElementById("btnFechar");
@@ -363,20 +376,19 @@
   const forma = document.getElementById("forma");
   const valor = document.getElementById("valor");
   const tagTime = document.getElementById("tagTime");
-
   const msg = document.getElementById("msg");
-  const msgOps = document.getElementById("msgOps");
 
-  const inpNovoOperador = document.getElementById("inpNovoOperador");
-
-  // Right
   const kpiSaldo = document.getElementById("kpiSaldo");
   const kpiFilterName = document.getElementById("kpiFilterName");
   const kpiFilterTotal = document.getElementById("kpiFilterTotal");
   const tabs = document.getElementById("tabs");
   const tb = document.getElementById("tb");
 
-  // Report
+  // Modal rel
+  const relBack = document.getElementById("relBack");
+  const btnCloseRel = document.getElementById("btnCloseRel");
+  const btnPrintRel = document.getElementById("btnPrintRel");
+
   const relTitle = document.getElementById("relTitle");
   const relInfo = document.getElementById("relInfo");
   const relVendas = document.getElementById("relVendas");
@@ -491,7 +503,7 @@
       const t = String(r.tipo||"").toUpperCase();
       const v = Number(r.valor||0);
       const isSaida = (t==="SANGRIA" || t==="DESPESA");
-      if(isSaida) saidas += v; else entradas += v; // inclui ABERTURA e SUPRIMENTO
+      if(isSaida) saidas += v; else entradas += v;
     }
     kpiSaldo.textContent = `Saldo da sessão: ${brl(entradas - saidas)}`;
   }
@@ -551,7 +563,7 @@
       if(ops.length === 0){
         const opt = document.createElement("option");
         opt.value = "";
-        opt.textContent = "— cadastre um operador —";
+        opt.textContent = "— cadastre na planilha —";
         selOperador.appendChild(opt);
       }else{
         for(const o of ops){
@@ -561,52 +573,8 @@
           selOperador.appendChild(opt);
         }
       }
-      msgOps.textContent = `Operadores cadastrados: ${ops.length}`;
     }catch(e){
       setOnline(false);
-      msgOps.textContent = "Falha ao carregar operadores.";
-    }
-  }
-
-  async function addOperator(){
-    const name = (inpNovoOperador.value || "").trim();
-    if(!name) return alert("Digite o nome do operador.");
-
-    try{
-      const body = new URLSearchParams();
-      body.set("action","op_add");
-      body.set("operador", name);
-
-      const r = await fetch(API_URL, { method:"POST", body });
-      const data = await r.json();
-      if(!data.ok) return alert(data.error || "Erro ao cadastrar.");
-
-      inpNovoOperador.value = "";
-      await loadOperators();
-    }catch(e){
-      setOnline(false);
-      alert("Falha ao cadastrar operador.");
-    }
-  }
-
-  async function deleteOperator(){
-    const op = selOperador.value;
-    if(!op) return alert("Selecione um operador para excluir.");
-    if(!confirm(`Excluir o operador "${op}"?`)) return;
-
-    try{
-      const body = new URLSearchParams();
-      body.set("action","op_del");
-      body.set("operador", op);
-
-      const r = await fetch(API_URL, { method:"POST", body });
-      const data = await r.json();
-      if(!data.ok) return alert(data.error || "Erro ao excluir.");
-
-      await loadOperators();
-    }catch(e){
-      setOnline(false);
-      alert("Falha ao excluir operador.");
     }
   }
 
@@ -634,7 +602,6 @@
       computeSaldoSessao(cacheRows);
       renderTable();
 
-      // Se retornar vazio, é porque está fechado (ou não abriu)
       if(cacheRows.length === 0 && !caixaAberto){
         kpiSaldo.textContent = "Saldo da sessão: R$ 0,00";
       }
@@ -671,7 +638,7 @@
   async function fecharCaixa(){
     const op = selOperador.value;
     if(!op) return alert("Selecione o operador.");
-    if(!confirm(`Fechar ${currentLoja()}? (A tela vai zerar e travar lançamentos)`)) return;
+    if(!confirm(`Fechar ${currentLoja()}? (A sessão vai zerar na tela)`)) return;
 
     const body = new URLSearchParams();
     body.set("action","close");
@@ -685,7 +652,7 @@
     if(!data.ok) return alert(data.error || "Erro ao fechar.");
 
     await loadStatus();
-    await listSession(); // ✅ como FECHOU, o list volta vazio -> some tudo
+    await listSession(); // FECHOU -> list retorna vazio -> some
   }
 
   async function addMovement(){
@@ -715,7 +682,7 @@
 
   async function deleteMovement(row){
     const op = selOperador.value;
-    if(!op) return alert("Selecione o operador (quem está usando).");
+    if(!op) return alert("Selecione o operador.");
 
     const pin = prompt("Digite o PIN para apagar:");
     if(pin === null) return;
@@ -735,15 +702,20 @@
     await listSession();
   }
 
-  // ---------- RELATÓRIOS ----------
+  // ===== Relatórios (modal discreto) =====
+  function openRel(){ relBack.style.display = "flex"; relBack.setAttribute("aria-hidden","false"); }
+  function closeRel(){ relBack.style.display = "none"; relBack.setAttribute("aria-hidden","true"); }
+
+  btnCloseRel.addEventListener("click", closeRel);
+  relBack.addEventListener("click", (e)=>{ if(e.target === relBack) closeRel(); });
+  btnPrintRel.addEventListener("click", ()=> window.print());
+
   function getWeekRange(isoDay){
     const d = new Date(isoDay + "T00:00:00");
-    const day = d.getDay(); // 0 dom .. 6 sab
+    const day = d.getDay();
     const diffToMon = (day === 0 ? -6 : 1 - day);
-    const mon = new Date(d);
-    mon.setDate(d.getDate() + diffToMon);
-    const sun = new Date(mon);
-    sun.setDate(mon.getDate() + 6);
+    const mon = new Date(d); mon.setDate(d.getDate() + diffToMon);
+    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
 
     const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
     return { from: toISO(mon), to: toISO(sun) };
@@ -804,19 +776,19 @@
     relPix.textContent = brl(r.pix);
     relCartao.textContent = brl(r.cartao);
     relFiado.textContent = brl(r.fiado);
-
     relSupr.textContent = brl(r.supr);
     relSang.textContent = brl(r.sang);
     relDesp.textContent = brl(r.desp);
-
     relSaldo.textContent = brl(r.saldo);
+
+    openRel();
   }
 
   document.getElementById("btnRelDia").addEventListener("click", async ()=>{
     try{
       const d = currentDay();
       const rows = await fetchRange(d, d);
-      paintReport(`Relatório DIÁRIO (${d})`, d, d, rows);
+      paintReport(`Relatório Diário (${d})`, d, d, rows);
     }catch(e){ alert(String(e.message || e)); }
   });
   document.getElementById("btnRelSemana").addEventListener("click", async ()=>{
@@ -824,7 +796,7 @@
       const d = currentDay();
       const {from, to} = getWeekRange(d);
       const rows = await fetchRange(from, to);
-      paintReport(`Relatório SEMANAL`, from, to, rows);
+      paintReport(`Relatório Semanal`, from, to, rows);
     }catch(e){ alert(String(e.message || e)); }
   });
   document.getElementById("btnRelMes").addEventListener("click", async ()=>{
@@ -832,12 +804,11 @@
       const d = currentDay();
       const {from, to} = getMonthRange(d);
       const rows = await fetchRange(from, to);
-      paintReport(`Relatório MENSAL`, from, to, rows);
+      paintReport(`Relatório Mensal`, from, to, rows);
     }catch(e){ alert(String(e.message || e)); }
   });
-  document.getElementById("btnPrintRel").addEventListener("click", ()=> window.print());
 
-  // ---------- Eventos UI ----------
+  // Tabs
   tabs.addEventListener("click", (e)=>{
     const btn = e.target.closest("button[data-filter]");
     if(!btn) return;
@@ -860,9 +831,7 @@
   btnAbrir.addEventListener("click", abrirCaixa);
   btnFechar.addEventListener("click", fecharCaixa);
 
-  document.getElementById("btnReloadOps").addEventListener("click", loadOperators);
-  document.getElementById("btnAddOp").addEventListener("click", addOperator);
-  document.getElementById("btnDelOp").addEventListener("click", deleteOperator);
+  btnReloadOps.addEventListener("click", loadOperators);
 
   selLoja.addEventListener("change", async ()=>{
     syncLabels();
