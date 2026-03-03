@@ -507,7 +507,6 @@
   const lblFilter = document.getElementById("lblFilter");
   const tagTime = document.getElementById("tagTime");
   const menuHint = document.getElementById("menuHint");
-
   const msgGlobal = document.getElementById("msgGlobal");
 
   // Menu & screens
@@ -539,7 +538,6 @@
   const btnAbrir = document.getElementById("btnAbrir");
   const btnFechar = document.getElementById("btnFechar");
   const msgAbertura = document.getElementById("msgAbertura");
-  const msgConfig = document.getElementById("msgConfig");
 
   // Venda
   const boxVenda = document.getElementById("boxVenda");
@@ -631,7 +629,7 @@
     menuHint.textContent = caixaAberto ? "ABERTO" : "FECHADO";
   }
 
-  // ===== Screens =====
+  // Screens
   function showScreen(id){
     activeScreenId = id;
 
@@ -644,19 +642,11 @@
       b.classList.toggle("active", b.getAttribute("data-screen") === id);
     });
 
-    // foco automático na venda
     if(id === "sVenda"){
-      setTimeout(()=> {
-        valorVenda.focus();
-        if(typeof valorVenda.select === "function") valorVenda.select();
-      }, 60);
+      setTimeout(()=>{ valorVenda.focus(); valorVenda.select?.(); }, 60);
     }
-    // foco automático em outros
     if(id === "sOutros"){
-      setTimeout(()=> {
-        valorOutros.focus();
-        if(typeof valorOutros.select === "function") valorOutros.select();
-      }, 60);
+      setTimeout(()=>{ valorOutros.focus(); valorOutros.select?.(); }, 60);
     }
   }
 
@@ -666,7 +656,7 @@
     showScreen(btn.getAttribute("data-screen"));
   });
 
-  // ===== Load status =====
+  // Status
   async function loadStatus(){
     try{
       const url = `${API_URL}?action=status&loja=${encodeURIComponent(currentLoja())}`;
@@ -682,7 +672,7 @@
     }
   }
 
-  // ===== Operators / Sellers =====
+  // Operators
   async function loadOperators(){
     try{
       const r = await fetch(`${API_URL}?action=ops`);
@@ -714,9 +704,7 @@
         }
       }
 
-      // padrão: vendedor igual operador
       if(selOperador.value) selVendedor.value = selOperador.value;
-
     }catch(e){
       setOnline(false);
     }
@@ -726,7 +714,7 @@
     if(selOperador.value) selVendedor.value = selOperador.value;
   });
 
-  // ===== Movimentos list =====
+  // Movimentos helpers
   function badgeTipo(t){
     const type = norm(t);
     if(type==="VENDA") return `<span class="badge b-venda">VENDA</span>`;
@@ -772,10 +760,8 @@
   function computeTotalDoFiltro(filteredRows){
     let total = 0;
     for(const r of filteredRows) total += Number(r.valor||0);
-
     const f = norm(activeFilter);
     const label = (f==="CARTAO") ? "CARTÃO" : f;
-
     kpiFilterName.textContent = `${label} — ${currentLoja()}`;
     kpiFilterTotal.textContent = brl(total);
     lblFilter.textContent = label;
@@ -812,39 +798,51 @@
     }
   }
 
+  // ✅ LISTA (CORRIGIDO: manda data e day)
   async function listSession(){
     syncHeader();
     try{
-      const url = `${API_URL}?action=list&day=${encodeURIComponent(currentDay())}&loja=${encodeURIComponent(currentLoja())}`;
+      const d = currentDay();
+      const loja = currentLoja();
+
+      const url =
+        `${API_URL}?action=list` +
+        `&data=${encodeURIComponent(d)}` +
+        `&day=${encodeURIComponent(d)}` +
+        `&loja=${encodeURIComponent(loja)}`;
+
       const r = await fetch(url);
       const data = await r.json();
       if(!data.ok) throw new Error(data.error || "list error");
 
       setOnline(true);
 
-      cacheRows = (data.rows || []).map(x => ({
-        row: Number(x.row || 0),
-        hora: String(x.hora || ""),
-        operador: String(x.operador || ""),
-        tipo: norm(x.tipo),
-        forma: norm(x.forma),
-        valor: Number(x.valor || 0)
+      const rowsRaw = Array.isArray(data.rows) ? data.rows : [];
+
+      // ✅ map compatível com vários scripts (chaves diferentes)
+      cacheRows = rowsRaw.map(x => ({
+        row: Number(x.row ?? x.Row ?? x.linha ?? x.id ?? 0),
+        hora: String(x.hora ?? x.Hora ?? x.time ?? x.timestamp ?? ""),
+        operador: String(x.operador ?? x.Operador ?? x.op ?? x.vendedor ?? ""),
+        tipo: norm(x.tipo ?? x.Tipo ?? x.movimento ?? x.categoria ?? ""),
+        forma: norm(x.forma ?? x.Forma ?? x.pagamento ?? x.meio ?? ""),
+        valor: Number(x.valor ?? x.Valor ?? x.amount ?? 0)
       }));
 
       computeSaldoSessao(cacheRows);
       renderTable();
     }catch(e){
       setOnline(false);
+      // mantém a tela, mas não quebra
     }
   }
 
-  // ===== Ações caixa =====
+  // Caixa (abrir/fechar)
   async function abrirCaixa(){
     const op = selOperador.value;
     if(!op) return alert("Selecione o operador do caixa.");
     const f = parseMoney(fundo.value);
     if(f < 0) return alert("Fundo inválido.");
-
     if(!confirm(`Abrir ${currentLoja()} com fundo ${brl(f)}?`)) return;
 
     const body = new URLSearchParams();
@@ -861,8 +859,6 @@
 
     await loadStatus();
     await listSession();
-
-    // ✅ opcional: após abrir, já vai pra venda
     showScreen("sVenda");
   }
 
@@ -884,12 +880,10 @@
 
     await loadStatus();
     await listSession();
-
-    // volta para abertura
     showScreen("sAbertura");
   }
 
-  // ===== Add / Delete =====
+  // Add / Delete
   async function addMovement({tipo, forma, valor, operador}){
     const op = operador || selOperador.value;
     if(!op) return alert("Selecione o operador/vendedor.");
@@ -928,17 +922,13 @@
 
     if(ok){
       msgVenda.textContent = "Venda salva ✅";
-
-      // flash verde discreto
       boxVenda.classList.remove("flashOk");
       void boxVenda.offsetWidth;
       boxVenda.classList.add("flashOk");
-
-      // prepara próxima
       valorVenda.value = "";
       setTimeout(()=> {
         valorVenda.focus();
-        if(typeof valorVenda.select === "function") valorVenda.select();
+        valorVenda.select?.();
         msgVenda.textContent = "Pronto para lançar venda.";
       }, 450);
     }
@@ -956,7 +946,7 @@
       valorOutros.value = "";
       setTimeout(()=> {
         valorOutros.focus();
-        if(typeof valorOutros.select === "function") valorOutros.select();
+        valorOutros.select?.();
         msgOutros.textContent = "Pronto para lançar outros.";
       }, 350);
     }
@@ -990,7 +980,6 @@
     deleteMovement(Number(b.getAttribute("data-row")));
   });
 
-  // Tabs filtro
   tabs.addEventListener("click", (e)=>{
     const btn = e.target.closest("button[data-filter]");
     if(!btn) return;
@@ -1000,7 +989,7 @@
     renderTable();
   });
 
-  // ===== Relatórios =====
+  // Relatórios
   function openRel(){ relBack.style.display = "flex"; relBack.setAttribute("aria-hidden","false"); }
   function closeRel(){ relBack.style.display = "none"; relBack.setAttribute("aria-hidden","true"); }
   btnCloseRel.addEventListener("click", closeRel);
@@ -1025,12 +1014,20 @@
     return { from: toISO(first), to: toISO(last) };
   }
 
+  // ✅ RANGE (compatível com vários nomes)
   async function fetchRange(from, to){
-    const url = `${API_URL}?action=range&loja=${encodeURIComponent(currentLoja())}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
+    const loja = currentLoja();
+    const url =
+      `${API_URL}?action=range` +
+      `&loja=${encodeURIComponent(loja)}` +
+      `&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}` +
+      `&inicio=${encodeURIComponent(from)}&fim=${encodeURIComponent(to)}` +
+      `&start=${encodeURIComponent(from)}&end=${encodeURIComponent(to)}`;
+
     const r = await fetch(url);
     const data = await r.json();
     if(!data.ok) throw new Error(data.error || "Erro no relatório");
-    return data.rows || [];
+    return Array.isArray(data.rows) ? data.rows : [];
   }
 
   function calcReport(rows){
@@ -1038,9 +1035,9 @@
     let supr=0, sang=0, desp=0, abertura=0;
 
     for(const r of rows){
-      const tipo = norm(r.tipo);
-      const forma = norm(r.forma);
-      const v = Number(r.valor||0);
+      const tipo = norm(r.tipo ?? r.Tipo ?? r.movimento ?? r.categoria ?? "");
+      const forma = norm(r.forma ?? r.Forma ?? r.pagamento ?? r.meio ?? "");
+      const v = Number(r.valor ?? r.Valor ?? r.amount ?? 0);
 
       if(tipo === "VENDA"){
         if(forma === "DINHEIRO") dinheiro += v;
@@ -1104,7 +1101,7 @@
     }catch(e){ alert(String(e.message || e)); }
   });
 
-  // ===== Wire =====
+  // Wire
   btnAbrir.addEventListener("click", abrirCaixa);
   btnFechar.addEventListener("click", fecharCaixa);
   btnReloadOps.addEventListener("click", loadOperators);
@@ -1138,9 +1135,8 @@
     await listSession();
   });
 
-  // ===== Keyboard shortcuts =====
+  // Keyboard shortcuts
   document.addEventListener("keydown", (e)=>{
-    // não atrapalhar digitação (exceto F-keys e ESC)
     const allow = (e.key.startsWith("F") || e.key === "Escape");
     if(!allow && isTypingField(document.activeElement)) return;
 
@@ -1152,14 +1148,13 @@
     else if(e.key === "F7"){ e.preventDefault(); showScreen("sConfig"); }
     else if(e.key === "Escape"){ if(relBack.style.display === "flex") closeRel(); }
     else if(e.key === "Enter"){
-      // Enter salva na tela ativa (se não estiver no modal)
       if(relBack.style.display === "flex") return;
       if(activeScreenId === "sVenda") { e.preventDefault(); addVenda(); }
       if(activeScreenId === "sOutros") { e.preventDefault(); addOutros(); }
     }
   });
 
-  // ===== Init =====
+  // Init
   dayEl.value = todayISO();
   relWeekDay.value = dayEl.value;
   relMonthPick.value = dayEl.value.slice(0,7);
@@ -1172,10 +1167,8 @@
     showScreen("sAbertura");
   })();
 
-  // relógio
   setInterval(()=>{ tagTime.textContent = nowTime(); }, 1000);
 
-  // atualização
   setInterval(async ()=>{
     await loadStatus();
     await listSession();
