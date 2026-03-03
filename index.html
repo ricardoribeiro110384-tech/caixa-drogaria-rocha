@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Caixa em Rede — Drogaria Rocha (2 Lojas)</title>
+  <title>Caixa — Drogaria Rocha (2 Lojas)</title>
   <style>
     :root{
       --orange:#ff6a00; --black:#111; --line:#e5e7eb; --bg:#f3f4f6;
@@ -178,10 +178,14 @@
 
     <div class="bd">
 
-      <!-- VENDA -->
+      <!-- VENDA (agora com VENDEDOR) -->
       <div class="sec active" id="secVenda">
         <div id="boxVenda" class="saleBox">
           <div class="grid2">
+            <div>
+              <label>Vendedor</label>
+              <select id="selVendedor"></select>
+            </div>
             <div>
               <label>Forma</label>
               <select id="formaVenda">
@@ -191,11 +195,17 @@
                 <option>FIADO</option>
               </select>
             </div>
-            <div>
+          </div>
+
+          <div style="height:10px"></div>
+
+          <div class="grid2">
+            <div style="grid-column:1 / -1">
               <label>Valor</label>
               <input id="valorVenda" inputmode="decimal" placeholder="Ex.: 35,90" />
             </div>
           </div>
+
           <div style="height:10px"></div>
           <button class="bigBtn" id="btnAddVenda">Salvar Venda</button>
           <div class="note" id="msgVenda" style="margin-top:10px;">—</div>
@@ -268,7 +278,7 @@
 
         <div class="grid2">
           <div>
-            <label>Operador</label>
+            <label>Operador (caixa)</label>
             <select id="selOperador"></select>
           </div>
           <div>
@@ -283,7 +293,7 @@
         </div>
 
         <div class="note" id="msgConfig">
-          Operadores são cadastrados direto na planilha (aba <b>operadores</b>).
+          Operadores/vendedores são cadastrados direto na planilha (aba <b>operadores</b>).
         </div>
       </div>
 
@@ -345,7 +355,7 @@
           <thead>
             <tr>
               <th>Hora</th>
-              <th>Operador</th>
+              <th>Operador/Vendedor</th>
               <th>Tipo</th>
               <th>Forma</th>
               <th class="mono">Valor</th>
@@ -389,586 +399,4 @@
       </div>
 
       <div class="grid2" style="margin-bottom:10px;">
-        <div class="kpiBox" style="margin:0;"><div><div class="t">SUPRIMENTO</div></div><div class="v" id="relSupr">R$ 0,00</div></div>
-        <div class="kpiBox" style="margin:0;"><div><div class="t">SANGRIA</div></div><div class="v" id="relSang">R$ 0,00</div></div>
-      </div>
-
-      <div class="kpiBox">
-        <div><div class="t">DESPESA</div></div>
-        <div class="v" id="relDesp">R$ 0,00</div>
-      </div>
-
-      <div class="kpiBox">
-        <div><div class="t">SALDO</div><div class="small">Entradas - Saídas</div></div>
-        <div class="v" id="relSaldo">R$ 0,00</div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script>
-  const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
-  const norm = (s)=> String(s||"").trim().toUpperCase();
-
-  // Header
-  const dot = document.getElementById("dot");
-  const statusEl = document.getElementById("status");
-  const lblLoja = document.getElementById("lblLoja");
-  const lblStatusCaixa = document.getElementById("lblStatusCaixa");
-  const lblDay = document.getElementById("lblDay");
-  const lblFilter = document.getElementById("lblFilter");
-  const tagTime = document.getElementById("tagTime");
-
-  // Menu
-  const leftMenu = document.getElementById("leftMenu");
-
-  // Seções
-  const secVenda = document.getElementById("secVenda");
-  const secOutros = document.getElementById("secOutros");
-  const secCaixa = document.getElementById("secCaixa");
-  const secConfig = document.getElementById("secConfig");
-
-  // Venda
-  const boxVenda = document.getElementById("boxVenda");
-  const formaVenda = document.getElementById("formaVenda");
-  const valorVenda = document.getElementById("valorVenda");
-  const btnAddVenda = document.getElementById("btnAddVenda");
-  const msgVenda = document.getElementById("msgVenda");
-
-  // Outros
-  const boxOutros = document.getElementById("boxOutros");
-  const tipoOutros = document.getElementById("tipoOutros");
-  const valorOutros = document.getElementById("valorOutros");
-  const btnAddOutros = document.getElementById("btnAddOutros");
-  const msgOutros = document.getElementById("msgOutros");
-
-  // Caixa
-  const fundo = document.getElementById("fundo");
-  const btnAbrir = document.getElementById("btnAbrir");
-  const btnFechar = document.getElementById("btnFechar");
-  const msgCaixa = document.getElementById("msgCaixa");
-
-  // Config
-  const selLoja = document.getElementById("selLoja");
-  const dayEl = document.getElementById("day");
-  const selOperador = document.getElementById("selOperador");
-  const btnReloadOps = document.getElementById("btnReloadOps");
-  const btnRefresh = document.getElementById("btnRefresh");
-  const msgConfig = document.getElementById("msgConfig");
-
-  // Direita
-  const kpiSaldo = document.getElementById("kpiSaldo");
-  const kpiFilterName = document.getElementById("kpiFilterName");
-  const kpiFilterTotal = document.getElementById("kpiFilterTotal");
-  const tabs = document.getElementById("tabs");
-  const tb = document.getElementById("tb");
-
-  // Relatórios
-  const relWeekDay = document.getElementById("relWeekDay");
-  const relMonthPick = document.getElementById("relMonthPick");
-
-  // Modal
-  const relBack = document.getElementById("relBack");
-  const btnCloseRel = document.getElementById("btnCloseRel");
-  const btnPrintRel = document.getElementById("btnPrintRel");
-  const relTitle = document.getElementById("relTitle");
-  const relInfo = document.getElementById("relInfo");
-  const relVendas = document.getElementById("relVendas");
-  const relDinheiro = document.getElementById("relDinheiro");
-  const relPix = document.getElementById("relPix");
-  const relCartao = document.getElementById("relCartao");
-  const relFiado = document.getElementById("relFiado");
-  const relSupr = document.getElementById("relSupr");
-  const relSang = document.getElementById("relSang");
-  const relDesp = document.getElementById("relDesp");
-  const relSaldo = document.getElementById("relSaldo");
-
-  let cacheRows = [];
-  let activeFilter = "TODOS";
-  let caixaAberto = false;
-
-  const pad2 = n => String(n).padStart(2,"0");
-  const todayISO = () => {
-    const d = new Date();
-    return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
-  };
-  const nowTime = () => {
-    const d = new Date();
-    return `${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
-  };
-  const brl = n => (n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-  const parseMoney = s => {
-    if(typeof s !== "string") return 0;
-    const cleaned = s.trim().replace(/\s/g,"").replace(/\./g,"").replace(",",".");
-    const v = Number(cleaned);
-    return Number.isFinite(v) ? v : 0;
-  };
-  const setOnline = ok => {
-    if(ok){ dot.classList.add("ok"); statusEl.textContent="Online"; }
-    else { dot.classList.remove("ok"); statusEl.textContent="Offline"; }
-  };
-
-  const currentDay = () => dayEl.value || todayISO();
-  const currentLoja = () => selLoja.value || "LOJA 1";
-
-  function syncLabels(){
-    lblLoja.textContent = currentLoja();
-    const d = currentDay();
-    lblDay.textContent = d.split("-").reverse().join("/");
-  }
-
-  function setCaixaUI(open){
-    caixaAberto = !!open;
-    lblStatusCaixa.textContent = caixaAberto ? "ABERTO" : "FECHADO";
-
-    if(caixaAberto){
-      boxVenda.classList.remove("disabled");
-      boxOutros.classList.remove("disabled");
-      msgVenda.textContent = "Pronto para lançar venda.";
-      msgOutros.textContent = "Pronto para lançar outros.";
-      msgCaixa.textContent = `${currentLoja()} ABERTA.`;
-    }else{
-      boxVenda.classList.add("disabled");
-      boxOutros.classList.add("disabled");
-      msgVenda.textContent = "Caixa fechado. Abra em CAIXA.";
-      msgOutros.textContent = "Caixa fechado. Abra em CAIXA.";
-      msgCaixa.textContent = `${currentLoja()} FECHADA.`;
-    }
-  }
-
-  async function loadStatus(){
-    try{
-      const url = `${API_URL}?action=status&loja=${encodeURIComponent(currentLoja())}`;
-      const r = await fetch(url);
-      const data = await r.json();
-      if(!data.ok) throw new Error(data.error || "status error");
-      setOnline(true);
-      setCaixaUI(norm(data.status)==="ABERTO");
-    }catch(e){
-      setOnline(false);
-      lblStatusCaixa.textContent = "—";
-    }
-  }
-
-  function badgeTipo(t){
-    const type = norm(t);
-    if(type==="VENDA") return `<span class="badge b-venda">VENDA</span>`;
-    if(type==="SUPRIMENTO") return `<span class="badge b-supr">SUPRIMENTO</span>`;
-    if(type==="SANGRIA") return `<span class="badge b-sang">SANGRIA</span>`;
-    if(type==="DESPESA") return `<span class="badge b-desp">DESPESA</span>`;
-    if(type==="ABERTURA") return `<span class="badge b-supr">ABERTURA</span>`;
-    if(type==="FECHAMENTO") return `<span class="badge b-desp">FECHAMENTO</span>`;
-    return `<span class="badge">${type}</span>`;
-  }
-  function chipForma(type, form){
-    const t = norm(type);
-    const f = norm(form);
-    if(t !== "VENDA") return `<span class="chip">—</span>`;
-    if(!f) return `<span class="chip">—</span>`;
-    const label = (f==="CARTAO") ? "CARTÃO" : f;
-    return `<span class="chip">${label}</span>`;
-  }
-
-  function applyFilter(rows){
-    const f = norm(activeFilter);
-    if (f === "TODOS") return rows;
-    if (["SUPRIMENTO","SANGRIA","DESPESA","VENDA","ABERTURA","FECHAMENTO"].includes(f)){
-      return rows.filter(r => norm(r.tipo) === f);
-    }
-    if (["DINHEIRO","PIX","CARTAO","FIADO"].includes(f)){
-      return rows.filter(r => norm(r.tipo) === "VENDA" && norm(r.forma) === f);
-    }
-    return rows;
-  }
-
-  function computeSaldoSessao(rows){
-    let entradas=0, saidas=0;
-    for(const r of rows){
-      const t = norm(r.tipo);
-      const v = Number(r.valor||0);
-      const isSaida = (t==="SANGRIA" || t==="DESPESA");
-      if(isSaida) saidas += v; else entradas += v;
-    }
-    kpiSaldo.textContent = `Saldo da sessão: ${brl(entradas - saidas)}`;
-  }
-
-  function computeTotalDoFiltro(filteredRows){
-    let total = 0;
-    for(const r of filteredRows) total += Number(r.valor||0);
-
-    const f = norm(activeFilter);
-    const label = (f==="CARTAO") ? "CARTÃO" : f;
-
-    kpiFilterName.textContent = `${label} — ${currentLoja()}`;
-    kpiFilterTotal.textContent = brl(total);
-    lblFilter.textContent = label;
-  }
-
-  function renderTable(){
-    const filtered = applyFilter([...cacheRows]);
-    computeTotalDoFiltro(filtered);
-
-    tb.innerHTML = "";
-    if(filtered.length === 0){
-      const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="6" style="color:#64748b">Sem lançamentos (sessão atual).</td>`;
-      tb.appendChild(tr);
-      return;
-    }
-
-    filtered.sort((a,b)=> String(a.hora||"").localeCompare(String(b.hora||"")));
-    for(const r of filtered){
-      const t = norm(r.tipo);
-      const v = Number(r.valor||0);
-      const isSaida = (t==="SANGRIA" || t==="DESPESA");
-
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td class="mono">${r.hora || ""}</td>
-        <td>${r.operador || ""}</td>
-        <td>${badgeTipo(t)}</td>
-        <td>${chipForma(t, r.forma)}</td>
-        <td class="mono ${isSaida ? "neg" : "pos"}">${brl(v)}</td>
-        <td><button class="trash" title="Apagar" data-row="${r.row}">🗑️</button></td>
-      `;
-      tb.appendChild(tr);
-    }
-  }
-
-  async function loadOperators(){
-    try{
-      const r = await fetch(`${API_URL}?action=ops`);
-      const data = await r.json();
-      if(!data.ok) throw new Error();
-      setOnline(true);
-
-      const ops = data.ops || [];
-      selOperador.innerHTML = "";
-      if(ops.length === 0){
-        const opt = document.createElement("option");
-        opt.value = "";
-        opt.textContent = "— cadastre na planilha —";
-        selOperador.appendChild(opt);
-      }else{
-        for(const o of ops){
-          const opt = document.createElement("option");
-          opt.value = o;
-          opt.textContent = o;
-          selOperador.appendChild(opt);
-        }
-      }
-    }catch(e){
-      setOnline(false);
-    }
-  }
-
-  async function listSession(){
-    syncLabels();
-    tagTime.textContent = nowTime();
-
-    try{
-      const url = `${API_URL}?action=list&day=${encodeURIComponent(currentDay())}&loja=${encodeURIComponent(currentLoja())}`;
-      const r = await fetch(url);
-      const data = await r.json();
-      if(!data.ok) throw new Error(data.error || "list error");
-
-      setOnline(true);
-
-      cacheRows = (data.rows || []).map(x => ({
-        row: Number(x.row || 0),
-        hora: String(x.hora || ""),
-        operador: String(x.operador || ""),
-        tipo: norm(x.tipo),
-        forma: norm(x.forma),
-        valor: Number(x.valor || 0)
-      }));
-
-      computeSaldoSessao(cacheRows);
-      renderTable();
-
-      if(cacheRows.length === 0 && !caixaAberto){
-        kpiSaldo.textContent = "Saldo da sessão: R$ 0,00";
-      }
-    }catch(e){
-      setOnline(false);
-      msgConfig.textContent = "Falha ao carregar sessão.";
-    }
-  }
-
-  async function abrirCaixa(){
-    const op = selOperador.value;
-    if(!op) return alert("Selecione o operador (CONFIG).");
-    const f = parseMoney(fundo.value);
-    if(f < 0) return alert("Fundo inválido.");
-
-    if(!confirm(`Abrir ${currentLoja()} com fundo ${brl(f)}?`)) return;
-
-    const body = new URLSearchParams();
-    body.set("action","open");
-    body.set("loja", currentLoja());
-    body.set("data", currentDay());
-    body.set("hora", nowTime());
-    body.set("operador", op);
-    body.set("fundo", String(f));
-
-    const r = await fetch(API_URL, { method:"POST", body });
-    const data = await r.json();
-    if(!data.ok) return alert(data.error || "Erro ao abrir.");
-
-    await loadStatus();
-    await listSession();
-  }
-
-  async function fecharCaixa(){
-    const op = selOperador.value;
-    if(!op) return alert("Selecione o operador (CONFIG).");
-    if(!confirm(`Fechar ${currentLoja()}? (A sessão vai zerar na tela)`)) return;
-
-    const body = new URLSearchParams();
-    body.set("action","close");
-    body.set("loja", currentLoja());
-    body.set("data", currentDay());
-    body.set("hora", nowTime());
-    body.set("operador", op);
-
-    const r = await fetch(API_URL, { method:"POST", body });
-    const data = await r.json();
-    if(!data.ok) return alert(data.error || "Erro ao fechar.");
-
-    await loadStatus();
-    await listSession();
-  }
-
-  async function addMovement({tipo, forma, valor}){
-    const op = selOperador.value;
-    if(!op) return alert("Selecione o operador (CONFIG).");
-
-    const v = parseMoney(String(valor || ""));
-    if(v <= 0) return alert("Informe um valor maior que zero.");
-
-    const body = new URLSearchParams();
-    body.set("action","add");
-    body.set("loja", currentLoja());
-    body.set("data", currentDay());
-    body.set("hora", nowTime());
-    body.set("operador", op);
-    body.set("tipo", tipo);
-    body.set("forma", (tipo === "VENDA") ? forma : "");
-    body.set("valor", String(v));
-
-    const r = await fetch(API_URL, { method:"POST", body });
-    const data = await r.json();
-    if(!data.ok) return alert(data.error || "Erro ao salvar.");
-
-    await listSession();
-    return true;
-  }
-
-  async function addVenda(){
-    const ok = await addMovement({ tipo:"VENDA", forma: formaVenda.value, valor: valorVenda.value });
-    if(ok){
-      msgVenda.textContent = "Venda salva ✅";
-      valorVenda.value = "";
-      valorVenda.focus();
-      setTimeout(()=> msgVenda.textContent = "Pronto para lançar venda.", 1400);
-    }
-  }
-
-  async function addOutros(){
-    const ok = await addMovement({ tipo: tipoOutros.value, forma:"", valor: valorOutros.value });
-    if(ok){
-      msgOutros.textContent = "Lançamento salvo ✅";
-      valorOutros.value = "";
-      valorOutros.focus();
-      setTimeout(()=> msgOutros.textContent = "Pronto para lançar outros.", 1400);
-    }
-  }
-
-  async function deleteMovement(row){
-    const op = selOperador.value;
-    if(!op) return alert("Selecione o operador (CONFIG).");
-
-    const pin = prompt("Digite o PIN para apagar:");
-    if(pin === null) return;
-
-    if(!confirm("Apagar esse lançamento?")) return;
-
-    const body = new URLSearchParams();
-    body.set("action","del");
-    body.set("row", String(row));
-    body.set("operador", op);
-    body.set("pin", String(pin));
-
-    const r = await fetch(API_URL, { method:"POST", body });
-    const data = await r.json();
-    if(!data.ok) return alert(data.error || "Erro ao apagar.");
-
-    await listSession();
-  }
-
-  // ===== Relatórios =====
-  function openRel(){ relBack.style.display = "flex"; relBack.setAttribute("aria-hidden","false"); }
-  function closeRel(){ relBack.style.display = "none"; relBack.setAttribute("aria-hidden","true"); }
-  btnCloseRel.addEventListener("click", closeRel);
-  relBack.addEventListener("click", (e)=>{ if(e.target === relBack) closeRel(); });
-  btnPrintRel.addEventListener("click", ()=> window.print());
-
-  function getWeekRange(isoDay){
-    const d = new Date(isoDay + "T00:00:00");
-    const day = d.getDay();
-    const diffToMon = (day === 0 ? -6 : 1 - day);
-    const mon = new Date(d); mon.setDate(d.getDate() + diffToMon);
-    const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-    const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
-    return { from: toISO(mon), to: toISO(sun) };
-  }
-  function getMonthRange(isoDay){
-    const d = new Date(isoDay + "T00:00:00");
-    const y = d.getFullYear(), m = d.getMonth();
-    const first = new Date(y, m, 1);
-    const last = new Date(y, m+1, 0);
-    const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
-    return { from: toISO(first), to: toISO(last) };
-  }
-  async function fetchRange(from, to){
-    const url = `${API_URL}?action=range&loja=${encodeURIComponent(currentLoja())}&from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`;
-    const r = await fetch(url);
-    const data = await r.json();
-    if(!data.ok) throw new Error(data.error || "Erro no relatório");
-    return data.rows || [];
-  }
-  function calcReport(rows){
-    let dinheiro=0, pix=0, cartao=0, fiado=0;
-    let supr=0, sang=0, desp=0, abertura=0;
-    for(const r of rows){
-      const tipo = norm(r.tipo);
-      const forma = norm(r.forma);
-      const v = Number(r.valor||0);
-      if(tipo === "VENDA"){
-        if(forma === "DINHEIRO") dinheiro += v;
-        else if(forma === "PIX") pix += v;
-        else if(forma === "CARTAO") cartao += v;
-        else if(forma === "FIADO") fiado += v;
-      } else if(tipo === "SUPRIMENTO") supr += v;
-      else if(tipo === "SANGRIA") sang += v;
-      else if(tipo === "DESPESA") desp += v;
-      else if(tipo === "ABERTURA") abertura += v;
-    }
-    const vendas = dinheiro + pix + cartao + fiado;
-    const entradas = vendas + supr + abertura;
-    const saidas = sang + desp;
-    const saldo = entradas - saidas;
-    return { vendas, dinheiro, pix, cartao, fiado, supr, sang, desp, abertura, saldo };
-  }
-  function paintReport(title, from, to, rows){
-    const r = calcReport(rows);
-    relTitle.textContent = title;
-    relInfo.textContent = `Loja: ${currentLoja()} • Período: ${from} até ${to} • Registros: ${rows.length}`;
-    relVendas.textContent = brl(r.vendas);
-    relDinheiro.textContent = brl(r.dinheiro);
-    relPix.textContent = brl(r.pix);
-    relCartao.textContent = brl(r.cartao);
-    relFiado.textContent = brl(r.fiado);
-    relSupr.textContent = brl(r.supr);
-    relSang.textContent = brl(r.sang);
-    relDesp.textContent = brl(r.desp);
-    relSaldo.textContent = brl(r.saldo);
-    openRel();
-  }
-
-  document.getElementById("btnRelDia").addEventListener("click", async ()=>{
-    try{
-      const d = currentDay();
-      const rows = await fetchRange(d, d);
-      paintReport(`Relatório Diário (${d})`, d, d, rows);
-    }catch(e){ alert(String(e.message || e)); }
-  });
-  document.getElementById("btnRelSemana").addEventListener("click", async ()=>{
-    try{
-      const base = relWeekDay.value || currentDay();
-      const {from, to} = getWeekRange(base);
-      const rows = await fetchRange(from, to);
-      paintReport(`Relatório Semanal`, from, to, rows);
-    }catch(e){ alert(String(e.message || e)); }
-  });
-  document.getElementById("btnRelMes").addEventListener("click", async ()=>{
-    try{
-      const m = relMonthPick.value;
-      const base = m ? (m + "-01") : currentDay();
-      const {from, to} = getMonthRange(base);
-      const rows = await fetchRange(from, to);
-      paintReport(`Relatório Mensal`, from, to, rows);
-    }catch(e){ alert(String(e.message || e)); }
-  });
-
-  // Tabs / delete
-  tabs.addEventListener("click", (e)=>{
-    const btn = e.target.closest("button[data-filter]");
-    if(!btn) return;
-    activeFilter = btn.getAttribute("data-filter") || "TODOS";
-    [...tabs.querySelectorAll(".tab")].forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-    renderTable();
-  });
-  tb.addEventListener("click", (e)=>{
-    const b = e.target.closest("button[data-row]");
-    if(!b) return;
-    deleteMovement(Number(b.getAttribute("data-row")));
-  });
-
-  // Menu comportamento
-  leftMenu.addEventListener("click", (e)=>{
-    const b = e.target.closest("button[data-sec]");
-    if(!b) return;
-    const id = b.getAttribute("data-sec");
-    [...leftMenu.querySelectorAll(".mitem")].forEach(x=>x.classList.remove("active"));
-    b.classList.add("active");
-    [secVenda, secOutros, secCaixa, secConfig].forEach(s=>s.classList.remove("active"));
-    document.getElementById(id).classList.add("active");
-  });
-
-  // Ações
-  btnAddVenda.addEventListener("click", addVenda);
-  valorVenda.addEventListener("keydown", (e)=>{ if(e.key==="Enter") addVenda(); });
-
-  btnAddOutros.addEventListener("click", addOutros);
-  valorOutros.addEventListener("keydown", (e)=>{ if(e.key==="Enter") addOutros(); });
-
-  btnLimpar.addEventListener("click", ()=>{ valorVenda.value=""; valorOutros.value=""; valorVenda.focus(); });
-  btnAbrir.addEventListener("click", abrirCaixa);
-  btnFechar.addEventListener("click", fecharCaixa);
-
-  btnReloadOps.addEventListener("click", loadOperators);
-  btnRefresh.addEventListener("click", async ()=>{ await loadStatus(); await listSession(); });
-
-  selLoja.addEventListener("change", async ()=>{
-    syncLabels();
-    await loadStatus();
-    await listSession();
-  });
-  dayEl.addEventListener("change", async ()=>{
-    syncLabels();
-    relWeekDay.value = dayEl.value;
-    relMonthPick.value = dayEl.value.slice(0,7);
-    await listSession();
-  });
-
-  // Init
-  dayEl.value = todayISO();
-  relWeekDay.value = dayEl.value;
-  relMonthPick.value = dayEl.value.slice(0,7);
-  syncLabels();
-
-  (async ()=>{
-    await loadOperators();
-    await loadStatus();
-    await listSession();
-    msgVenda.textContent = "Pronto para lançar venda.";
-    msgOutros.textContent = "Pronto para lançar outros.";
-    msgCaixa.textContent = "Use Abrir/Fechar aqui.";
-  })();
-
-  setInterval(async ()=>{ await loadStatus(); await listSession(); }, 10000);
-</script>
-</body>
-</html>
+        <div class="kpiBox" style="margin:0;"><div><div class="t">SUPRIMENTO</div></div><div class
