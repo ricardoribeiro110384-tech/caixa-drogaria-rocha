@@ -111,7 +111,7 @@
       <div class="logo">DR</div>
       <div>
         <div style="font-weight:900">Caixa em Rede — <span style="color:var(--orange)">Drogaria Rocha</span></div>
-        <div class="small">2 lojas • Abrir/Fechar por loja • Relatórios discretos • Zera tela ao fechar</div>
+        <div class="small">2 lojas • Abrir/Fechar por loja • Relatórios discretos (sem tomar a tela)</div>
       </div>
     </div>
     <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
@@ -231,15 +231,19 @@
     </div>
 
     <div class="bd">
-      <!-- Barra discreta de relatórios -->
+      <!-- Barra discreta de relatórios + escolha semana/mês -->
       <div class="kpiBox">
         <div>
           <div class="t">RELATÓRIOS</div>
-          <div class="small">Abre em janela discreta para imprimir</div>
+          <div class="small">Escolha a semana/mês desejado e imprima no modal</div>
         </div>
-        <div class="btnrow noPrint">
+        <div class="btnrow noPrint" style="gap:8px;">
           <button class="ghost" id="btnRelDia">Diário</button>
+
+          <input id="relWeekDay" type="date" style="max-width:160px;" title="Escolha um dia da semana desejada" />
           <button class="ghost" id="btnRelSemana">Semanal</button>
+
+          <input id="relMonthPick" type="month" style="max-width:150px;" title="Escolha o mês desejado" />
           <button class="ghost" id="btnRelMes">Mensal</button>
         </div>
       </div>
@@ -355,6 +359,9 @@
 <script>
   const API_URL = "https://script.google.com/macros/s/AKfycbyTSeLNrPUjHfX412S2WiZs514kqGIGdIr8uFMCHNFbOoMFBhTAJe5YpkxK-S9VtTABaA/exec";
 
+  // ===== Normalizador (corrige filtros das abas) =====
+  function norm(s){ return String(s || "").trim().toUpperCase(); }
+
   const dot = document.getElementById("dot");
   const statusEl = document.getElementById("status");
   const lblLoja = document.getElementById("lblLoja");
@@ -383,6 +390,10 @@
   const kpiFilterTotal = document.getElementById("kpiFilterTotal");
   const tabs = document.getElementById("tabs");
   const tb = document.getElementById("tb");
+
+  // Relatórios (inputs)
+  const relWeekDay = document.getElementById("relWeekDay");
+  const relMonthPick = document.getElementById("relMonthPick");
 
   // Modal rel
   const relBack = document.getElementById("relBack");
@@ -455,7 +466,7 @@
       const data = await r.json();
       if(!data.ok) throw new Error(data.error || "status error");
       setOnline(true);
-      setCaixaUI(String(data.status||"FECHADO").toUpperCase()==="ABERTO");
+      setCaixaUI(norm(data.status)==="ABERTO");
     }catch(e){
       setOnline(false);
       lblStatusCaixa.textContent = "—";
@@ -463,7 +474,7 @@
   }
 
   function badgeTipo(t){
-    const type = String(t||"").toUpperCase();
+    const type = norm(t);
     if(type==="VENDA") return `<span class="badge b-venda">VENDA</span>`;
     if(type==="SUPRIMENTO") return `<span class="badge b-supr">SUPRIMENTO</span>`;
     if(type==="SANGRIA") return `<span class="badge b-sang">SANGRIA</span>`;
@@ -473,26 +484,25 @@
     return `<span class="badge">${type}</span>`;
   }
   function chipForma(type, form){
-    const t = String(type||"").toUpperCase();
-    const f = String(form||"").toUpperCase();
+    const t = norm(type);
+    const f = norm(form);
     if(t !== "VENDA") return `<span class="chip">—</span>`;
     if(!f) return `<span class="chip">—</span>`;
     const label = (f==="CARTAO") ? "CARTÃO" : f;
     return `<span class="chip">${label}</span>`;
   }
 
+  // ✅ FILTRO ROBUSTO (conserta abas)
   function applyFilter(rows){
-    const f = activeFilter;
-    if(f === "TODOS") return rows;
+    const f = norm(activeFilter);
 
-    if(["SUPRIMENTO","SANGRIA","DESPESA","VENDA","ABERTURA","FECHAMENTO"].includes(f)){
-      return rows.filter(r => String(r.tipo||"").toUpperCase() === f);
+    if (f === "TODOS") return rows;
+
+    if (["SUPRIMENTO","SANGRIA","DESPESA","VENDA","ABERTURA","FECHAMENTO"].includes(f)){
+      return rows.filter(r => norm(r.tipo) === f);
     }
-    if(["DINHEIRO","PIX","CARTAO","FIADO"].includes(f)){
-      return rows.filter(r =>
-        String(r.tipo||"").toUpperCase() === "VENDA" &&
-        String(r.forma||"").toUpperCase() === f
-      );
+    if (["DINHEIRO","PIX","CARTAO","FIADO"].includes(f)){
+      return rows.filter(r => norm(r.tipo) === "VENDA" && norm(r.forma) === f);
     }
     return rows;
   }
@@ -500,7 +510,7 @@
   function computeSaldoSessao(rows){
     let entradas=0, saidas=0;
     for(const r of rows){
-      const t = String(r.tipo||"").toUpperCase();
+      const t = norm(r.tipo);
       const v = Number(r.valor||0);
       const isSaida = (t==="SANGRIA" || t==="DESPESA");
       if(isSaida) saidas += v; else entradas += v;
@@ -512,7 +522,7 @@
     let total = 0;
     for(const r of filteredRows) total += Number(r.valor||0);
 
-    const f = activeFilter;
+    const f = norm(activeFilter);
     const label = (f==="CARTAO") ? "CARTÃO" : f;
 
     kpiFilterName.textContent = `${label} — ${currentLoja()}`;
@@ -534,7 +544,7 @@
 
     filtered.sort((a,b)=> String(a.hora||"").localeCompare(String(b.hora||"")));
     for(const r of filtered){
-      const t = String(r.tipo||"").toUpperCase();
+      const t = norm(r.tipo);
       const v = Number(r.valor||0);
       const isSaida = (t==="SANGRIA" || t==="DESPESA");
 
@@ -590,13 +600,14 @@
 
       setOnline(true);
 
+      // ✅ Normaliza tipo/forma (conserta filtro)
       cacheRows = (data.rows || []).map(x => ({
         row: Number(x.row || 0),
-        hora: x.hora,
-        operador: x.operador,
-        tipo: x.tipo,
-        forma: x.forma,
-        valor: Number(x.valor||0)
+        hora: String(x.hora || ""),
+        operador: String(x.operador || ""),
+        tipo: norm(x.tipo),
+        forma: norm(x.forma),
+        valor: Number(x.valor || 0)
       }));
 
       computeSaldoSessao(cacheRows);
@@ -652,7 +663,7 @@
     if(!data.ok) return alert(data.error || "Erro ao fechar.");
 
     await loadStatus();
-    await listSession(); // FECHOU -> list retorna vazio -> some
+    await listSession();
   }
 
   async function addMovement(){
@@ -716,10 +727,10 @@
     const diffToMon = (day === 0 ? -6 : 1 - day);
     const mon = new Date(d); mon.setDate(d.getDate() + diffToMon);
     const sun = new Date(mon); sun.setDate(mon.getDate() + 6);
-
     const toISO = (x)=> `${x.getFullYear()}-${String(x.getMonth()+1).padStart(2,"0")}-${String(x.getDate()).padStart(2,"0")}`;
     return { from: toISO(mon), to: toISO(sun) };
   }
+
   function getMonthRange(isoDay){
     const d = new Date(isoDay + "T00:00:00");
     const y = d.getFullYear(), m = d.getMonth();
@@ -742,8 +753,8 @@
     let supr=0, sang=0, desp=0, abertura=0;
 
     for(const r of rows){
-      const tipo = String(r.tipo||"").toUpperCase();
-      const forma = String(r.forma||"").toUpperCase();
+      const tipo = norm(r.tipo);
+      const forma = norm(r.forma);
       const v = Number(r.valor||0);
 
       if(tipo === "VENDA"){
@@ -784,6 +795,7 @@
     openRel();
   }
 
+  // Diário (usa o dia do sistema)
   document.getElementById("btnRelDia").addEventListener("click", async ()=>{
     try{
       const d = currentDay();
@@ -791,18 +803,23 @@
       paintReport(`Relatório Diário (${d})`, d, d, rows);
     }catch(e){ alert(String(e.message || e)); }
   });
+
+  // Semanal (usa a data escolhida)
   document.getElementById("btnRelSemana").addEventListener("click", async ()=>{
     try{
-      const d = currentDay();
-      const {from, to} = getWeekRange(d);
+      const base = relWeekDay.value || currentDay();
+      const {from, to} = getWeekRange(base);
       const rows = await fetchRange(from, to);
       paintReport(`Relatório Semanal`, from, to, rows);
     }catch(e){ alert(String(e.message || e)); }
   });
+
+  // Mensal (usa o mês escolhido)
   document.getElementById("btnRelMes").addEventListener("click", async ()=>{
     try{
-      const d = currentDay();
-      const {from, to} = getMonthRange(d);
+      const m = relMonthPick.value; // YYYY-MM
+      const base = m ? (m + "-01") : currentDay();
+      const {from, to} = getMonthRange(base);
       const rows = await fetchRange(from, to);
       paintReport(`Relatório Mensal`, from, to, rows);
     }catch(e){ alert(String(e.message || e)); }
@@ -846,6 +863,10 @@
   dayEl.value = todayISO();
   syncLabels();
   forma.disabled = (tipo.value !== "VENDA");
+
+  // Inicializa seleção de semana/mês
+  relWeekDay.value = dayEl.value;
+  relMonthPick.value = dayEl.value.slice(0,7);
 
   (async ()=>{
     await loadOperators();
