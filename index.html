@@ -4,7 +4,6 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Caixa — Drogaria Rocha</title>
-
   <style>
     :root{
       --brand:#ff6a00; --brand2:#ff8a3d;
@@ -116,15 +115,12 @@
 
           <div class="mitem hidden" data-tab="abertura" id="m-abertura"><div class="micon">🧾</div>Abertura/Fechamento<div class="mnum">2</div></div>
           <div class="mitem hidden" data-tab="vendas" id="m-vendas"><div class="micon">🛒</div>Vendas<div class="mnum">3</div></div>
-
           <div class="mitem hidden" data-tab="receb" id="m-receb"><div class="micon">💰</div>Recebimentos<div class="mnum">4</div></div>
-
           <div class="mitem hidden" data-tab="lanc" id="m-lanc"><div class="micon">➕</div>Outros lançamentos<div class="mnum">5</div></div>
           <div class="mitem hidden" data-tab="mov" id="m-mov"><div class="micon">📌</div>Movimentos<div class="mnum">6</div></div>
           <div class="mitem hidden" data-tab="rel" id="m-rel"><div class="micon">📊</div>Relatórios<div class="mnum">7</div></div>
-          <div class="mitem hidden" data-tab="cfg" id="m-cfg"><div class="micon">⚙️</div>Configurações<div class="mnum">8</div></div>
 
-          <div style="margin-top:12px" class="small">Dica: se der erro, revise a URL do Web App e o Deploy (Acesso: Anyone).</div>
+          <div style="margin-top:12px" class="small">Dica: revise a URL do Web App e o Deploy (Acesso: Anyone).</div>
           <div class="btnrow" style="margin-top:12px">
             <button class="btn secondary" id="btnLogout" style="width:100%;display:none">Sair</button>
           </div>
@@ -222,10 +218,9 @@
           <div class="contentHeader">
             <div>
               <h1>Recebimentos</h1>
-              <div class="hint">Entradas extras no caixa (ex: repasse, ajuste, entrada de troco).</div>
+              <div class="hint">Entradas extras no caixa.</div>
             </div>
           </div>
-
           <div class="grid2">
             <div>
               <label>Valor</label>
@@ -236,7 +231,6 @@
               <input id="rDesc" placeholder="Ex: entrada de troco, repasse…"/>
             </div>
           </div>
-
           <div class="btnrow" style="margin-top:12px">
             <button class="btn" id="btnSalvarReceb">Salvar recebimento</button>
           </div>
@@ -250,7 +244,6 @@
               <div class="hint">Somente Sangria e Despesa (Recebimento tem aba própria).</div>
             </div>
           </div>
-
           <div class="grid3">
             <div>
               <label>Tipo</label>
@@ -269,7 +262,6 @@
               <input id="lDesc" placeholder="Ex: retirada, conta…"/>
             </div>
           </div>
-
           <div class="btnrow" style="margin-top:12px">
             <button class="btn" id="btnSalvarLanc">Salvar lançamento</button>
           </div>
@@ -280,7 +272,7 @@
           <div class="contentHeader">
             <div>
               <h1>Movimentos</h1>
-              <div class="hint">Saldo inclui: inicial + vendas + recebimentos - sangrias - despesas.</div>
+              <div class="hint">Saldo: inicial + vendas + recebimentos - sangrias - despesas.</div>
             </div>
             <div class="btnrow">
               <button class="btn secondary" id="btnAtualizarMov">Atualizar</button>
@@ -321,7 +313,7 @@
           </div>
         </section>
 
-        <!-- RELATÓRIOS (LOCK + CONTENT) -->
+        <!-- RELATÓRIOS -->
         <section data-content="rel" class="hidden">
           <div class="contentHeader">
             <div>
@@ -389,16 +381,6 @@
           </div>
         </section>
 
-        <!-- CONFIG (mantive simples: se você quiser, posso colar completo depois, mas não muda nada aqui) -->
-        <section data-content="cfg" class="hidden">
-          <div class="contentHeader">
-            <div><h1>Configurações</h1><div class="hint">Cadastro de operadores (já como você tinha).</div></div>
-          </div>
-          <div class="kpi">
-            <div class="small">Se você quiser, eu cole a Config completa aqui também (igual sua versão anterior). Como o pedido agora foi Recebimentos + Relatórios com senha + TXT no fechamento, foquei nisso.</div>
-          </div>
-        </section>
-
       </div>
     </div>
   </div>
@@ -406,14 +388,9 @@
   <div class="toast" id="toast"></div>
 
 <script>
-  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwPP5QMdCmnRMD7FjNlN8IvN4gXChLN2k8B2gTcoLmZWQDAHLX_aIAbku5uUVX15vS82g/exec"; // TROQUE AQUI
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwPP5QMdCmnRMD7FjNlN8IvN4gXChLN2k8B2gTcoLmZWQDAHLX_aIAbku5uUVX15vS82g/exec"; // ✅ coloque a URL do Web App (/exec)
 
-  const state = {
-    user:null,
-    loja:null,
-    sessao_id:null,
-    relUnlocked:false
-  };
+  const state = { user:null, loja:null, sessao_id:null, relUnlocked:false };
   const $ = (id)=>document.getElementById(id);
 
   function brl(n){ return Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); }
@@ -421,7 +398,11 @@
   function todayISO(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
 
   async function callApi(action, payload={}){
-    const res = await fetch(WEBAPP_URL,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({action,payload})});
+    const res = await fetch(WEBAPP_URL,{
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({action,payload})
+    });
     const json = await res.json();
     if(!json.ok) throw new Error(json.error||"Erro no servidor.");
     return json.data;
@@ -439,7 +420,7 @@
   function requireSessao(){ if(!state.loja || !state.sessao_id) throw new Error("Abra o caixa para registrar."); }
 
   function showMenus(logged){
-    ["m-abertura","m-vendas","m-receb","m-lanc","m-mov","m-rel","m-cfg"].forEach(id=>$(id).classList.toggle("hidden",!logged));
+    ["m-abertura","m-vendas","m-receb","m-lanc","m-mov","m-rel"].forEach(id=>$(id).classList.toggle("hidden",!logged));
     $("btnLogout").style.display = logged ? "block" : "none";
   }
 
@@ -544,10 +525,8 @@
       const loja=$("abLoja").value;
       const obs=$("abObs").value;
 
-      // fecha no backend
       await callApi("fecharCaixa",{loja, operador_id: state.user.id, observacao: obs});
 
-      // gera TXT da sessão (antes de limpar o estado)
       const txt = await callApi("gerarFechamentoTxt",{loja: state.loja, sessao_id: state.sessao_id});
       downloadTxt(txt.filename, txt.content);
 
@@ -635,7 +614,6 @@
     }catch(e){ toast(e.message,false); }
   }
 
-  // ===== RELATÓRIOS (PIN) =====
   function relTipoUI(){
     const t=$("relTipo").value;
     $("relBoxDiario").classList.toggle("hidden", t!=="DIARIO");
@@ -719,7 +697,6 @@
     }catch(e){ toast(e.message,false); }
   }
 
-  // ===== INIT =====
   function fillYears(){
     const y = new Date().getFullYear();
     const sel = $("relAno");
@@ -735,6 +712,8 @@
   async function init(){
     try{
       await callApi("ping",{});
+      $("subline").textContent="Servidor OK — faça login.";
+      $("srvTxt").textContent="ok"; $("dotServer").classList.add("ok");
       await loadOperadores();
 
       showMenus(false);
@@ -748,17 +727,20 @@
       fillYears();
       relTipoUI();
     }catch(e){
+      $("subline").textContent="Erro no servidor — revise URL / Deploy.";
+      $("srvTxt").textContent="erro"; $("dotServer").classList.add("bad");
       toast("Erro: verifique a URL do Web App / Deploy.", false);
     }
   }
 
-  // ===== EVENTS =====
   $("btnReloadOps").addEventListener("click", async ()=>{ try{ await loadOperadores(); toast("Operadores atualizados."); }catch(e){ toast(e.message,false);} });
   $("btnLogin").addEventListener("click", doLogin);
   $("btnLogout").addEventListener("click", doLogout);
 
   $("abLoja").addEventListener("change", async ()=>{
     state.loja = $("abLoja").value;
+    $("lojaTxt").textContent = state.loja;
+    $("dotLoja").classList.remove("warn"); $("dotLoja").classList.add("ok");
     try{
       if(state.user){
         const sess = await callApi("getSessaoAberta",{loja: state.loja});
