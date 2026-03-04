@@ -4,12 +4,18 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Caixa — Drogaria Rocha</title>
+
   <style>
     :root{
       --brand:#ff6a00; --brand2:#ff8a3d;
-      --bg:#eef1f6; --panel:#ffffff; --panel2:#f6f8fc;
+
+      /* ✅ tema mais cinza (menos branco) */
+      --bg:#e6e9f0;
+      --panel:#f7f8fb;
+      --panel2:#eef1f6;
+
       --text:#0f172a; --muted:#64748b; --muted2:#94a3b8;
-      --line:#dfe6f0; --shadow: 0 18px 40px rgba(2,6,23,.10);
+      --line:#d7deea; --shadow: 0 18px 40px rgba(2,6,23,.12);
       --r:18px; --r2:26px;
       --ok:#16a34a; --warn:#f59e0b; --bad:#dc2626;
       --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
@@ -18,56 +24,72 @@
     body{
       margin:0; font-family:var(--font); color:var(--text); min-height:100vh;
       background:
-        radial-gradient(900px 450px at 20% 0%, rgba(255,106,0,.10), transparent 60%),
+        radial-gradient(900px 450px at 20% 0%, rgba(255,106,0,.12), transparent 60%),
         radial-gradient(900px 450px at 90% 10%, rgba(59,130,246,.08), transparent 60%),
-        linear-gradient(180deg, #f7f8fb, var(--bg));
+        linear-gradient(180deg, #f2f4f8, var(--bg));
     }
-    .topbar{position:sticky;top:0;z-index:5;backdrop-filter:blur(10px);background:rgba(247,248,251,.70);border-bottom:1px solid rgba(223,230,240,.9)}
+    .topbar{position:sticky;top:0;z-index:5;backdrop-filter:blur(10px);background:rgba(242,244,248,.78);border-bottom:1px solid rgba(215,222,234,.9)}
     .wrap{max-width:1200px;margin:0 auto;padding:18px}
     .row{display:flex;gap:16px;align-items:stretch}
     .col{flex:1}
     .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.2px}
     .logoDot{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.0)), var(--brand);box-shadow:0 10px 25px rgba(255,106,0,.25)}
-    .sub{color:var(--muted);font-weight:600;font-size:13px;margin-top:2px}
+    .sub{color:var(--muted);font-weight:700;font-size:13px;margin-top:2px}
     .statusbar{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
-    .pill{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(255,255,255,.75);border:1px solid rgba(223,230,240,.9);border-radius:999px;box-shadow:0 10px 25px rgba(2,6,23,.05);font-weight:800;color:var(--text);font-size:13px}
+    .pill{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(247,248,251,.88);border:1px solid rgba(215,222,234,.95);border-radius:999px;box-shadow:0 10px 25px rgba(2,6,23,.06);font-weight:900;color:var(--text);font-size:13px}
     .dot{width:10px;height:10px;border-radius:50%;background:var(--muted2)}
     .dot.ok{background:var(--ok)} .dot.bad{background:var(--bad)} .dot.warn{background:var(--warn)}
     .layout{display:grid;grid-template-columns:260px 1fr;gap:16px;margin-top:16px}
-    .card{background:rgba(255,255,255,.85);border:1px solid rgba(223,230,240,.95);border-radius:var(--r2);box-shadow:var(--shadow)}
+    .card{background:rgba(247,248,251,.92);border:1px solid rgba(215,222,234,.98);border-radius:var(--r2);box-shadow:var(--shadow)}
     .sidebar{padding:14px;position:sticky;top:86px;height:calc(100vh - 110px);overflow:auto}
-    .menuTitle{font-weight:900;margin:6px 10px 10px;color:var(--muted);font-size:12px;letter-spacing:.4px;text-transform:uppercase}
+    .menuTitle{font-weight:1000;margin:6px 10px 10px;color:var(--muted);font-size:12px;letter-spacing:.4px;text-transform:uppercase}
     .menu{display:flex;flex-direction:column;gap:8px}
-    .mitem{display:flex;align-items:center;gap:10px;padding:12px 12px;border-radius:14px;border:1px solid transparent;cursor:pointer;user-select:none;font-weight:800;color:var(--text);transition:.15s ease}
-    .mitem:hover{background:rgba(255,255,255,.65);border-color:rgba(223,230,240,.9)}
-    .mitem.active{background:linear-gradient(180deg, rgba(255,106,0,.14), rgba(255,106,0,.06));border-color:rgba(255,106,0,.28);box-shadow:0 10px 25px rgba(255,106,0,.15)}
-    .micon{width:30px;height:30px;border-radius:12px;display:grid;place-items:center;background:rgba(2,6,23,.05);border:1px solid rgba(223,230,240,.9);font-size:14px}
-    .mnum{margin-left:auto;width:28px;height:28px;border-radius:12px;display:grid;place-items:center;background:rgba(2,6,23,.05);border:1px solid rgba(223,230,240,.9);color:var(--muted);font-weight:900;font-size:12px}
+    .mitem{display:flex;align-items:center;gap:10px;padding:12px 12px;border-radius:14px;border:1px solid transparent;cursor:pointer;user-select:none;font-weight:900;color:var(--text);transition:.15s ease}
+    .mitem:hover{background:rgba(255,255,255,.65);border-color:rgba(215,222,234,.95)}
+    .mitem.active{background:linear-gradient(180deg, rgba(255,106,0,.16), rgba(255,106,0,.06));border-color:rgba(255,106,0,.30);box-shadow:0 10px 25px rgba(255,106,0,.16)}
+    .micon{width:30px;height:30px;border-radius:12px;display:grid;place-items:center;background:rgba(2,6,23,.05);border:1px solid rgba(215,222,234,.95);font-size:14px}
+    .mnum{margin-left:auto;width:28px;height:28px;border-radius:12px;display:grid;place-items:center;background:rgba(2,6,23,.05);border:1px solid rgba(215,222,234,.95);color:var(--muted);font-weight:1000;font-size:12px}
     .content{padding:18px}
     .contentHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px}
     h1{margin:0;font-size:22px}
     .hint{color:var(--muted);font-weight:700;font-size:13px;margin-top:6px}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
-    label{display:block;font-weight:900;font-size:12px;color:var(--muted);margin:4px 0 8px;text-transform:uppercase;letter-spacing:.35px}
-    input,select,textarea{width:100%;padding:12px 12px;border-radius:14px;border:1px solid rgba(223,230,240,.95);background:rgba(255,255,255,.9);outline:none;font-weight:800;color:var(--text)}
-    input:focus,select:focus,textarea:focus{border-color:rgba(255,106,0,.55);box-shadow:0 0 0 4px rgba(255,106,0,.12)}
+    label{display:block;font-weight:1000;font-size:12px;color:var(--muted);margin:4px 0 8px;text-transform:uppercase;letter-spacing:.35px}
+    input,select,textarea{
+      width:100%;padding:12px 12px;border-radius:14px;border:1px solid rgba(215,222,234,.98);
+      background:rgba(255,255,255,.9);outline:none;font-weight:900;color:var(--text)
+    }
+    input:focus,select:focus,textarea:focus{border-color:rgba(255,106,0,.58);box-shadow:0 0 0 4px rgba(255,106,0,.13)}
     textarea{min-height:90px;resize:vertical;font-weight:700}
     .btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .btn{padding:12px 14px;border-radius:16px;border:1px solid rgba(255,106,0,.35);background:linear-gradient(180deg, rgba(255,106,0,1), rgba(255,138,61,1));color:white;font-weight:900;cursor:pointer;box-shadow:0 16px 32px rgba(255,106,0,.22);transition:transform .08s ease}
+    .btn{
+      padding:12px 14px;border-radius:16px;border:1px solid rgba(255,106,0,.35);
+      background:linear-gradient(180deg, rgba(255,106,0,1), rgba(255,138,61,1));
+      color:white;font-weight:1000;cursor:pointer;box-shadow:0 16px 32px rgba(255,106,0,.22);transition:transform .08s ease
+    }
     .btn:active{transform:scale(.98)}
-    .btn.secondary{background:rgba(2,6,23,.04);color:var(--text);border:1px solid rgba(223,230,240,.95);box-shadow:none}
+    .btn.secondary{background:rgba(2,6,23,.04);color:var(--text);border:1px solid rgba(215,222,234,.98);box-shadow:none}
     .btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border-color:rgba(220,38,38,.35);box-shadow:0 16px 32px rgba(220,38,38,.18)}
     .kpis{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin:8px 0 16px}
-    .kpi{padding:14px;border-radius:18px;border:1px solid rgba(223,230,240,.95);background:rgba(255,255,255,.75)}
-    .kpi .t{color:var(--muted);font-weight:900;text-transform:uppercase;font-size:11px;letter-spacing:.35px}
+    .kpi{padding:14px;border-radius:18px;border:1px solid rgba(215,222,234,.98);background:rgba(255,255,255,.78)}
+    .kpi .t{color:var(--muted);font-weight:1000;text-transform:uppercase;font-size:11px;letter-spacing:.35px}
     .kpi .v{font-weight:1000;font-size:22px;margin-top:6px}
-    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:18px;border:1px solid rgba(223,230,240,.95);background:rgba(255,255,255,.75)}
-    thead th{text-align:left;padding:12px 12px;font-size:12px;color:var(--muted);font-weight:1000;text-transform:uppercase;letter-spacing:.35px;border-bottom:1px solid rgba(223,230,240,.95);background:rgba(246,248,252,.9)}
-    tbody td{padding:12px 12px;border-bottom:1px solid rgba(223,230,240,.7);font-weight:800;color:var(--text);vertical-align:middle}
+    table{
+      width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:18px;
+      border:1px solid rgba(215,222,234,.98);background:rgba(255,255,255,.78)
+    }
+    thead th{
+      text-align:left;padding:12px 12px;font-size:12px;color:var(--muted);font-weight:1000;text-transform:uppercase;
+      letter-spacing:.35px;border-bottom:1px solid rgba(215,222,234,.98);background:rgba(238,241,246,.95)
+    }
+    tbody td{padding:12px 12px;border-bottom:1px solid rgba(215,222,234,.75);font-weight:900;color:var(--text);vertical-align:middle}
     tbody tr:last-child td{border-bottom:none}
     .tmuted{color:var(--muted);font-weight:800}
-    .toast{position:fixed;right:16px;bottom:16px;z-index:99;background:rgba(255,255,255,.92);border:1px solid rgba(223,230,240,.95);box-shadow:0 18px 45px rgba(2,6,23,.14);padding:12px 14px;border-radius:18px;display:none;max-width:360px;font-weight:900}
+    .toast{
+      position:fixed;right:16px;bottom:16px;z-index:99;background:rgba(247,248,251,.95);
+      border:1px solid rgba(215,222,234,.98);box-shadow:0 18px 45px rgba(2,6,23,.14);padding:12px 14px;border-radius:18px;display:none;max-width:360px;font-weight:1000
+    }
     .toast.ok{border-left:6px solid var(--ok)} .toast.bad{border-left:6px solid var(--bad)}
     .hidden{display:none !important}
     .small{font-size:12px;color:var(--muted);font-weight:800}
@@ -81,6 +103,7 @@
     }
   </style>
 </head>
+
 <body>
   <div class="topbar">
     <div class="wrap">
@@ -120,7 +143,7 @@
           <div class="mitem hidden" data-tab="mov" id="m-mov"><div class="micon">📌</div>Movimentos<div class="mnum">6</div></div>
           <div class="mitem hidden" data-tab="rel" id="m-rel"><div class="micon">📊</div>Relatórios<div class="mnum">7</div></div>
 
-          <div style="margin-top:12px" class="small">Dica: revise a URL do Web App e o Deploy (Acesso: Anyone).</div>
+          <div style="margin-top:12px" class="small">Dica: se der erro, revise a URL do Web App e o Deploy (Acesso: Anyone).</div>
           <div class="btnrow" style="margin-top:12px">
             <button class="btn secondary" id="btnLogout" style="width:100%;display:none">Sair</button>
           </div>
@@ -166,7 +189,10 @@
           <div class="grid2">
             <div>
               <label>Loja</label>
-              <select id="abLoja"><option value="LOJA 1">LOJA 1</option><option value="LOJA 2">LOJA 2</option></select>
+              <select id="abLoja">
+                <option value="LOJA 1">LOJA 1</option>
+                <option value="LOJA 2">LOJA 2</option>
+              </select>
             </div>
             <div>
               <label>Suprimento inicial (ao abrir)</label>
@@ -305,15 +331,13 @@
 
           <div style="margin-top:12px">
             <table>
-              <thead>
-                <tr><th>Data/Hora</th><th>Vendedor</th><th>Forma</th><th class="right">Valor</th></tr>
-              </thead>
+              <thead><tr><th>Data/Hora</th><th>Vendedor</th><th>Forma</th><th class="right">Valor</th></tr></thead>
               <tbody id="movTbody"><tr><td colspan="4" class="tmuted">—</td></tr></tbody>
             </table>
           </div>
         </section>
 
-        <!-- RELATÓRIOS -->
+        <!-- RELATÓRIOS (PIN) -->
         <section data-content="rel" class="hidden">
           <div class="contentHeader">
             <div>
@@ -388,7 +412,7 @@
   <div class="toast" id="toast"></div>
 
 <script>
-  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwPP5QMdCmnRMD7FjNlN8IvN4gXChLN2k8B2gTcoLmZWQDAHLX_aIAbku5uUVX15vS82g/exec"; // ✅ coloque a URL do Web App (/exec)
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbwPP5QMdCmnRMD7FjNlN8IvN4gXChLN2k8B2gTcoLmZWQDAHLX_aIAbku5uUVX15vS82g/exec";
 
   const state = { user:null, loja:null, sessao_id:null, relUnlocked:false };
   const $ = (id)=>document.getElementById(id);
@@ -427,6 +451,11 @@
   function showTab(tab){
     document.querySelectorAll(".mitem").forEach(el=>el.classList.toggle("active", el.dataset.tab===tab));
     document.querySelectorAll("section[data-content]").forEach(sec=>sec.classList.toggle("hidden", sec.dataset.content!==tab));
+
+    // ✅ sempre sincroniza sessão ao entrar em telas operacionais
+    if(["abertura","vendas","receb","lanc","mov","rel"].includes(tab)){
+      syncSessaoByLoja().catch(()=>{});
+    }
 
     if(tab==="rel"){
       if(!state.relUnlocked){
@@ -468,6 +497,24 @@
     ).join("");
   }
 
+  // ✅ FIX LOJA 2: sempre carregar a sessão correta da loja atual
+  async function syncSessaoByLoja(){
+    if(!state.user) return;
+
+    if(!state.loja) state.loja = $("abLoja").value || "LOJA 1";
+    $("abLoja").value = state.loja;
+
+    $("lojaTxt").textContent = state.loja;
+    $("dotLoja").classList.remove("warn"); $("dotLoja").classList.add("ok");
+
+    const sess = await callApi("getSessaoAberta",{loja: state.loja});
+    state.sessao_id = sess ? sess.sessao_id : null;
+
+    $("sessTxt").textContent = state.sessao_id ? state.sessao_id : "—";
+    $("dotSess").classList.remove("warn","ok");
+    $("dotSess").classList.add(state.sessao_id ? "ok" : "warn");
+  }
+
   async function doLogin(){
     try{
       const operadorId=$("loginOperador").value;
@@ -476,12 +523,16 @@
       const user=await callApi("login",{operadorId,pin});
       state.user=user;
 
+      $("opTxt").textContent = user.nome;
+      $("dotOp").classList.remove("warn"); $("dotOp").classList.add("ok");
+
       showMenus(true);
+
+      // loja padrão = seleção de abertura
       state.loja = $("abLoja").value || "LOJA 1";
 
       await loadVendedores();
-      const sess = await callApi("getSessaoAberta",{loja: state.loja});
-      state.sessao_id = sess ? sess.sessao_id : null;
+      await syncSessaoByLoja();
 
       showTab("abertura");
       toast("Login OK.");
@@ -490,6 +541,11 @@
 
   function doLogout(){
     state.user=null; state.loja=null; state.sessao_id=null; state.relUnlocked=false;
+    $("opTxt").textContent="—"; $("sessTxt").textContent="—"; $("lojaTxt").textContent="—";
+    $("dotOp").classList.remove("ok"); $("dotOp").classList.add("warn");
+    $("dotSess").classList.remove("ok"); $("dotSess").classList.add("warn");
+    $("dotLoja").classList.remove("ok"); $("dotLoja").classList.add("warn");
+
     showMenus(false);
     showTab("login");
     toast("Sessão encerrada.");
@@ -498,10 +554,13 @@
   async function abrirCaixa(){
     try{
       requireLogin();
-      const loja=$("abLoja").value;
+      state.loja = $("abLoja").value;
+
       const sup=parseMoney($("abSup").value);
-      const r=await callApi("abrirCaixa",{loja, operador_id: state.user.id, operador_nome: state.user.nome, suprimento_inicial: sup});
-      state.loja=loja; state.sessao_id=r.sessao_id;
+      const r=await callApi("abrirCaixa",{loja: state.loja, operador_id: state.user.id, operador_nome: state.user.nome, suprimento_inicial: sup});
+      state.sessao_id=r.sessao_id;
+
+      await syncSessaoByLoja();
       toast("Caixa aberto.");
     }catch(e){ toast(e.message,false); }
   }
@@ -522,22 +581,24 @@
     try{
       requireLogin();
       requireSessao();
-      const loja=$("abLoja").value;
+
       const obs=$("abObs").value;
 
-      await callApi("fecharCaixa",{loja, operador_id: state.user.id, observacao: obs});
+      await callApi("fecharCaixa",{loja: state.loja, operador_id: state.user.id, observacao: obs});
 
       const txt = await callApi("gerarFechamentoTxt",{loja: state.loja, sessao_id: state.sessao_id});
       downloadTxt(txt.filename, txt.content);
 
       state.sessao_id=null;
+      await syncSessaoByLoja();
       toast("Caixa fechado e TXT gerado.");
     }catch(e){ toast(e.message,false); }
   }
 
   async function salvarVenda(){
     try{
-      requireLogin(); requireSessao();
+      requireLogin(); await syncSessaoByLoja(); requireSessao();
+
       const vendedor=$("vVendedor").value;
       const forma=$("vForma").value;
       const valor=parseMoney($("vValor").value);
@@ -553,7 +614,8 @@
 
   async function salvarReceb(){
     try{
-      requireLogin(); requireSessao();
+      requireLogin(); await syncSessaoByLoja(); requireSessao();
+
       const valor=parseMoney($("rValor").value);
       const descricao=$("rDesc").value;
       if(!(valor>0)) throw new Error("Informe um valor válido.");
@@ -566,7 +628,8 @@
 
   async function salvarLanc(){
     try{
-      requireLogin(); requireSessao();
+      requireLogin(); await syncSessaoByLoja(); requireSessao();
+
       const tipo=$("lTipo").value;
       const valor=parseMoney($("lValor").value);
       const descricao=$("lDesc").value;
@@ -581,7 +644,8 @@
 
   async function atualizarMov(){
     try{
-      requireLogin(); requireSessao();
+      requireLogin(); await syncSessaoByLoja(); requireSessao();
+
       const r=await callApi("movimentosResumo",{loja: state.loja, sessao_id: state.sessao_id});
       $("kSaldo").textContent=brl(r.saldo_atual);
       $("kVendas").textContent=brl(r.total_vendas);
@@ -593,7 +657,8 @@
 
   async function buscarMov(){
     try{
-      requireLogin();
+      requireLogin(); await syncSessaoByLoja();
+
       const forma=$("mForma").value;
       const inicio=$("mIni").value;
       const fim=$("mFim").value;
@@ -714,8 +779,8 @@
       await callApi("ping",{});
       $("subline").textContent="Servidor OK — faça login.";
       $("srvTxt").textContent="ok"; $("dotServer").classList.add("ok");
-      await loadOperadores();
 
+      await loadOperadores();
       showMenus(false);
       showTab("login");
 
@@ -737,16 +802,13 @@
   $("btnLogin").addEventListener("click", doLogin);
   $("btnLogout").addEventListener("click", doLogout);
 
+  // ✅ mudar loja = puxar sessão aberta daquela loja
   $("abLoja").addEventListener("change", async ()=>{
     state.loja = $("abLoja").value;
-    $("lojaTxt").textContent = state.loja;
-    $("dotLoja").classList.remove("warn"); $("dotLoja").classList.add("ok");
     try{
-      if(state.user){
-        const sess = await callApi("getSessaoAberta",{loja: state.loja});
-        state.sessao_id = sess ? sess.sessao_id : null;
-      }
-    }catch{}
+      await syncSessaoByLoja();
+      toast(state.sessao_id ? "Sessão carregada." : "Nenhum caixa aberto nessa loja.", true);
+    }catch(e){ toast(e.message,false); }
   });
 
   $("btnAbrir").addEventListener("click", abrirCaixa);
