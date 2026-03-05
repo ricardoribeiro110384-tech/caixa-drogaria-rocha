@@ -8,12 +8,7 @@
   <style>
     :root{
       --brand:#ff6a00; --brand2:#ff8a3d;
-
-      /* ✅ tema mais cinza (menos branco) */
-      --bg:#e6e9f0;
-      --panel:#f7f8fb;
-      --panel2:#eef1f6;
-
+      --bg:#e6e9f0; --panel:#f7f8fb; --panel2:#eef1f6;
       --text:#0f172a; --muted:#64748b; --muted2:#94a3b8;
       --line:#d7deea; --shadow: 0 18px 40px rgba(2,6,23,.12);
       --r:18px; --r2:26px;
@@ -28,23 +23,53 @@
         radial-gradient(900px 450px at 90% 10%, rgba(59,130,246,.08), transparent 60%),
         linear-gradient(180deg, #f2f4f8, var(--bg));
     }
-    .topbar{position:sticky;top:0;z-index:5;backdrop-filter:blur(10px);background:rgba(242,244,248,.78);border-bottom:1px solid rgba(215,222,234,.9)}
+
+    /* ✅ TOPBAR LARANJA */
+    .topbar{
+      position:sticky; top:0; z-index:5;
+      background: linear-gradient(180deg, var(--brand), var(--brand2));
+      border-bottom: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 16px 40px rgba(255,106,0,.28);
+      backdrop-filter:none;
+    }
+
     .wrap{max-width:1200px;margin:0 auto;padding:18px}
     .row{display:flex;gap:16px;align-items:stretch}
     .col{flex:1}
-    .brand{display:flex;align-items:center;gap:10px;font-weight:900;letter-spacing:.2px}
-    .logoDot{width:14px;height:14px;border-radius:50%;background:radial-gradient(circle at 30% 30%, #fff, rgba(255,255,255,.0)), var(--brand);box-shadow:0 10px 25px rgba(255,106,0,.25)}
-    .sub{color:var(--muted);font-weight:700;font-size:13px;margin-top:2px}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:.2px;color:#fff}
+    .sub{color:rgba(255,255,255,.92);font-weight:800;font-size:13px;margin-top:2px}
+
+    /* logo opcional */
+    .logoSistema{
+      height:40px; width:auto;
+      border-radius:10px;
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.25);
+      padding:6px;
+    }
+
     .statusbar{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
-    .pill{display:flex;align-items:center;gap:8px;padding:8px 12px;background:rgba(247,248,251,.88);border:1px solid rgba(215,222,234,.95);border-radius:999px;box-shadow:0 10px 25px rgba(2,6,23,.06);font-weight:900;color:var(--text);font-size:13px}
-    .dot{width:10px;height:10px;border-radius:50%;background:var(--muted2)}
+    .pill{
+      display:flex;align-items:center;gap:8px;padding:8px 12px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.28);
+      box-shadow: 0 12px 26px rgba(0,0,0,.12);
+      border-radius:999px;
+      font-weight:1000;
+      color:#fff;
+      font-size:13px
+    }
+    .pill .tmuted{color:rgba(255,255,255,.92)!important}
+
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--muted2);box-shadow:0 0 0 3px rgba(255,255,255,.22)}
     .dot.ok{background:var(--ok)} .dot.bad{background:var(--bad)} .dot.warn{background:var(--warn)}
+
     .layout{display:grid;grid-template-columns:260px 1fr;gap:16px;margin-top:16px}
     .card{background:rgba(247,248,251,.92);border:1px solid rgba(215,222,234,.98);border-radius:var(--r2);box-shadow:var(--shadow)}
     .sidebar{padding:14px;position:sticky;top:86px;height:calc(100vh - 110px);overflow:auto}
     .menuTitle{font-weight:1000;margin:6px 10px 10px;color:var(--muted);font-size:12px;letter-spacing:.4px;text-transform:uppercase}
     .menu{display:flex;flex-direction:column;gap:8px}
-    .mitem{display:flex;align-items:center;gap:10px;padding:12px 12px;border-radius:14px;border:1px solid transparent;cursor:pointer;user-select:none;font-weight:900;color:var(--text);transition:.15s ease}
+    .mitem{display:flex;align-items:center;gap:10px;padding:12px 12px;border-radius:14px;border:1px solid transparent;cursor:pointer;user-select:none;font-weight:1000;color:var(--text);transition:.15s ease}
     .mitem:hover{background:rgba(255,255,255,.65);border-color:rgba(215,222,234,.95)}
     .mitem.active{background:linear-gradient(180deg, rgba(255,106,0,.16), rgba(255,106,0,.06));border-color:rgba(255,106,0,.30);box-shadow:0 10px 25px rgba(255,106,0,.16)}
     .micon{width:30px;height:30px;border-radius:12px;display:grid;place-items:center;background:rgba(2,6,23,.05);border:1px solid rgba(215,222,234,.95);font-size:14px}
@@ -52,44 +77,29 @@
     .content{padding:18px}
     .contentHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px}
     h1{margin:0;font-size:22px}
-    .hint{color:var(--muted);font-weight:700;font-size:13px;margin-top:6px}
+    .hint{color:var(--muted);font-weight:800;font-size:13px;margin-top:6px}
     .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
     .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
     label{display:block;font-weight:1000;font-size:12px;color:var(--muted);margin:4px 0 8px;text-transform:uppercase;letter-spacing:.35px}
-    input,select,textarea{
-      width:100%;padding:12px 12px;border-radius:14px;border:1px solid rgba(215,222,234,.98);
-      background:rgba(255,255,255,.9);outline:none;font-weight:900;color:var(--text)
-    }
+    input,select,textarea{width:100%;padding:12px 12px;border-radius:14px;border:1px solid rgba(215,222,234,.98);background:rgba(255,255,255,.9);outline:none;font-weight:1000;color:var(--text)}
     input:focus,select:focus,textarea:focus{border-color:rgba(255,106,0,.58);box-shadow:0 0 0 4px rgba(255,106,0,.13)}
-    textarea{min-height:90px;resize:vertical;font-weight:700}
+    textarea{min-height:90px;resize:vertical;font-weight:800}
     .btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    .btn{
-      padding:12px 14px;border-radius:16px;border:1px solid rgba(255,106,0,.35);
-      background:linear-gradient(180deg, rgba(255,106,0,1), rgba(255,138,61,1));
-      color:white;font-weight:1000;cursor:pointer;box-shadow:0 16px 32px rgba(255,106,0,.22);transition:transform .08s ease
-    }
+    .btn{padding:12px 14px;border-radius:16px;border:1px solid rgba(255,106,0,.35);background:linear-gradient(180deg, rgba(255,106,0,1), rgba(255,138,61,1));color:white;font-weight:1000;cursor:pointer;box-shadow:0 16px 32px rgba(255,106,0,.22);transition:transform .08s ease}
     .btn:active{transform:scale(.98)}
+    .btn:disabled{opacity:.65;cursor:not-allowed}
     .btn.secondary{background:rgba(2,6,23,.04);color:var(--text);border:1px solid rgba(215,222,234,.98);box-shadow:none}
     .btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border-color:rgba(220,38,38,.35);box-shadow:0 16px 32px rgba(220,38,38,.18)}
     .kpis{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin:8px 0 16px}
     .kpi{padding:14px;border-radius:18px;border:1px solid rgba(215,222,234,.98);background:rgba(255,255,255,.78)}
     .kpi .t{color:var(--muted);font-weight:1000;text-transform:uppercase;font-size:11px;letter-spacing:.35px}
     .kpi .v{font-weight:1000;font-size:22px;margin-top:6px}
-    table{
-      width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:18px;
-      border:1px solid rgba(215,222,234,.98);background:rgba(255,255,255,.78)
-    }
-    thead th{
-      text-align:left;padding:12px 12px;font-size:12px;color:var(--muted);font-weight:1000;text-transform:uppercase;
-      letter-spacing:.35px;border-bottom:1px solid rgba(215,222,234,.98);background:rgba(238,241,246,.95)
-    }
-    tbody td{padding:12px 12px;border-bottom:1px solid rgba(215,222,234,.75);font-weight:900;color:var(--text);vertical-align:middle}
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:18px;border:1px solid rgba(215,222,234,.98);background:rgba(255,255,255,.78)}
+    thead th{text-align:left;padding:12px 12px;font-size:12px;color:var(--muted);font-weight:1000;text-transform:uppercase;letter-spacing:.35px;border-bottom:1px solid rgba(215,222,234,.98);background:rgba(238,241,246,.95)}
+    tbody td{padding:12px 12px;border-bottom:1px solid rgba(215,222,234,.75);font-weight:900;color:var(--text)}
     tbody tr:last-child td{border-bottom:none}
     .tmuted{color:var(--muted);font-weight:800}
-    .toast{
-      position:fixed;right:16px;bottom:16px;z-index:99;background:rgba(247,248,251,.95);
-      border:1px solid rgba(215,222,234,.98);box-shadow:0 18px 45px rgba(2,6,23,.14);padding:12px 14px;border-radius:18px;display:none;max-width:360px;font-weight:1000
-    }
+    .toast{position:fixed;right:16px;bottom:16px;z-index:99;background:rgba(247,248,251,.95);border:1px solid rgba(215,222,234,.98);box-shadow:0 18px 45px rgba(2,6,23,.14);padding:12px 14px;border-radius:18px;display:none;max-width:360px;font-weight:1000}
     .toast.ok{border-left:6px solid var(--ok)} .toast.bad{border-left:6px solid var(--bad)}
     .hidden{display:none !important}
     .small{font-size:12px;color:var(--muted);font-weight:800}
@@ -101,35 +111,6 @@
       .kpis{grid-template-columns:1fr}
       .grid2,.grid3{grid-template-columns:1fr}
     }
-    /* ✅ TOPBAR LARANJA */
-.topbar{
-  position:sticky; top:0; z-index:5;
-  background: linear-gradient(180deg, var(--brand), var(--brand2));
-  border-bottom: 1px solid rgba(255,255,255,.22);
-  box-shadow: 0 16px 40px rgba(255,106,0,.28);
-  backdrop-filter: none; /* remove o blur em cima do laranja */
-}
-
-/* Textos do topo brancos */
-.topbar .brand,
-.topbar .brand .sub{
-  color:#fff !important;
-}
-.topbar .brand .sub{ opacity:.92; }
-
-/* Pílulas/Status no topo com contraste */
-.pill{
-  background: rgba(255,255,255,.14);
-  border: 1px solid rgba(255,255,255,.28);
-  box-shadow: 0 12px 26px rgba(0,0,0,.12);
-  color:#fff;
-}
-.pill .tmuted{ color: rgba(255,255,255,.92) !important; }
-
-/* Pontinhos com contorno pra aparecer no laranja */
-.dot{
-  box-shadow: 0 0 0 3px rgba(255,255,255,.22);
-}
   </style>
 </head>
 
@@ -139,10 +120,13 @@
       <div class="row" style="align-items:center">
         <div class="col">
           <div class="brand">
-            <div class="logoDot"></div>
-            <div>
-              <div>Caixa • Drogaria Rocha</div>
-              <div class="sub" id="subline">Conectando…</div>
+            <!-- ✅ coloque sua logo aqui (arquivo local ou link) -->
+            <!-- Ex: <img src="logo.png" class="logoSistema" alt="Drogaria Rocha"> -->
+            <div style="display:flex;align-items:center;gap:12px">
+              <div>
+                <div>Caixa • Drogaria Rocha</div>
+                <div class="sub" id="subline">Conectando…</div>
+              </div>
             </div>
           </div>
         </div>
@@ -172,7 +156,7 @@
           <div class="mitem hidden" data-tab="mov" id="m-mov"><div class="micon">📌</div>Movimentos<div class="mnum">6</div></div>
           <div class="mitem hidden" data-tab="rel" id="m-rel"><div class="micon">📊</div>Relatórios<div class="mnum">7</div></div>
 
-          <div style="margin-top:12px" class="small">Dica: se der erro, revise a URL do Web App e o Deploy (Acesso: Anyone).</div>
+          <div style="margin-top:12px" class="small">Dica: revise a URL do Web App e o Deploy (Acesso: Anyone).</div>
           <div class="btnrow" style="margin-top:12px">
             <button class="btn secondary" id="btnLogout" style="width:100%;display:none">Sair</button>
           </div>
@@ -366,7 +350,7 @@
           </div>
         </section>
 
-        <!-- RELATÓRIOS (PIN) -->
+        <!-- RELATÓRIOS -->
         <section data-content="rel" class="hidden">
           <div class="contentHeader">
             <div>
@@ -466,7 +450,16 @@
     t.textContent=msg;
     t.className="toast "+(ok?"ok":"bad");
     t.style.display="block";
-    setTimeout(()=>t.style.display="none",2600);
+    setTimeout(()=>t.style.display="none",2400);
+  }
+
+  // ✅ busy state (evita duplo clique)
+  async function withBusy(btn, fn){
+    const old = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Salvando…";
+    try{ return await fn(); }
+    finally{ btn.disabled=false; btn.textContent=old; }
   }
 
   function requireLogin(){ if(!state.user) throw new Error("Faça login."); }
@@ -481,8 +474,8 @@
     document.querySelectorAll(".mitem").forEach(el=>el.classList.toggle("active", el.dataset.tab===tab));
     document.querySelectorAll("section[data-content]").forEach(sec=>sec.classList.toggle("hidden", sec.dataset.content!==tab));
 
-    // ✅ sempre sincroniza sessão ao entrar em telas operacionais
-    if(["abertura","vendas","receb","lanc","mov","rel"].includes(tab)){
+    // ✅ sincroniza só nas telas que “precisam”
+    if(["abertura","mov","rel"].includes(tab)){
       syncSessaoByLoja().catch(()=>{});
     }
 
@@ -526,7 +519,7 @@
     ).join("");
   }
 
-  // ✅ FIX LOJA 2: sempre carregar a sessão correta da loja atual
+  // ✅ sessão por loja (fix LOJA 2)
   async function syncSessaoByLoja(){
     if(!state.user) return;
 
@@ -544,6 +537,14 @@
     $("dotSess").classList.add(state.sessao_id ? "ok" : "warn");
   }
 
+  // ✅ só sincroniza se estiver sem sessão (1 chamada por salvar)
+  async function ensureSessaoFast(){
+    if(!state.sessao_id){
+      await syncSessaoByLoja();
+    }
+    requireSessao();
+  }
+
   async function doLogin(){
     try{
       const operadorId=$("loginOperador").value;
@@ -557,9 +558,7 @@
 
       showMenus(true);
 
-      // loja padrão = seleção de abertura
       state.loja = $("abLoja").value || "LOJA 1";
-
       await loadVendedores();
       await syncSessaoByLoja();
 
@@ -581,17 +580,13 @@
   }
 
   async function abrirCaixa(){
-    try{
-      requireLogin();
-      state.loja = $("abLoja").value;
-
-      const sup=parseMoney($("abSup").value);
-      const r=await callApi("abrirCaixa",{loja: state.loja, operador_id: state.user.id, operador_nome: state.user.nome, suprimento_inicial: sup});
-      state.sessao_id=r.sessao_id;
-
-      await syncSessaoByLoja();
-      toast("Caixa aberto.");
-    }catch(e){ toast(e.message,false); }
+    requireLogin();
+    state.loja = $("abLoja").value;
+    const sup=parseMoney($("abSup").value);
+    const r=await callApi("abrirCaixa",{loja: state.loja, operador_id: state.user.id, operador_nome: state.user.nome, suprimento_inicial: sup});
+    state.sessao_id=r.sessao_id;
+    await syncSessaoByLoja();
+    toast("Caixa aberto.");
   }
 
   function downloadTxt(filename, content){
@@ -607,105 +602,89 @@
   }
 
   async function fecharCaixa(){
-    try{
-      requireLogin();
-      requireSessao();
+    requireLogin(); await ensureSessaoFast();
+    const obs=$("abObs").value;
 
-      const obs=$("abObs").value;
+    await callApi("fecharCaixa",{loja: state.loja, operador_id: state.user.id, observacao: obs});
+    const txt = await callApi("gerarFechamentoTxt",{loja: state.loja, sessao_id: state.sessao_id});
+    downloadTxt(txt.filename, txt.content);
 
-      await callApi("fecharCaixa",{loja: state.loja, operador_id: state.user.id, observacao: obs});
-
-      const txt = await callApi("gerarFechamentoTxt",{loja: state.loja, sessao_id: state.sessao_id});
-      downloadTxt(txt.filename, txt.content);
-
-      state.sessao_id=null;
-      await syncSessaoByLoja();
-      toast("Caixa fechado e TXT gerado.");
-    }catch(e){ toast(e.message,false); }
+    state.sessao_id=null;
+    await syncSessaoByLoja();
+    toast("Caixa fechado e TXT gerado.");
   }
 
   async function salvarVenda(){
-    try{
-      requireLogin(); await syncSessaoByLoja(); requireSessao();
+    requireLogin(); await ensureSessaoFast();
 
-      const vendedor=$("vVendedor").value;
-      const forma=$("vForma").value;
-      const valor=parseMoney($("vValor").value);
-      if(!vendedor) throw new Error("Selecione o vendedor.");
-      if(!forma) throw new Error("Selecione a forma.");
-      if(!(valor>0)) throw new Error("Informe um valor válido.");
+    const vendedor=$("vVendedor").value;
+    const forma=$("vForma").value;
+    const valor=parseMoney($("vValor").value);
+    if(!vendedor) throw new Error("Selecione o vendedor.");
+    if(!forma) throw new Error("Selecione a forma.");
+    if(!(valor>0)) throw new Error("Informe um valor válido.");
 
-      await callApi("salvarVenda",{loja: state.loja, operador_id: state.user.id, sessao_id: state.sessao_id, vendedor, forma, valor});
-      $("vValor").value="";
-      toast("Venda salva.");
-    }catch(e){ toast(e.message,false); }
+    await callApi("salvarVenda",{loja: state.loja, operador_id: state.user.id, sessao_id: state.sessao_id, vendedor, forma, valor});
+    $("vValor").value="";
+    toast("Venda salva.");
   }
 
   async function salvarReceb(){
-    try{
-      requireLogin(); await syncSessaoByLoja(); requireSessao();
+    requireLogin(); await ensureSessaoFast();
+    const valor=parseMoney($("rValor").value);
+    const descricao=$("rDesc").value;
+    if(!(valor>0)) throw new Error("Informe um valor válido.");
 
-      const valor=parseMoney($("rValor").value);
-      const descricao=$("rDesc").value;
-      if(!(valor>0)) throw new Error("Informe um valor válido.");
-
-      await callApi("salvarRecebimento",{loja: state.loja, operador_id: state.user.id, sessao_id: state.sessao_id, valor, descricao});
-      $("rValor").value=""; $("rDesc").value="";
-      toast("Recebimento salvo.");
-    }catch(e){ toast(e.message,false); }
+    await callApi("salvarRecebimento",{loja: state.loja, operador_id: state.user.id, sessao_id: state.sessao_id, valor, descricao});
+    $("rValor").value=""; $("rDesc").value="";
+    toast("Recebimento salvo.");
   }
 
   async function salvarLanc(){
-    try{
-      requireLogin(); await syncSessaoByLoja(); requireSessao();
+    requireLogin(); await ensureSessaoFast();
+    const tipo=$("lTipo").value;
+    const valor=parseMoney($("lValor").value);
+    const descricao=$("lDesc").value;
+    if(!tipo) throw new Error("Selecione o tipo.");
+    if(!(valor>0)) throw new Error("Informe um valor válido.");
 
-      const tipo=$("lTipo").value;
-      const valor=parseMoney($("lValor").value);
-      const descricao=$("lDesc").value;
-      if(!tipo) throw new Error("Selecione o tipo.");
-      if(!(valor>0)) throw new Error("Informe um valor válido.");
-
-      await callApi("salvarLancamento",{loja: state.loja, operador_id: state.user.id, sessao_id: state.sessao_id, tipo, valor, descricao});
-      $("lValor").value=""; $("lDesc").value="";
-      toast("Lançamento salvo.");
-    }catch(e){ toast(e.message,false); }
+    await callApi("salvarLancamento",{loja: state.loja, operador_id: state.user.id, sessao_id: state.sessao_id, tipo, valor, descricao});
+    $("lValor").value=""; $("lDesc").value="";
+    toast("Lançamento salvo.");
   }
 
   async function atualizarMov(){
-    try{
-      requireLogin(); await syncSessaoByLoja(); requireSessao();
-
-      const r=await callApi("movimentosResumo",{loja: state.loja, sessao_id: state.sessao_id});
-      $("kSaldo").textContent=brl(r.saldo_atual);
-      $("kVendas").textContent=brl(r.total_vendas);
-      $("kReceb").textContent=brl(r.total_recebimentos);
-      $("kSaidas").textContent=brl((r.total_sangrias||0)+(r.total_despesas||0));
-      toast("Atualizado.");
-    }catch(e){ toast(e.message,false); }
+    requireLogin(); await ensureSessaoFast();
+    const r=await callApi("movimentosResumo",{loja: state.loja, sessao_id: state.sessao_id});
+    $("kSaldo").textContent=brl(r.saldo_atual);
+    $("kVendas").textContent=brl(r.total_vendas);
+    $("kReceb").textContent=brl(r.total_recebimentos);
+    $("kSaidas").textContent=brl((r.total_sangrias||0)+(r.total_despesas||0));
+    toast("Atualizado.");
   }
 
   async function buscarMov(){
-    try{
-      requireLogin(); await syncSessaoByLoja();
+    requireLogin();
+    // aqui não precisa de sessão; busca geral por loja
+    if(!state.loja) state.loja = $("abLoja").value || "LOJA 1";
 
-      const forma=$("mForma").value;
-      const inicio=$("mIni").value;
-      const fim=$("mFim").value;
+    const forma=$("mForma").value;
+    const inicio=$("mIni").value;
+    const fim=$("mFim").value;
 
-      const list=await callApi("buscarVendasPorForma",{loja: state.loja, forma, inicio, fim});
-      const tb=$("movTbody");
-      tb.innerHTML = (!list || list.length===0)
-        ? `<tr><td colspan="4" class="tmuted">Nenhuma venda no período.</td></tr>`
-        : list.map(v=>`
-            <tr>
-              <td class="mono">${escapeHtml(v.data)} ${escapeHtml(v.hora)}</td>
-              <td>${escapeHtml(v.vendedor||"")}</td>
-              <td>${escapeHtml(v.forma||"")}</td>
-              <td class="right">${brl(v.valor)}</td>
-            </tr>
-          `).join("");
-      toast("Busca concluída.");
-    }catch(e){ toast(e.message,false); }
+    const list=await callApi("buscarVendasPorForma",{loja: state.loja, forma, inicio, fim});
+    const tb=$("movTbody");
+    tb.innerHTML = (!list || list.length===0)
+      ? `<tr><td colspan="4" class="tmuted">Nenhuma venda no período.</td></tr>`
+      : list.map(v=>`
+          <tr>
+            <td class="mono">${escapeHtml(v.data)} ${escapeHtml(v.hora)}</td>
+            <td>${escapeHtml(v.vendedor||"")}</td>
+            <td>${escapeHtml(v.forma||"")}</td>
+            <td class="right">${brl(v.valor)}</td>
+          </tr>
+        `).join("");
+    toast("Busca concluída.");
   }
 
   function relTipoUI(){
@@ -723,18 +702,16 @@
   }
 
   async function unlockRel(){
-    try{
-      requireLogin();
-      const pin=$("relPin").value;
-      const ok=await callApi("reauth",{operadorId: state.user.id, pin});
-      if(ok!==true) throw new Error("PIN inválido.");
+    requireLogin();
+    const pin=$("relPin").value;
+    const ok=await callApi("reauth",{operadorId: state.user.id, pin});
+    if(ok!==true) throw new Error("PIN inválido.");
 
-      state.relUnlocked=true;
-      $("relLockBox").classList.add("hidden");
-      $("relContent").classList.remove("hidden");
-      $("relPin").value="";
-      toast("Relatórios desbloqueados.");
-    }catch(e){ toast(e.message,false); }
+    state.relUnlocked=true;
+    $("relLockBox").classList.add("hidden");
+    $("relContent").classList.remove("hidden");
+    $("relPin").value="";
+    toast("Relatórios desbloqueados.");
   }
 
   function lockRel(){
@@ -745,50 +722,50 @@
   }
 
   async function gerarRel(){
-    try{
-      requireLogin();
-      if(!state.relUnlocked) throw new Error("Desbloqueie Relatórios.");
+    requireLogin();
+    if(!state.relUnlocked) throw new Error("Desbloqueie Relatórios.");
 
-      const tipo=$("relTipo").value;
-      const data=relGetData();
-      if(!data) throw new Error("Selecione a data.");
+    if(!state.loja) state.loja = $("abLoja").value || "LOJA 1";
 
-      const r = await callApi("relatorioResumo",{loja: state.loja, tipo, data});
+    const tipo=$("relTipo").value;
+    const data=relGetData();
+    if(!data) throw new Error("Selecione a data.");
 
-      $("relPeriodo").textContent = `Período: ${r.periodo.inicio} até ${r.periodo.fim} (${r.periodo.tipo})`;
-      $("relTotalVendas").textContent = `Vendas: ${brl(r.vendas_total)}`;
-      $("relQtdVendas").textContent = `Qtd vendas: ${r.vendas_qtd}`;
+    const r = await callApi("relatorioResumo",{loja: state.loja, tipo, data});
 
-      $("relReceb").textContent = brl(r.receb_total);
-      $("relQtdReceb").textContent = `Qtd: ${r.receb_qtd}`;
+    $("relPeriodo").textContent = `Período: ${r.periodo.inicio} até ${r.periodo.fim} (${r.periodo.tipo})`;
+    $("relTotalVendas").textContent = `Vendas: ${brl(r.vendas_total)}`;
+    $("relQtdVendas").textContent = `Qtd vendas: ${r.vendas_qtd}`;
 
-      $("relSangria").textContent = brl(r.sangria_total);
-      $("relDespesa").textContent = brl(r.despesa_total);
+    $("relReceb").textContent = brl(r.receb_total);
+    $("relQtdReceb").textContent = `Qtd: ${r.receb_qtd}`;
 
-      const pf=r.vendas_por_forma||{};
-      $("relPorForma").innerHTML = Object.keys(pf).length
-        ? Object.entries(pf).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}: ${brl(v)}`).join("<br>")
-        : "—";
+    $("relSangria").textContent = brl(r.sangria_total);
+    $("relDespesa").textContent = brl(r.despesa_total);
 
-      const pv=r.vendas_por_vendedor||{};
-      $("relPorVendedor").innerHTML = Object.keys(pv).length
-        ? Object.entries(pv).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${escapeHtml(k)}: ${brl(v)}`).join("<br>")
-        : "—";
+    const pf=r.vendas_por_forma||{};
+    $("relPorForma").innerHTML = Object.keys(pf).length
+      ? Object.entries(pf).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}: ${brl(v)}`).join("<br>")
+      : "—";
 
-      const ult=r.vendas_ultimas||[];
-      $("relTbody").innerHTML = ult.length
-        ? ult.map(v=>`
-            <tr>
-              <td class="mono">${escapeHtml(v.data)} ${escapeHtml(v.hora)}</td>
-              <td>${escapeHtml(v.vendedor||"")}</td>
-              <td>${escapeHtml(v.forma||"")}</td>
-              <td class="right">${brl(v.valor)}</td>
-            </tr>
-          `).join("")
-        : `<tr><td colspan="4" class="tmuted">Nenhuma venda no período.</td></tr>`;
+    const pv=r.vendas_por_vendedor||{};
+    $("relPorVendedor").innerHTML = Object.keys(pv).length
+      ? Object.entries(pv).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${escapeHtml(k)}: ${brl(v)}`).join("<br>")
+      : "—";
 
-      toast("Relatório gerado.");
-    }catch(e){ toast(e.message,false); }
+    const ult=r.vendas_ultimas||[];
+    $("relTbody").innerHTML = ult.length
+      ? ult.map(v=>`
+          <tr>
+            <td class="mono">${escapeHtml(v.data)} ${escapeHtml(v.hora)}</td>
+            <td>${escapeHtml(v.vendedor||"")}</td>
+            <td>${escapeHtml(v.forma||"")}</td>
+            <td class="right">${brl(v.valor)}</td>
+          </tr>
+        `).join("")
+      : `<tr><td colspan="4" class="tmuted">Nenhuma venda no período.</td></tr>`;
+
+    toast("Relatório gerado.");
   }
 
   function fillYears(){
@@ -827,11 +804,12 @@
     }
   }
 
+  // eventos
   $("btnReloadOps").addEventListener("click", async ()=>{ try{ await loadOperadores(); toast("Operadores atualizados."); }catch(e){ toast(e.message,false);} });
-  $("btnLogin").addEventListener("click", doLogin);
+
+  $("btnLogin").addEventListener("click", () => withBusy($("btnLogin"), doLogin));
   $("btnLogout").addEventListener("click", doLogout);
 
-  // ✅ mudar loja = puxar sessão aberta daquela loja
   $("abLoja").addEventListener("change", async ()=>{
     state.loja = $("abLoja").value;
     try{
@@ -840,23 +818,22 @@
     }catch(e){ toast(e.message,false); }
   });
 
-  $("btnAbrir").addEventListener("click", abrirCaixa);
-  $("btnFechar").addEventListener("click", fecharCaixa);
+  $("btnAbrir").addEventListener("click", () => withBusy($("btnAbrir"), abrirCaixa));
+  $("btnFechar").addEventListener("click", () => withBusy($("btnFechar"), fecharCaixa));
 
-  $("btnSalvarVenda").addEventListener("click", salvarVenda);
-  $("btnSalvarReceb").addEventListener("click", salvarReceb);
-  $("btnSalvarLanc").addEventListener("click", salvarLanc);
+  $("btnSalvarVenda").addEventListener("click", () => withBusy($("btnSalvarVenda"), salvarVenda));
+  $("btnSalvarReceb").addEventListener("click", () => withBusy($("btnSalvarReceb"), salvarReceb));
+  $("btnSalvarLanc").addEventListener("click", () => withBusy($("btnSalvarLanc"), salvarLanc));
 
-  $("btnAtualizarMov").addEventListener("click", atualizarMov);
-  $("btnBuscarMov").addEventListener("click", buscarMov);
+  $("btnAtualizarMov").addEventListener("click", () => withBusy($("btnAtualizarMov"), atualizarMov));
+  $("btnBuscarMov").addEventListener("click", () => withBusy($("btnBuscarMov"), buscarMov));
 
   $("relTipo").addEventListener("change", relTipoUI);
-  $("btnRelUnlock").addEventListener("click", unlockRel);
+  $("btnRelUnlock").addEventListener("click", () => withBusy($("btnRelUnlock"), unlockRel));
   $("btnRelLock").addEventListener("click", lockRel);
-  $("btnGerarRel").addEventListener("click", gerarRel);
+  $("btnGerarRel").addEventListener("click", () => withBusy($("btnGerarRel"), gerarRel));
 
   init();
 </script>
 </body>
 </html>
-
