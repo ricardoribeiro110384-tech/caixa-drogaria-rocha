@@ -7,1169 +7,833 @@
 
   <style>
     :root{
-      --brand:#ff6a00;
-      --brand2:#ff8a3d;
-      --bg:#eef1f4;
-      --card:#ffffff;
-      --text:#0f172a;
-      --muted:#6b7280;
-      --line:#e5e7eb;
-      --good:#16a34a;
-      --bad:#dc2626;
-      --warn:#f59e0b;
-      --shadow:0 10px 30px rgba(0,0,0,.08);
-      --r:18px;
+      --brand:#ff6a00; --brand2:#ff8a3d;
+      --bg:#e6e9f0; --panel:#f7f8fb; --panel2:#eef1f6;
+      --text:#0f172a; --muted:#64748b; --muted2:#94a3b8;
+      --line:#d7deea; --shadow: 0 18px 40px rgba(2,6,23,.12);
+      --r:18px; --r2:26px;
+      --ok:#16a34a; --warn:#f59e0b; --bad:#dc2626;
+      --font: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
     }
-    *{ box-sizing:border-box; }
+    *{box-sizing:border-box}
     body{
-      margin:0;
-      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:var(--bg);
-      color:var(--text);
+      margin:0; font-family:var(--font); color:var(--text); min-height:100vh;
+      background:
+        radial-gradient(900px 450px at 20% 0%, rgba(255,106,0,.12), transparent 60%),
+        radial-gradient(900px 450px at 90% 10%, rgba(59,130,246,.08), transparent 60%),
+        linear-gradient(180deg, #f2f4f8, var(--bg));
     }
 
-    /* TOP BAR ORANGE */
-    header{
-      background:linear-gradient(90deg,var(--brand),var(--brand2));
-      color:#fff;
-      padding:14px 16px;
-      display:flex;
-      align-items:center;
-      justify-content:space-between;
-      gap:14px;
-      position:sticky;
-      top:0;
-      z-index:5;
-      box-shadow:0 6px 20px rgba(0,0,0,.15);
+    /* ✅ TOPBAR LARANJA */
+    .topbar{
+      position:sticky; top:0; z-index:5;
+      background: linear-gradient(180deg, var(--brand), var(--brand2));
+      border-bottom: 1px solid rgba(255,255,255,.22);
+      box-shadow: 0 16px 40px rgba(255,106,0,.28);
+      backdrop-filter:none;
     }
-    .brand{
-      display:flex; align-items:center; gap:10px;
-      min-width:220px;
-    }
-    .logo{
-      width:42px; height:42px; border-radius:12px;
-      background:#fff1;
-      display:grid; place-items:center;
-      overflow:hidden;
-      border:1px solid rgba(255,255,255,.25);
-    }
-    .logo img{ width:100%; height:100%; object-fit:cover; }
-    .brand h1{
-      font-size:16px; margin:0; line-height:1.1;
-    }
-    .brand small{ display:block; opacity:.9; margin-top:2px; font-size:12px; }
 
-    .chips{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-    .chip{
-      background:rgba(255,255,255,.15);
+    .wrap{max-width:1200px;margin:0 auto;padding:18px}
+    .row{display:flex;gap:16px;align-items:stretch}
+    .col{flex:1}
+    .brand{display:flex;align-items:center;gap:12px;font-weight:1000;letter-spacing:.2px;color:#fff}
+    .sub{color:rgba(255,255,255,.92);font-weight:800;font-size:13px;margin-top:2px}
+
+    /* logo opcional */
+    .logoSistema{
+      height:40px; width:auto;
+      border-radius:10px;
+      background:rgba(255,255,255,.18);
       border:1px solid rgba(255,255,255,.25);
-      padding:8px 10px;
+      padding:6px;
+    }
+
+    .statusbar{display:flex;gap:10px;align-items:center;justify-content:flex-end;flex-wrap:wrap}
+    .pill{
+      display:flex;align-items:center;gap:8px;padding:8px 12px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.28);
+      box-shadow: 0 12px 26px rgba(0,0,0,.12);
       border-radius:999px;
-      display:flex;
-      align-items:center;
-      gap:8px;
-      font-size:12px;
-      white-space:nowrap;
-    }
-    .dot{ width:10px; height:10px; border-radius:50%; background:#bbb; }
-    .dot.ok{ background:var(--good); }
-    .dot.bad{ background:var(--bad); }
-    .dot.warn{ background:var(--warn); }
-
-    main{
-      display:grid;
-      grid-template-columns: 260px 1fr;
-      gap:16px;
-      padding:16px;
-      max-width:1250px;
-      margin:0 auto;
-    }
-
-    aside{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--r);
-      box-shadow:var(--shadow);
-      padding:12px;
-      height: calc(100vh - 110px);
-      position:sticky;
-      top:84px;
-      overflow:auto;
-    }
-
-    .menuTitle{
-      font-weight:800;
-      font-size:13px;
-      color:var(--muted);
-      margin:6px 8px 10px;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-    }
-
-    .navbtn{
-      width:100%;
-      border:1px solid var(--line);
-      background:#fff;
-      padding:12px 12px;
-      border-radius:14px;
-      text-align:left;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      cursor:pointer;
-      margin-bottom:10px;
-      transition:.15s;
-    }
-    .navbtn:hover{ transform:translateY(-1px); }
-    .navbtn.active{
-      border-color:rgba(255,106,0,.35);
-      box-shadow:0 10px 26px rgba(255,106,0,.14);
-    }
-    .navbtn b{ font-size:14px; }
-    .navbtn small{ color:var(--muted); }
-
-    section{
-      background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--r);
-      box-shadow:var(--shadow);
-      padding:16px;
-      min-height: 560px;
-    }
-    .hidden{ display:none !important; }
-
-    .grid{
-      display:grid;
-      grid-template-columns: repeat(12, 1fr);
-      gap:12px;
-      align-items:end;
-    }
-    .col-12{ grid-column: span 12; }
-    .col-8{ grid-column: span 8; }
-    .col-6{ grid-column: span 6; }
-    .col-4{ grid-column: span 4; }
-    .col-3{ grid-column: span 3; }
-
-    label{
-      display:block;
-      font-size:12px;
-      color:var(--muted);
-      margin:0 0 6px;
-      font-weight:700;
-      letter-spacing:.02em;
-    }
-    input, select, textarea{
-      width:100%;
-      padding:12px 12px;
-      border:1px solid var(--line);
-      border-radius:14px;
-      background:#fff;
-      font-size:14px;
-      outline:none;
-    }
-    textarea{ min-height:90px; resize:vertical; }
-    input:focus, select:focus, textarea:focus{
-      border-color: rgba(255,106,0,.55);
-      box-shadow:0 0 0 4px rgba(255,106,0,.12);
-    }
-
-    .btn{
-      border:0;
-      background:linear-gradient(90deg,var(--brand),var(--brand2));
+      font-weight:1000;
       color:#fff;
-      font-weight:800;
-      padding:12px 14px;
-      border-radius:14px;
-      cursor:pointer;
-      box-shadow:0 12px 24px rgba(255,106,0,.22);
-      transition:.15s;
+      font-size:13px
     }
-    .btn:hover{ transform: translateY(-1px); }
-    .btn:disabled{ opacity:.55; cursor:not-allowed; transform:none; }
+    .pill .tmuted{color:rgba(255,255,255,.92)!important}
 
-    .btn2{
-      border:1px solid var(--line);
-      background:#fff;
-      color:var(--text);
-      font-weight:800;
-      padding:12px 14px;
-      border-radius:14px;
-      cursor:pointer;
-    }
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--muted2);box-shadow:0 0 0 3px rgba(255,255,255,.22)}
+    .dot.ok{background:var(--ok)} .dot.bad{background:var(--bad)} .dot.warn{background:var(--warn)}
 
-    .danger{
-      background:linear-gradient(90deg,#ef4444,#dc2626);
-      box-shadow:0 12px 24px rgba(220,38,38,.18);
-    }
-
-    .cardsRow{
-      display:grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap:12px;
-      margin:14px 0;
-    }
-    .mini{
-      border:1px solid var(--line);
-      border-radius:16px;
-      padding:12px;
-      background:#fff;
-    }
-    .mini .k{ color:var(--muted); font-weight:800; font-size:12px; text-transform:uppercase; }
-    .mini .v{ font-weight:900; font-size:22px; margin-top:6px; }
-
-    table{
-      width:100%;
-      border-collapse:collapse;
-      overflow:hidden;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:#fff;
-    }
-    th, td{
-      padding:10px 10px;
-      border-bottom:1px solid var(--line);
-      font-size:13px;
-      text-align:left;
-    }
-    th{
-      background:#f8fafc;
-      color:#334155;
-      font-weight:900;
-      font-size:12px;
-      text-transform:uppercase;
-      letter-spacing:.06em;
-    }
-    tr:last-child td{ border-bottom:0; }
-    td.right{ text-align:right; }
-
-    .toastWrap{
-      position:fixed;
-      right:18px;
-      bottom:18px;
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-      z-index:50;
-    }
-    .toast{
-      max-width: 420px;
-      padding:12px 14px;
-      border-radius:16px;
-      border:1px solid var(--line);
-      background:#fff;
-      box-shadow:var(--shadow);
-      display:flex;
-      gap:10px;
-      align-items:flex-start;
-    }
-    .toast .bar{ width:6px; border-radius:999px; background:var(--good); margin-top:2px; height: 100%; min-height:28px; }
-    .toast.bad .bar{ background:var(--bad); }
-    .toast b{ display:block; margin-bottom:2px; }
-    .muted{ color:var(--muted); }
-    .rowActions{ display:flex; gap:8px; justify-content:flex-end; }
-
-    @media (max-width: 980px){
-      main{ grid-template-columns: 1fr; }
-      aside{ position:relative; top:auto; height:auto; }
-      .cardsRow{ grid-template-columns: repeat(2, 1fr); }
+    .layout{display:grid;grid-template-columns:260px 1fr;gap:16px;margin-top:16px}
+    .card{background:rgba(247,248,251,.92);border:1px solid rgba(215,222,234,.98);border-radius:var(--r2);box-shadow:var(--shadow)}
+    .sidebar{padding:14px;position:sticky;top:86px;height:calc(100vh - 110px);overflow:auto}
+    .menuTitle{font-weight:1000;margin:6px 10px 10px;color:var(--muted);font-size:12px;letter-spacing:.4px;text-transform:uppercase}
+    .menu{display:flex;flex-direction:column;gap:8px}
+    .mitem{display:flex;align-items:center;gap:10px;padding:12px 12px;border-radius:14px;border:1px solid transparent;cursor:pointer;user-select:none;font-weight:1000;color:var(--text);transition:.15s ease}
+    .mitem:hover{background:rgba(255,255,255,.65);border-color:rgba(215,222,234,.95)}
+    .mitem.active{background:linear-gradient(180deg, rgba(255,106,0,.16), rgba(255,106,0,.06));border-color:rgba(255,106,0,.30);box-shadow:0 10px 25px rgba(255,106,0,.16)}
+    .micon{width:30px;height:30px;border-radius:12px;display:grid;place-items:center;background:rgba(2,6,23,.05);border:1px solid rgba(215,222,234,.95);font-size:14px}
+    .mnum{margin-left:auto;width:28px;height:28px;border-radius:12px;display:grid;place-items:center;background:rgba(2,6,23,.05);border:1px solid rgba(215,222,234,.95);color:var(--muted);font-weight:1000;font-size:12px}
+    .content{padding:18px}
+    .contentHeader{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:14px}
+    h1{margin:0;font-size:22px}
+    .hint{color:var(--muted);font-weight:800;font-size:13px;margin-top:6px}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+    label{display:block;font-weight:1000;font-size:12px;color:var(--muted);margin:4px 0 8px;text-transform:uppercase;letter-spacing:.35px}
+    input,select,textarea{width:100%;padding:12px 12px;border-radius:14px;border:1px solid rgba(215,222,234,.98);background:rgba(255,255,255,.9);outline:none;font-weight:1000;color:var(--text)}
+    input:focus,select:focus,textarea:focus{border-color:rgba(255,106,0,.58);box-shadow:0 0 0 4px rgba(255,106,0,.13)}
+    textarea{min-height:90px;resize:vertical;font-weight:800}
+    .btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .btn{padding:12px 14px;border-radius:16px;border:1px solid rgba(255,106,0,.35);background:linear-gradient(180deg, rgba(255,106,0,1), rgba(255,138,61,1));color:white;font-weight:1000;cursor:pointer;box-shadow:0 16px 32px rgba(255,106,0,.22);transition:transform .08s ease}
+    .btn:active{transform:scale(.98)}
+    .btn:disabled{opacity:.65;cursor:not-allowed}
+    .btn.secondary{background:rgba(2,6,23,.04);color:var(--text);border:1px solid rgba(215,222,234,.98);box-shadow:none}
+    .btn.danger{background:linear-gradient(180deg,#ef4444,#dc2626);border-color:rgba(220,38,38,.35);box-shadow:0 16px 32px rgba(220,38,38,.18)}
+    .kpis{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin:8px 0 16px}
+    .kpi{padding:14px;border-radius:18px;border:1px solid rgba(215,222,234,.98);background:rgba(255,255,255,.78)}
+    .kpi .t{color:var(--muted);font-weight:1000;text-transform:uppercase;font-size:11px;letter-spacing:.35px}
+    .kpi .v{font-weight:1000;font-size:22px;margin-top:6px}
+    table{width:100%;border-collapse:separate;border-spacing:0;overflow:hidden;border-radius:18px;border:1px solid rgba(215,222,234,.98);background:rgba(255,255,255,.78)}
+    thead th{text-align:left;padding:12px 12px;font-size:12px;color:var(--muted);font-weight:1000;text-transform:uppercase;letter-spacing:.35px;border-bottom:1px solid rgba(215,222,234,.98);background:rgba(238,241,246,.95)}
+    tbody td{padding:12px 12px;border-bottom:1px solid rgba(215,222,234,.75);font-weight:900;color:var(--text)}
+    tbody tr:last-child td{border-bottom:none}
+    .tmuted{color:var(--muted);font-weight:800}
+    .toast{position:fixed;right:16px;bottom:16px;z-index:99;background:rgba(247,248,251,.95);border:1px solid rgba(215,222,234,.98);box-shadow:0 18px 45px rgba(2,6,23,.14);padding:12px 14px;border-radius:18px;display:none;max-width:360px;font-weight:1000}
+    .toast.ok{border-left:6px solid var(--ok)} .toast.bad{border-left:6px solid var(--bad)}
+    .hidden{display:none !important}
+    .small{font-size:12px;color:var(--muted);font-weight:800}
+    .right{text-align:right}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace}
+    @media (max-width:980px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{position:relative;top:0;height:auto}
+      .kpis{grid-template-columns:1fr}
+      .grid2,.grid3{grid-template-columns:1fr}
     }
   </style>
 </head>
+
 <body>
-<header>
-  <div class="brand">
-    <div class="logo">
-      <!-- TROQUE A URL DA LOGO -->
-      <img id="logoImg" src="https://i.imgur.com/9QKJw0Q.png" alt="Logo">
-    </div>
-    <div>
-      <h1>Drogaria Rocha — Caixa</h1>
-      <small id="subHeader">Servidor — aguardando…</small>
-    </div>
-  </div>
-
-  <div class="chips">
-    <div class="chip"><span id="dotServer" class="dot warn"></span> <span id="chipServer">Servidor</span></div>
-    <div class="chip"><span class="dot ok"></span> <span id="chipLoja">Loja: —</span></div>
-    <div class="chip"><span class="dot ok"></span> <span id="chipOp">Operador: —</span></div>
-    <div class="chip"><span class="dot ok"></span> <span id="chipSessao">Sessão: —</span></div>
-  </div>
-</header>
-
-<main>
-  <aside>
-    <div class="menuTitle">Menu</div>
-
-    <!-- Só aparece antes do login -->
-    <button class="navbtn active" data-tab="login" id="btnLoginTab">
-      <div><b>Login</b><br><small>Entrar no sistema</small></div>
-      <div>→</div>
-    </button>
-
-    <!-- Só aparece depois do login -->
-    <div id="menusAfterLogin" class="hidden">
-      <button class="navbtn" data-tab="abertura">
-        <div><b>Abertura/Fechamento</b><br><small>Caixa por loja</small></div><div>1</div>
-      </button>
-      <button class="navbtn" data-tab="vendas">
-        <div><b>Vendas</b><br><small>Registrar venda</small></div><div>2</div>
-      </button>
-      <button class="navbtn" data-tab="receb">
-        <div><b>Recebimentos</b><br><small>Registrar entrada</small></div><div>3</div>
-      </button>
-      <button class="navbtn" data-tab="outros">
-        <div><b>Outros lançamentos</b><br><small>Sangria / Despesa</small></div><div>4</div>
-      </button>
-      <button class="navbtn" data-tab="mov">
-        <div><b>Movimentos</b><br><small>Saldo + pesquisa</small></div><div>5</div>
-      </button>
-      <button class="navbtn" data-tab="rel">
-        <div><b>Relatórios</b><br><small>Protegido</small></div><div>6</div>
-      </button>
-      <button class="navbtn" data-tab="cfg">
-        <div><b>Configurações</b><br><small>Admin</small></div><div>7</div>
-      </button>
-
-      <button class="navbtn" id="btnLogout">
-        <div><b>Sair</b><br><small>Encerrar sessão</small></div><div>⎋</div>
-      </button>
-    </div>
-  </aside>
-
-  <!-- LOGIN -->
-  <section id="tab-login">
-    <h2>Login do Operador</h2>
-    <p class="muted">Selecione o operador e digite o PIN.</p>
-
-    <div class="grid">
-      <div class="col-4">
-        <label>Loja</label>
-        <select id="loginLoja">
-          <option value="LOJA 1">LOJA 1</option>
-          <option value="LOJA 2">LOJA 2</option>
-        </select>
-      </div>
-      <div class="col-4">
-        <label>Operador</label>
-        <select id="loginOperador">
-          <option value="">Carregando…</option>
-        </select>
-      </div>
-      <div class="col-4">
-        <label>PIN</label>
-        <input id="loginPin" type="password" placeholder="ex: 1234"/>
-      </div>
-
-      <div class="col-12" style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
-        <button class="btn" id="btnEntrar">Entrar</button>
-        <button class="btn2" id="btnReloadOps">Recarregar operadores</button>
-        <label style="display:flex; gap:8px; align-items:center; margin:0;">
-          <input type="checkbox" id="sndOn" checked style="width:auto; transform:scale(1.1);"/>
-          <span class="muted" style="font-weight:800;">Som</span>
-        </label>
-      </div>
-
-      <div class="col-12">
-        <div class="mini">
-          <div class="k">Dica</div>
-          <div class="muted">Se aparecer “Servidor erro”, revise a URL do WebApp e o Deploy (Acesso: Anyone).</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABERTURA -->
-  <section id="tab-abertura" class="hidden">
-    <h2>Abertura e Fechamento de Caixa</h2>
-    <p class="muted">O caixa é controlado por loja. Abra antes de registrar vendas/recebimentos/outros.</p>
-
-    <div class="grid">
-      <div class="col-4">
-        <label>Loja</label>
-        <select id="abLoja">
-          <option value="LOJA 1">LOJA 1</option>
-          <option value="LOJA 2">LOJA 2</option>
-        </select>
-      </div>
-
-      <div class="col-4">
-        <label>Suprimento inicial (ao abrir)</label>
-        <input id="abSup" inputmode="decimal" placeholder="0,00"/>
-      </div>
-
-      <div class="col-4">
-        <label>Status</label>
-        <input id="abStatus" disabled value="—"/>
-      </div>
-
-      <div class="col-12" style="display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn" id="btnAbrir">Abrir caixa</button>
-        <button class="btn danger" id="btnFechar">Fechar caixa (gera TXT)</button>
-        <button class="btn2" id="btnSessaoAtual">Atualizar sessão</button>
-      </div>
-
-      <div class="col-12">
-        <label>Observação (fechamento)</label>
-        <textarea id="abObs" placeholder="Ex: conferido, sem divergências..."></textarea>
-      </div>
-
-      <div class="col-12">
-        <div class="mini">
-          <div class="k">TXT de fechamento</div>
-          <div class="muted">Ao fechar, será gerado um arquivo .txt no Drive com tudo da sessão.</div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- VENDAS -->
-  <section id="tab-vendas" class="hidden">
-    <h2>Registrar Venda</h2>
-    <div class="grid">
-      <div class="col-4">
-        <label>Vendedor</label>
-        <select id="vdVendedor"></select>
-      </div>
-      <div class="col-4">
-        <label>Forma de pagamento</label>
-        <select id="vdForma">
-          <option value="">Selecione</option>
-          <option>DINHEIRO</option>
-          <option>PIX</option>
-          <option>CARTAO</option>
-          <option>OUTROS</option>
-        </select>
-      </div>
-      <div class="col-4">
-        <label>Valor</label>
-        <input id="vdValor" inputmode="decimal" placeholder="0,00"/>
-      </div>
-      <div class="col-12">
-        <button class="btn" id="btnSalvarVenda">Salvar venda</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- RECEBIMENTOS -->
-  <section id="tab-receb" class="hidden">
-    <h2>Recebimentos</h2>
-    <div class="grid">
-      <div class="col-8">
-        <label>Origem / descrição</label>
-        <input id="rcOrigem" placeholder="Ex: recebimento convênio, cobrança, etc."/>
-      </div>
-      <div class="col-4">
-        <label>Valor</label>
-        <input id="rcValor" inputmode="decimal" placeholder="0,00"/>
-      </div>
-      <div class="col-12">
-        <button class="btn" id="btnSalvarReceb">Salvar recebimento</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- OUTROS -->
-  <section id="tab-outros" class="hidden">
-    <h2>Outros lançamentos</h2>
-    <div class="grid">
-      <div class="col-4">
-        <label>Tipo</label>
-        <select id="otTipo">
-          <option value="SANGRIA">SANGRIA</option>
-          <option value="DESPESA">DESPESA</option>
-        </select>
-      </div>
-      <div class="col-5">
-        <label>Descrição</label>
-        <input id="otDesc" placeholder="Ex: motoboy, água, sangria p/ cofre..."/>
-      </div>
-      <div class="col-3">
-        <label>Valor</label>
-        <input id="otValor" inputmode="decimal" placeholder="0,00"/>
-      </div>
-      <div class="col-12">
-        <button class="btn" id="btnSalvarOutro">Salvar</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- MOVIMENTOS -->
-  <section id="tab-mov" class="hidden">
-    <h2>Movimentos</h2>
-
-    <div class="cardsRow">
-      <div class="mini"><div class="k">Saldo</div><div class="v" id="mvSaldo">R$ 0,00</div><div class="muted">suprimento + vendas + recebimentos - sangrias - despesas</div></div>
-      <div class="mini"><div class="k">Vendas</div><div class="v" id="mvVendas">R$ 0,00</div></div>
-      <div class="mini"><div class="k">Recebimentos</div><div class="v" id="mvRec">R$ 0,00</div></div>
-      <div class="mini"><div class="k">Saídas</div><div class="v" id="mvSaidas">R$ 0,00</div></div>
-    </div>
-
-    <div class="grid">
-      <div class="col-4">
-        <label>Forma</label>
-        <select id="mvForma">
-          <option value="(todas)">(todas)</option>
-          <option>DINHEIRO</option>
-          <option>PIX</option>
-          <option>CARTAO</option>
-          <option>OUTROS</option>
-        </select>
-      </div>
-      <div class="col-3">
-        <label>Início</label>
-        <input id="mvIni" type="date"/>
-      </div>
-      <div class="col-3">
-        <label>Fim</label>
-        <input id="mvFim" type="date"/>
-      </div>
-      <div class="col-2">
-        <button class="btn" id="btnBuscarMov">Buscar</button>
-      </div>
-    </div>
-
-    <div style="margin-top:14px;">
-      <table>
-        <thead>
-          <tr>
-            <th>Data/Hora</th>
-            <th>Vendedor</th>
-            <th>Forma</th>
-            <th class="right">Valor</th>
-            <th class="right">Ações</th>
-          </tr>
-        </thead>
-        <tbody id="mvTabela">
-          <tr><td colspan="5" class="muted">Sem dados.</td></tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div style="margin-top:12px; display:flex; justify-content:flex-end;">
-      <button class="btn2" id="btnAtualizarMov">Atualizar</button>
-    </div>
-  </section>
-
-  <!-- RELATORIOS -->
-  <section id="tab-rel" class="hidden">
-    <h2>Relatórios</h2>
-    <p class="muted">Área protegida. Somente operador com <b>PODE_APAGAR=SIM</b> pode acessar.</p>
-
-    <div id="relLock">
-      <div class="grid">
-        <div class="col-6">
-          <label>Operador (permitido)</label>
-          <select id="relOperador"></select>
-        </div>
-        <div class="col-3">
-          <label>PIN</label>
-          <input id="relPin" type="password" placeholder="PIN do operador"/>
-        </div>
-        <div class="col-3">
-          <button class="btn" id="btnRelUnlock">Desbloquear</button>
-        </div>
-      </div>
-    </div>
-
-    <div id="relArea" class="hidden">
-      <div class="grid" style="margin-top:10px;">
-        <div class="col-4">
-          <label>Tipo</label>
-          <select id="relTipo">
-            <option value="DIARIO">DIÁRIO</option>
-            <option value="MENSAL">MENSAL</option>
-            <option value="ANUAL">ANUAL</option>
-          </select>
-        </div>
-        <div class="col-4">
-          <label>Data (clicável)</label>
-          <input id="relData" type="date"/>
-        </div>
-        <div class="col-4" style="display:flex; gap:10px;">
-          <button class="btn" id="btnGerarRel">Gerar</button>
-          <button class="btn2" id="btnRelLock">Bloquear</button>
-        </div>
-      </div>
-
-      <div class="cardsRow">
-        <div class="mini"><div class="k">Vendas</div><div class="v" id="relVendas">R$ 0,00</div><div class="muted" id="relPeriodo">—</div></div>
-        <div class="mini"><div class="k">Recebimentos</div><div class="v" id="relRec">R$ 0,00</div></div>
-        <div class="mini"><div class="k">Sangrias</div><div class="v" id="relSang">R$ 0,00</div></div>
-        <div class="mini"><div class="k">Despesas</div><div class="v" id="relDesp">R$ 0,00</div></div>
-      </div>
-
-      <div class="grid">
-        <div class="col-6">
-          <div class="mini">
-            <div class="k">Por forma</div>
-            <div id="relPorForma" class="muted">—</div>
+  <div class="topbar">
+    <div class="wrap">
+      <div class="row" style="align-items:center">
+        <div class="col">
+          <div class="brand">
+            <!-- ✅ coloque sua logo aqui (arquivo local ou link) -->
+            <!-- Ex: <img src="logo.png" class="logoSistema" alt="Drogaria Rocha"> -->
+            <div style="display:flex;align-items:center;gap:12px">
+              <div>
+                <div>Caixa • Drogaria Rocha</div>
+                <div class="sub" id="subline">Conectando…</div>
+              </div>
+            </div>
           </div>
         </div>
-        <div class="col-6">
-          <div class="mini">
-            <div class="k">Por vendedor</div>
-            <div id="relPorVend" class="muted">—</div>
+        <div class="col statusbar">
+          <div class="pill"><span class="dot" id="dotServer"></span><span>Servidor</span><span class="tmuted" id="srvTxt">—</span></div>
+          <div class="pill"><span class="dot warn" id="dotLoja"></span><span>Loja</span><span class="tmuted" id="lojaTxt">—</span></div>
+          <div class="pill"><span class="dot warn" id="dotOp"></span><span>Operador</span><span class="tmuted" id="opTxt">—</span></div>
+          <div class="pill"><span class="dot warn" id="dotSess"></span><span>Sessão</span><span class="tmuted mono" id="sessTxt">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="layout">
+
+      <div class="card sidebar">
+        <div class="menuTitle">Sistema de Caixa</div>
+
+        <div class="menu">
+          <div class="mitem active" data-tab="login" id="m-login"><div class="micon">🔐</div>Login<div class="mnum">1</div></div>
+
+          <div class="mitem hidden" data-tab="abertura" id="m-abertura"><div class="micon">🧾</div>Abertura/Fechamento<div class="mnum">2</div></div>
+          <div class="mitem hidden" data-tab="vendas" id="m-vendas"><div class="micon">🛒</div>Vendas<div class="mnum">3</div></div>
+          <div class="mitem hidden" data-tab="receb" id="m-receb"><div class="micon">💰</div>Recebimentos<div class="mnum">4</div></div>
+          <div class="mitem hidden" data-tab="lanc" id="m-lanc"><div class="micon">➕</div>Outros lançamentos<div class="mnum">5</div></div>
+          <div class="mitem hidden" data-tab="mov" id="m-mov"><div class="micon">📌</div>Movimentos<div class="mnum">6</div></div>
+          <div class="mitem hidden" data-tab="rel" id="m-rel"><div class="micon">📊</div>Relatórios<div class="mnum">7</div></div>
+
+          <div style="margin-top:12px" class="small">Dica: revise a URL do Web App e o Deploy (Acesso: Anyone).</div>
+          <div class="btnrow" style="margin-top:12px">
+            <button class="btn secondary" id="btnLogout" style="width:100%;display:none">Sair</button>
           </div>
         </div>
       </div>
 
-      <h3 style="margin-top:14px;">Últimas vendas do período</h3>
-      <table>
-        <thead>
-          <tr>
-            <th>Data/Hora</th>
-            <th>Vendedor</th>
-            <th>Forma</th>
-            <th class="right">Valor</th>
-            <th class="right">Ações</th>
-          </tr>
-        </thead>
-        <tbody id="relUltimas">
-          <tr><td colspan="5" class="muted">—</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
+      <div class="card content">
 
-  <!-- CONFIG -->
-  <section id="tab-cfg" class="hidden">
-    <h2>Configurações</h2>
-    <p class="muted">Área Admin (somente com senha).</p>
+        <!-- LOGIN -->
+        <section data-content="login">
+          <div class="contentHeader">
+            <div>
+              <h1>Login do Operador</h1>
+              <div class="hint">Selecione um operador e informe o PIN.</div>
+            </div>
+            <div class="btnrow">
+              <button class="btn secondary" id="btnReloadOps">Recarregar operadores</button>
+            </div>
+          </div>
+          <div class="grid2">
+            <div>
+              <label>Operador</label>
+              <select id="loginOperador"><option value="">Carregando…</option></select>
+            </div>
+            <div>
+              <label>PIN</label>
+              <input id="loginPin" type="password" placeholder="ex: 1234"/>
+            </div>
+          </div>
+          <div class="btnrow" style="margin-top:12px">
+            <button class="btn" id="btnLogin">Entrar</button>
+          </div>
+        </section>
 
-    <div id="cfgLock">
-      <div class="grid">
-        <div class="col-6">
-          <label>Senha Admin</label>
-          <input id="cfgPin" type="password" placeholder="Senha admin"/>
-        </div>
-        <div class="col-6">
-          <button class="btn" id="btnCfgUnlock">Entrar</button>
-        </div>
+        <!-- ABERTURA -->
+        <section data-content="abertura" class="hidden">
+          <div class="contentHeader">
+            <div>
+              <h1>Abertura e Fechamento de Caixa</h1>
+              <div class="hint">Ao fechar, será baixado um TXT com todos os dados da sessão.</div>
+            </div>
+          </div>
+          <div class="grid2">
+            <div>
+              <label>Loja</label>
+              <select id="abLoja">
+                <option value="LOJA 1">LOJA 1</option>
+                <option value="LOJA 2">LOJA 2</option>
+              </select>
+            </div>
+            <div>
+              <label>Suprimento inicial (ao abrir)</label>
+              <input id="abSup" inputmode="decimal" placeholder="0,00"/>
+            </div>
+          </div>
+          <div class="btnrow" style="margin-top:12px">
+            <button class="btn" id="btnAbrir">Abrir caixa</button>
+            <button class="btn danger" id="btnFechar">Fechar caixa</button>
+          </div>
+          <div style="margin-top:14px">
+            <label>Observação (fechamento)</label>
+            <textarea id="abObs" placeholder="Ex: conferido, sem divergências…"></textarea>
+          </div>
+        </section>
+
+        <!-- VENDAS -->
+        <section data-content="vendas" class="hidden">
+          <div class="contentHeader">
+            <div>
+              <h1>Registrar Venda</h1>
+              <div class="hint">Vendedor por seleção (operadores ativos).</div>
+            </div>
+          </div>
+          <div class="grid3">
+            <div>
+              <label>Vendedor</label>
+              <select id="vVendedor"><option value="">Selecione</option></select>
+            </div>
+            <div>
+              <label>Forma de pagamento</label>
+              <select id="vForma">
+                <option value="">Selecione</option>
+                <option>PIX</option><option>DINHEIRO</option><option>CARTAO</option><option>CREDIARIO</option><option>OUTROS</option>
+              </select>
+            </div>
+            <div>
+              <label>Valor</label>
+              <input id="vValor" inputmode="decimal" placeholder="0,00"/>
+            </div>
+          </div>
+          <div class="btnrow" style="margin-top:12px">
+            <button class="btn" id="btnSalvarVenda">Salvar venda</button>
+          </div>
+        </section>
+
+        <!-- RECEBIMENTOS -->
+        <section data-content="receb" class="hidden">
+          <div class="contentHeader">
+            <div>
+              <h1>Recebimentos</h1>
+              <div class="hint">Entradas extras no caixa.</div>
+            </div>
+          </div>
+          <div class="grid2">
+            <div>
+              <label>Valor</label>
+              <input id="rValor" inputmode="decimal" placeholder="0,00"/>
+            </div>
+            <div>
+              <label>Descrição</label>
+              <input id="rDesc" placeholder="Ex: entrada de troco, repasse…"/>
+            </div>
+          </div>
+          <div class="btnrow" style="margin-top:12px">
+            <button class="btn" id="btnSalvarReceb">Salvar recebimento</button>
+          </div>
+        </section>
+
+        <!-- OUTROS LANÇAMENTOS -->
+        <section data-content="lanc" class="hidden">
+          <div class="contentHeader">
+            <div>
+              <h1>Outros lançamentos</h1>
+              <div class="hint">Somente Sangria e Despesa (Recebimento tem aba própria).</div>
+            </div>
+          </div>
+          <div class="grid3">
+            <div>
+              <label>Tipo</label>
+              <select id="lTipo">
+                <option value="">Selecione</option>
+                <option value="SANGRIA">SANGRIA</option>
+                <option value="DESPESA">DESPESA</option>
+              </select>
+            </div>
+            <div>
+              <label>Valor</label>
+              <input id="lValor" inputmode="decimal" placeholder="0,00"/>
+            </div>
+            <div>
+              <label>Descrição</label>
+              <input id="lDesc" placeholder="Ex: retirada, conta…"/>
+            </div>
+          </div>
+          <div class="btnrow" style="margin-top:12px">
+            <button class="btn" id="btnSalvarLanc">Salvar lançamento</button>
+          </div>
+        </section>
+
+        <!-- MOVIMENTOS -->
+        <section data-content="mov" class="hidden">
+          <div class="contentHeader">
+            <div>
+              <h1>Movimentos</h1>
+              <div class="hint">Saldo: inicial + vendas + recebimentos - sangrias - despesas.</div>
+            </div>
+            <div class="btnrow">
+              <button class="btn secondary" id="btnAtualizarMov">Atualizar</button>
+            </div>
+          </div>
+
+          <div class="kpis">
+            <div class="kpi"><div class="t">Saldo atual</div><div class="v" id="kSaldo">R$ 0,00</div></div>
+            <div class="kpi"><div class="t">Vendas</div><div class="v" id="kVendas">R$ 0,00</div></div>
+            <div class="kpi"><div class="t">Recebimentos</div><div class="v" id="kReceb">R$ 0,00</div></div>
+            <div class="kpi"><div class="t">Saídas</div><div class="v" id="kSaidas">R$ 0,00</div></div>
+          </div>
+
+          <div style="margin-top:6px; font-weight:1000; color:var(--muted)">Pesquisar vendas por forma</div>
+          <div class="grid3" style="margin-top:10px">
+            <div>
+              <label>Forma</label>
+              <select id="mForma">
+                <option value="">(todas)</option>
+                <option>PIX</option><option>DINHEIRO</option><option>CARTAO</option><option>CREDIARIO</option><option>OUTROS</option>
+              </select>
+            </div>
+            <div><label>Início</label><input id="mIni" type="date"/></div>
+            <div><label>Fim</label><input id="mFim" type="date"/></div>
+          </div>
+
+          <div class="btnrow" style="margin-top:12px">
+            <button class="btn" id="btnBuscarMov">Buscar</button>
+          </div>
+
+          <div style="margin-top:12px">
+            <table>
+              <thead><tr><th>Data/Hora</th><th>Vendedor</th><th>Forma</th><th class="right">Valor</th></tr></thead>
+              <tbody id="movTbody"><tr><td colspan="4" class="tmuted">—</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- RELATÓRIOS -->
+        <section data-content="rel" class="hidden">
+          <div class="contentHeader">
+            <div>
+              <h1>Relatórios</h1>
+              <div class="hint">Área protegida por PIN do operador.</div>
+            </div>
+          </div>
+
+          <div id="relLockBox">
+            <div class="kpi">
+              <div class="t" style="color:var(--text)">Área restrita</div>
+              <div class="small" style="margin-top:8px">Digite seu PIN para acessar Relatórios.</div>
+              <div class="grid2" style="margin-top:10px">
+                <div><label>PIN</label><input id="relPin" type="password" placeholder="PIN"/></div>
+                <div style="align-self:flex-end"><button class="btn" id="btnRelUnlock" style="width:100%">Desbloquear</button></div>
+              </div>
+            </div>
+          </div>
+
+          <div id="relContent" class="hidden">
+            <div class="grid3">
+              <div>
+                <label>Tipo</label>
+                <select id="relTipo">
+                  <option value="DIARIO">DIÁRIO</option>
+                  <option value="MENSAL">MENSAL</option>
+                  <option value="ANUAL">ANUAL</option>
+                </select>
+              </div>
+
+              <div id="relBoxDiario"><label>Data</label><input id="relDataDiario" type="date"/></div>
+              <div id="relBoxMensal" class="hidden"><label>Mês</label><input id="relDataMensal" type="month"/></div>
+              <div id="relBoxAnual" class="hidden"><label>Ano</label><select id="relAno"></select></div>
+            </div>
+
+            <div class="btnrow" style="margin-top:12px">
+              <button class="btn" id="btnGerarRel">Gerar</button>
+              <button class="btn secondary" id="btnRelLock">Bloquear</button>
+            </div>
+
+            <div style="margin-top:14px" class="kpi">
+              <div class="t" id="relPeriodo">Período: —</div>
+              <div class="v" id="relTotalVendas">Vendas: R$ 0,00</div>
+              <div class="small" id="relQtdVendas">Qtd vendas: 0</div>
+            </div>
+
+            <div class="grid3" style="margin-top:12px">
+              <div class="kpi"><div class="t">Recebimentos</div><div class="v" id="relReceb">R$ 0,00</div><div class="small" id="relQtdReceb">Qtd: 0</div></div>
+              <div class="kpi"><div class="t">Sangrias</div><div class="v" id="relSangria">R$ 0,00</div></div>
+              <div class="kpi"><div class="t">Despesas</div><div class="v" id="relDespesa">R$ 0,00</div></div>
+            </div>
+
+            <div class="grid2" style="margin-top:12px">
+              <div class="kpi"><div class="t">Vendas por forma</div><div id="relPorForma" class="small">—</div></div>
+              <div class="kpi"><div class="t">Vendas por vendedor</div><div id="relPorVendedor" class="small">—</div></div>
+            </div>
+
+            <div style="margin-top:12px; font-weight:1000; color:var(--muted)">Últimas vendas do período</div>
+            <div style="margin-top:10px">
+              <table>
+                <thead><tr><th>Data/Hora</th><th>Vendedor</th><th>Forma</th><th class="right">Valor</th></tr></thead>
+                <tbody id="relTbody"><tr><td colspan="4" class="tmuted">—</td></tr></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
       </div>
-      <div class="mini" style="margin-top:10px;">
-        <div class="k">Senha admin atual (padrão)</div>
-        <div class="muted">Está no Apps Script em DEFAULT_ADMIN_PIN. Você pode mudar nas Propriedades do Script.</div>
-      </div>
     </div>
+  </div>
 
-    <div id="cfgArea" class="hidden">
-      <div class="mini">
-        <div class="k">Cadastro é feito diretamente na planilha</div>
-        <div class="muted">
-          Operadores: ID, NOME, PIN, PODE_APAGAR (SIM/NÃO), ATIVO (SIM/NÃO).<br>
-          Vendedores: NOME, ATIVO (SIM/NÃO).
-        </div>
-      </div>
-    </div>
-  </section>
-</main>
-
-<div class="toastWrap" id="toasts"></div>
+  <div class="toast" id="toast"></div>
 
 <script>
-/** ====== CONFIG ====== */
-const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxl6SeqmBUGFVSRIO7emb7TjJwoza2wALmlUAs_iJNKNe8gNCukTNcy1-hcFLWYb_l-6A/exec"; // <-- COLE AQUI
+  const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbxl6SeqmBUGFVSRIO7emb7TjJwoza2wALmlUAs_iJNKNe8gNCukTNcy1-hcFLWYb_l-6A/exec";
 
-/** ====== STATE ====== */
-const state = {
-  serverOk:false,
-  logged:false,
-  operador:null, // {id,nome,pode_apagar}
-  loja:"LOJA 1",
-  sessao:null,   // {sessao_id,...}
-  operators:[],
-  vendedores:[],
-  reportUnlocked:false,
-  reportOperatorId:"",
-  reportPin:"",
-};
+  const state = { user:null, loja:null, sessao_id:null, relUnlocked:false };
+  const $ = (id)=>document.getElementById(id);
 
-function $(id){ return document.getElementById(id); }
+  function brl(n){ return Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); }
+  function parseMoney(s){ return Number(String(s??"").replace(/\./g,"").replace(",",".").replace(/[^\d.-]/g,"")) || 0; }
+  function todayISO(){ const d=new Date(); return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`; }
 
-function setDot(id, cls){
-  const el = $(id);
-  el.classList.remove("ok","bad","warn");
-  el.classList.add(cls);
-}
-function setText(id, text){ $(id).textContent = text; }
-
-function moneyBR(v){
-  const n = Number(v||0);
-  return n.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
-}
-function parseMoney(v){
-  if(v==null) return 0;
-  const s = String(v).trim().replace(/\./g,"").replace(",",".");
-  const n = Number(s);
-  return isNaN(n)?0:n;
-}
-function todayISO(){
-  const d = new Date();
-  const z = (n)=> String(n).padStart(2,"0");
-  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;
-}
-
-/** ====== SOUND ====== */
-let audioCtx=null;
-function beep(ok=true){
-  if(!$("sndOn")?.checked) return;
-  try{
-    audioCtx = audioCtx || new (window.AudioContext||window.webkitAudioContext)();
-    const o = audioCtx.createOscillator();
-    const g = audioCtx.createGain();
-    o.type="sine";
-    o.frequency.value = ok ? 880 : 240;
-    g.gain.value = 0.04;
-    o.connect(g); g.connect(audioCtx.destination);
-    o.start();
-    setTimeout(()=>{ o.stop(); }, 90);
-  }catch(e){}
-}
-
-/** ====== TOAST ====== */
-function toast(msg, ok=true){
-  const wrap = $("toasts");
-  const t = document.createElement("div");
-  t.className = "toast" + (ok ? "" : " bad");
-  t.innerHTML = `
-    <div class="bar"></div>
-    <div>
-      <b>${ok ? "OK" : "Erro"}</b>
-      <div class="muted">${msg}</div>
-    </div>`;
-  wrap.appendChild(t);
-  beep(ok);
-  setTimeout(()=>{ t.remove(); }, 4500);
-}
-
-/** ====== API ====== */
-async function callApi(action, payload){
-  if(!WEBAPP_URL || WEBAPP_URL.includes("COLE_AQUI")){
-    throw new Error("Cole a URL do WebApp em WEBAPP_URL.");
-  }
-
-  let res, txt, data;
-  try{
-    res = await fetch(WEBAPP_URL, {
+  async function callApi(action, payload={}){
+    const res = await fetch(WEBAPP_URL,{
       method:"POST",
-      headers:{ "Content-Type":"text/plain;charset=utf-8" },
-      body: JSON.stringify({ action, payload }),
-      redirect: "follow"
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body:JSON.stringify({action,payload})
     });
-  }catch(err){
-    throw new Error("Falha de rede ao acessar o WebApp (URL errada, bloqueio ou offline).");
+    const json = await res.json();
+    if(!json.ok) throw new Error(json.error||"Erro no servidor.");
+    return json.data;
   }
 
-  try{ txt = await res.text(); }
-  catch(e){ throw new Error("Resposta vazia do servidor."); }
-
-  try{ data = JSON.parse(txt); }
-  catch(e){ throw new Error("Servidor não retornou JSON. Resposta: " + txt.slice(0,180)); }
-
-  if(!data.ok){
-    throw new Error(data.error || "Erro no servidor.");
+  function toast(msg, ok=true){
+    const t=$("toast");
+    t.textContent=msg;
+    t.className="toast "+(ok?"ok":"bad");
+    t.style.display="block";
+    setTimeout(()=>t.style.display="none",2400);
   }
-  return data;
-}
 
-async function pingServer(){
-  try{
-    const r = await fetch(WEBAPP_URL, { method:"GET", redirect:"follow" });
-    const t = await r.text();
-    const j = JSON.parse(t);
-    state.serverOk = !!j.ok;
-    setDot("dotServer", state.serverOk ? "ok" : "bad");
-    setText("chipServer", state.serverOk ? "Servidor ok" : "Servidor erro");
-    setText("subHeader", state.serverOk ? "Servidor OK — faça login." : "Servidor com erro — revise URL/Deploy.");
-  }catch(e){
-    state.serverOk=false;
-    setDot("dotServer","bad");
-    setText("chipServer","Servidor erro");
-    setText("subHeader","Servidor com erro — revise URL/Deploy.");
-    toast(e.message,false);
+  // ✅ busy state (evita duplo clique)
+  async function withBusy(btn, fn){
+    const old = btn.textContent;
+    btn.disabled = true;
+    btn.textContent = "Salvando…";
+    try{ return await fn(); }
+    finally{ btn.disabled=false; btn.textContent=old; }
   }
-}
 
-/** ====== UI NAV ====== */
-function showTab(key){
-  document.querySelectorAll("section").forEach(s=>s.classList.add("hidden"));
-  document.querySelectorAll(".navbtn").forEach(b=>b.classList.remove("active"));
-  const sec = $("tab-"+key);
-  if(sec) sec.classList.remove("hidden");
-  document.querySelectorAll(`.navbtn[data-tab="${key}"]`).forEach(b=>b.classList.add("active"));
-}
+  function requireLogin(){ if(!state.user) throw new Error("Faça login."); }
+  function requireSessao(){ if(!state.loja || !state.sessao_id) throw new Error("Abra o caixa para registrar."); }
 
-function afterLoginUI(){
-  $("menusAfterLogin").classList.remove("hidden");
-  $("btnLoginTab").classList.add("hidden");
-  setText("chipOp", `Operador: ${state.operador.nome}`);
-  setText("chipLoja", `Loja: ${state.loja}`);
-  showTab("abertura");
-}
-
-/** ====== LOADERS ====== */
-async function loadOperators(){
-  const r = await callApi("getOperators",{});
-  state.operators = r.operators || [];
-
-  // Login list
-  const sel = $("loginOperador");
-  sel.innerHTML = `<option value="">Selecione</option>` +
-    state.operators.map(o=>`<option value="${o.id}">${o.nome} (${o.id})</option>`).join("");
-
-  // Relatórios: somente os que podem apagar
-  const relSel = $("relOperador");
-  const allowed = state.operators.filter(o=>o.pode_apagar);
-  relSel.innerHTML = `<option value="">Selecione</option>` +
-    allowed.map(o=>`<option value="${o.id}">${o.nome} (${o.id})</option>`).join("");
-}
-
-async function loadVendedores(){
-  const r = await callApi("getVendedores",{});
-  state.vendedores = r.vendedores || [];
-  const sel = $("vdVendedor");
-  sel.innerHTML = `<option value="">Selecione</option>` +
-    state.vendedores.map(v=>`<option value="${v}">${v}</option>`).join("");
-}
-
-async function refreshSession(){
-  const r = await callApi("getOpenSession",{ loja: state.loja });
-  state.sessao = r.session || null;
-  setText("chipSessao", "Sessão: " + (state.sessao ? state.sessao.sessao_id : "—"));
-  $("abStatus").value = state.sessao ? "ABERTO" : "FECHADO";
-}
-
-/** ====== ACTIONS ====== */
-async function doLogin(){
-  const loja = $("loginLoja").value;
-  const opId = $("loginOperador").value;
-  const pin = $("loginPin").value.trim();
-
-  if(!opId) return toast("Selecione o operador.", false);
-  if(!pin) return toast("Digite o PIN.", false);
-
-  const r = await callApi("login",{ operador_id:opId, pin });
-  state.logged = true;
-  state.operador = r.operador;
-  state.loja = loja;
-
-  // sincroniza selects de loja nos outros lugares
-  $("abLoja").value = loja;
-
-  setText("chipLoja", `Loja: ${state.loja}`);
-  setText("chipOp", `Operador: ${state.operador.nome}`);
-
-  await refreshSession();
-  await loadVendedores();
-
-  afterLoginUI();
-  toast("Login realizado.");
-}
-
-function doLogout(){
-  state.logged=false;
-  state.operador=null;
-  state.sessao=null;
-  state.reportUnlocked=false;
-  state.reportOperatorId="";
-  state.reportPin="";
-  $("menusAfterLogin").classList.add("hidden");
-  $("btnLoginTab").classList.remove("hidden");
-  $("btnLoginTab").classList.add("active");
-  $("loginPin").value="";
-  setText("chipOp","Operador: —");
-  setText("chipLoja","Loja: —");
-  setText("chipSessao","Sessão: —");
-  showTab("login");
-  toast("Saiu do sistema.");
-}
-
-async function abrirCaixa(){
-  state.loja = $("abLoja").value;
-  setText("chipLoja", `Loja: ${state.loja}`);
-
-  const sup = parseMoney($("abSup").value);
-  const r = await callApi("openCash", {
-    loja: state.loja,
-    operador_id: state.operador.id,
-    suprimento_inicial: sup
-  });
-  await refreshSession();
-  toast(r.note ? r.note : "Caixa aberto.");
-}
-
-async function fecharCaixa(){
-  state.loja = $("abLoja").value;
-  setText("chipLoja", `Loja: ${state.loja}`);
-
-  const obs = $("abObs").value.trim();
-  const r = await callApi("closeCash", {
-    loja: state.loja,
-    operador_id: state.operador.id,
-    obs
-  });
-  await refreshSession();
-  toast("Caixa fechado. TXT gerado no Drive.");
-}
-
-async function salvarVenda(){
-  // garante sessão da loja correta
-  await refreshSession();
-  if(!state.sessao) return toast("Abra o caixa para registrar.", false);
-
-  const vendedor = $("vdVendedor").value;
-  const forma = $("vdForma").value;
-  const valor = parseMoney($("vdValor").value);
-
-  $("btnSalvarVenda").disabled = true;
-  try{
-    await callApi("addSale", {
-      loja: state.loja,
-      operador_id: state.operador.id,
-      vendedor, forma, valor
-    });
-    $("vdValor").value="";
-    toast("Venda salva.");
-  }finally{
-    $("btnSalvarVenda").disabled = false;
+  function showMenus(logged){
+    ["m-abertura","m-vendas","m-receb","m-lanc","m-mov","m-rel"].forEach(id=>$(id).classList.toggle("hidden",!logged));
+    $("btnLogout").style.display = logged ? "block" : "none";
   }
-}
 
-async function salvarReceb(){
-  await refreshSession();
-  if(!state.sessao) return toast("Abra o caixa para registrar.", false);
+  function showTab(tab){
+    document.querySelectorAll(".mitem").forEach(el=>el.classList.toggle("active", el.dataset.tab===tab));
+    document.querySelectorAll("section[data-content]").forEach(sec=>sec.classList.toggle("hidden", sec.dataset.content!==tab));
 
-  const origem = $("rcOrigem").value.trim();
-  const valor = parseMoney($("rcValor").value);
-
-  $("btnSalvarReceb").disabled = true;
-  try{
-    await callApi("addReceb", {
-      loja: state.loja,
-      operador_id: state.operador.id,
-      origem, valor
-    });
-    $("rcOrigem").value="";
-    $("rcValor").value="";
-    toast("Recebimento salvo.");
-  }finally{
-    $("btnSalvarReceb").disabled = false;
-  }
-}
-
-async function salvarOutro(){
-  await refreshSession();
-  if(!state.sessao) return toast("Abra o caixa para registrar.", false);
-
-  const tipo = $("otTipo").value;
-  const descricao = $("otDesc").value.trim();
-  const valor = parseMoney($("otValor").value);
-
-  $("btnSalvarOutro").disabled = true;
-  try{
-    await callApi("addOutro", {
-      loja: state.loja,
-      operador_id: state.operador.id,
-      tipo, descricao, valor
-    });
-    $("otDesc").value="";
-    $("otValor").value="";
-    toast("Lançamento salvo.");
-  }finally{
-    $("btnSalvarOutro").disabled = false;
-  }
-}
-
-function renderTabelaVendas(tbodyId, rows, allowDelete, deleteFn){
-  const tb = $(tbodyId);
-  if(!rows || !rows.length){
-    tb.innerHTML = `<tr><td colspan="5" class="muted">Nenhum registro no período.</td></tr>`;
-    return;
-  }
-  tb.innerHTML = rows.map(r=>{
-    const dt = `${r.data} ${r.hora||""}`.trim();
-    const btn = allowDelete ? `<button class="btn2" data-del="${r.id}" style="padding:8px 10px;border-radius:12px;">Apagar</button>` : `<span class="muted">—</span>`;
-    return `
-      <tr>
-        <td>${dt}</td>
-        <td><b>${r.vendedor}</b></td>
-        <td>${r.forma}</td>
-        <td class="right"><b>${moneyBR(r.valor)}</b></td>
-        <td class="right">${btn}</td>
-      </tr>
-    `;
-  }).join("");
-
-  if(allowDelete){
-    tb.querySelectorAll("[data-del]").forEach(btn=>{
-      btn.addEventListener("click", async ()=>{
-        const id = btn.getAttribute("data-del");
-        if(!confirm("Apagar este registro?")) return;
-        await deleteFn(id);
-      });
-    });
-  }
-}
-
-async function buscarMovimentos(){
-  const forma = $("mvForma").value;
-  const ini = $("mvIni").value || todayISO();
-  const fim = $("mvFim").value || todayISO();
-
-  const r = await callApi("movimentosResumo", {
-    loja: state.loja,
-    ini, fim, forma
-  });
-
-  $("mvSaldo").textContent = moneyBR(r.resumo.saldo);
-  $("mvVendas").textContent = moneyBR(r.resumo.vendas);
-  $("mvRec").textContent = moneyBR(r.resumo.recebimentos);
-  $("mvSaidas").textContent = moneyBR(r.resumo.sangrias + r.resumo.despesas);
-
-  renderTabelaVendas("mvTabela", r.vendas, state.operador.pode_apagar, async (id)=>{
-    await callApi("delete",{ operador_id: state.operador.id, tabela:"Vendas", id });
-    toast("Venda apagada.");
-    await buscarMovimentos();
-  });
-}
-
-async function unlockRel(){
-  const opId = $("relOperador").value;
-  const pin = $("relPin").value.trim();
-  if(!opId) return toast("Selecione o operador.", false);
-  if(!pin) return toast("Digite o PIN.", false);
-
-  // testa permissão via report (chamada real valida)
-  state.reportOperatorId = opId;
-  state.reportPin = pin;
-
-  try{
-    await callApi("report", {
-      loja: state.loja,
-      tipo:"DIARIO",
-      data: todayISO(),
-      operador_id: opId,
-      pin
-    });
-    state.reportUnlocked = true;
-    $("relLock").classList.add("hidden");
-    $("relArea").classList.remove("hidden");
-    toast("Relatórios desbloqueados.");
-  }catch(e){
-    state.reportUnlocked=false;
-    toast(e.message,false);
-  }
-}
-
-function lockRel(){
-  state.reportUnlocked=false;
-  state.reportOperatorId="";
-  state.reportPin="";
-  $("relLock").classList.remove("hidden");
-  $("relArea").classList.add("hidden");
-  $("relPin").value="";
-  toast("Relatórios bloqueados.");
-}
-
-async function gerarRel(){
-  if(!state.reportUnlocked) return toast("Desbloqueie primeiro.", false);
-  const tipo = $("relTipo").value;
-  const data = $("relData").value || todayISO();
-
-  const r = await callApi("report", {
-    loja: state.loja,
-    tipo,
-    data,
-    operador_id: state.reportOperatorId,
-    pin: state.reportPin
-  });
-
-  $("relVendas").textContent = moneyBR(r.resumo.vendas);
-  $("relRec").textContent = moneyBR(r.resumo.recebimentos);
-  $("relSang").textContent = moneyBR(r.resumo.sangrias);
-  $("relDesp").textContent = moneyBR(r.resumo.despesas);
-  $("relPeriodo").textContent = "Período: " + r.periodo.label;
-
-  const pf = Object.entries(r.porForma || {}).map(([k,v])=>`<div><b>${k}</b>: ${moneyBR(v)}</div>`).join("") || "—";
-  const pv = Object.entries(r.porVendedor || {}).map(([k,v])=>`<div><b>${k}</b>: ${moneyBR(v)}</div>`).join("") || "—";
-  $("relPorForma").innerHTML = pf;
-  $("relPorVend").innerHTML = pv;
-
-  renderTabelaVendas("relUltimas", r.ultimasVendas || [], state.operador.pode_apagar, async (id)=>{
-    await callApi("delete",{ operador_id: state.operador.id, tabela:"Vendas", id });
-    toast("Venda apagada.");
-    await gerarRel();
-  });
-
-  toast("Relatório gerado.");
-}
-
-/** ====== CFG ====== */
-async function cfgUnlock(){
-  const pin = $("cfgPin").value.trim();
-  if(!pin) return toast("Digite a senha admin.", false);
-  await callApi("adminUnlock",{ admin_pin: pin });
-  $("cfgLock").classList.add("hidden");
-  $("cfgArea").classList.remove("hidden");
-  toast("Admin liberado.");
-}
-
-/** ====== EVENTS ====== */
-document.querySelectorAll(".navbtn[data-tab]").forEach(btn=>{
-  btn.addEventListener("click", ()=>{
-    const tab = btn.getAttribute("data-tab");
-    showTab(tab);
-  });
-});
-
-$("btnEntrar").addEventListener("click", async ()=>{
-  try{ await doLogin(); }catch(e){ toast(e.message,false); }
-});
-$("btnReloadOps").addEventListener("click", async ()=>{
-  try{ await loadOperators(); toast("Operadores recarregados."); }catch(e){ toast(e.message,false); }
-});
-$("btnLogout").addEventListener("click", doLogout);
-
-$("abLoja").addEventListener("change", async ()=>{
-  state.loja = $("abLoja").value;
-  setText("chipLoja", `Loja: ${state.loja}`);
-  await refreshSession();
-});
-
-$("btnSessaoAtual").addEventListener("click", async ()=>{
-  try{ await refreshSession(); toast("Sessão atualizada."); }catch(e){ toast(e.message,false); }
-});
-$("btnAbrir").addEventListener("click", async ()=>{ try{ await abrirCaixa(); }catch(e){ toast(e.message,false); }});
-$("btnFechar").addEventListener("click", async ()=>{ try{ await fecharCaixa(); }catch(e){ toast(e.message,false); }});
-
-$("btnSalvarVenda").addEventListener("click", async ()=>{ try{ await salvarVenda(); }catch(e){ toast(e.message,false); }});
-$("btnSalvarReceb").addEventListener("click", async ()=>{ try{ await salvarReceb(); }catch(e){ toast(e.message,false); }});
-$("btnSalvarOutro").addEventListener("click", async ()=>{ try{ await salvarOutro(); }catch(e){ toast(e.message,false); }});
-
-$("btnBuscarMov").addEventListener("click", async ()=>{ try{ await buscarMovimentos(); }catch(e){ toast(e.message,false); }});
-$("btnAtualizarMov").addEventListener("click", async ()=>{ try{ await buscarMovimentos(); toast("Atualizado."); }catch(e){ toast(e.message,false); }});
-
-$("btnRelUnlock").addEventListener("click", async ()=>{ await unlockRel(); });
-$("btnRelLock").addEventListener("click", lockRel);
-$("btnGerarRel").addEventListener("click", async ()=>{ try{ await gerarRel(); }catch(e){ toast(e.message,false); }});
-
-$("btnCfgUnlock").addEventListener("click", async ()=>{ try{ await cfgUnlock(); }catch(e){ toast(e.message,false); }});
-
-/** ====== BOOT ====== */
-(async function boot(){
-  $("mvIni").value = todayISO();
-  $("mvFim").value = todayISO();
-  $("relData").value = todayISO();
-  try{
-    await pingServer();
-    if(state.serverOk){
-      await loadOperators();
-      toast("Conectado ao servidor.");
+    // ✅ sincroniza só nas telas que “precisam”
+    if(["abertura","mov","rel"].includes(tab)){
+      syncSessaoByLoja().catch(()=>{});
     }
-  }catch(e){
-    // pingServer já trata
+
+    if(tab==="rel"){
+      if(!state.relUnlocked){
+        $("relLockBox").classList.remove("hidden");
+        $("relContent").classList.add("hidden");
+      }
+    }
   }
-})();
+
+  document.addEventListener("click",(e)=>{
+    const item=e.target.closest(".mitem");
+    if(item){
+      const tab=item.dataset.tab;
+      if(!state.user && tab!=="login") return;
+      showTab(tab);
+    }
+  });
+
+  function escapeHtml(s){
+    return String(s ?? "")
+      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+  }
+
+  async function loadOperadores(){
+    const ops = await callApi("listarOperadores");
+    const sel=$("loginOperador");
+    sel.innerHTML = `<option value="">Selecione</option>` + ops.map(o =>
+      `<option value="${escapeHtml(o.id)}">${escapeHtml(o.id)} — ${escapeHtml(o.nome)} (${String(o.ativo).toUpperCase()==="SIM"?"ATIVO":"INATIVO"})</option>`
+    ).join("");
+  }
+
+  async function loadVendedores(){
+    const ops = await callApi("listarOperadores");
+    const ativos = ops.filter(o => String(o.ativo).toUpperCase()==="SIM");
+    const sel=$("vVendedor");
+    sel.innerHTML = `<option value="">Selecione</option>` + ativos.map(o =>
+      `<option value="${escapeHtml(o.nome)}">${escapeHtml(o.nome)}</option>`
+    ).join("");
+  }
+
+  // ✅ sessão por loja (fix LOJA 2)
+  async function syncSessaoByLoja(){
+    if(!state.user) return;
+
+    if(!state.loja) state.loja = $("abLoja").value || "LOJA 1";
+    $("abLoja").value = state.loja;
+
+    $("lojaTxt").textContent = state.loja;
+    $("dotLoja").classList.remove("warn"); $("dotLoja").classList.add("ok");
+
+    const sess = await callApi("getSessaoAberta",{loja: state.loja});
+    state.sessao_id = sess ? sess.sessao_id : null;
+
+    $("sessTxt").textContent = state.sessao_id ? state.sessao_id : "—";
+    $("dotSess").classList.remove("warn","ok");
+    $("dotSess").classList.add(state.sessao_id ? "ok" : "warn");
+  }
+
+  // ✅ só sincroniza se estiver sem sessão (1 chamada por salvar)
+  async function ensureSessaoFast(){
+    if(!state.sessao_id){
+      await syncSessaoByLoja();
+    }
+    requireSessao();
+  }
+
+  async function doLogin(){
+    try{
+      const operadorId=$("loginOperador").value;
+      const pin=$("loginPin").value;
+
+      const user=await callApi("login",{operadorId,pin});
+      state.user=user;
+
+      $("opTxt").textContent = user.nome;
+      $("dotOp").classList.remove("warn"); $("dotOp").classList.add("ok");
+
+      showMenus(true);
+
+      state.loja = $("abLoja").value || "LOJA 1";
+      await loadVendedores();
+      await syncSessaoByLoja();
+
+      showTab("abertura");
+      toast("Login OK.");
+    }catch(e){ toast(e.message,false); }
+  }
+
+  function doLogout(){
+    state.user=null; state.loja=null; state.sessao_id=null; state.relUnlocked=false;
+    $("opTxt").textContent="—"; $("sessTxt").textContent="—"; $("lojaTxt").textContent="—";
+    $("dotOp").classList.remove("ok"); $("dotOp").classList.add("warn");
+    $("dotSess").classList.remove("ok"); $("dotSess").classList.add("warn");
+    $("dotLoja").classList.remove("ok"); $("dotLoja").classList.add("warn");
+
+    showMenus(false);
+    showTab("login");
+    toast("Sessão encerrada.");
+  }
+
+  async function abrirCaixa(){
+    requireLogin();
+    state.loja = $("abLoja").value;
+    const sup=parseMoney($("abSup").value);
+    const r=await callApi("abrirCaixa",{loja: state.loja, operador_id: state.user.id, operador_nome: state.user.nome, suprimento_inicial: sup});
+    state.sessao_id=r.sessao_id;
+    await syncSessaoByLoja();
+    toast("Caixa aberto.");
+  }
+
+  function downloadTxt(filename, content){
+    const blob = new Blob([content], {type:"text/plain;charset=utf-8"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  }
+
+  async function fecharCaixa(){
+    requireLogin(); await ensureSessaoFast();
+    const obs=$("abObs").value;
+
+    await callApi("fecharCaixa",{loja: state.loja, operador_id: state.user.id, observacao: obs});
+    const txt = await callApi("gerarFechamentoTxt",{loja: state.loja, sessao_id: state.sessao_id});
+    downloadTxt(txt.filename, txt.content);
+
+    state.sessao_id=null;
+    await syncSessaoByLoja();
+    toast("Caixa fechado e TXT gerado.");
+  }
+
+  async function salvarVenda(){
+    requireLogin(); await ensureSessaoFast();
+
+    const vendedor=$("vVendedor").value;
+    const forma=$("vForma").value;
+    const valor=parseMoney($("vValor").value);
+    if(!vendedor) throw new Error("Selecione o vendedor.");
+    if(!forma) throw new Error("Selecione a forma.");
+    if(!(valor>0)) throw new Error("Informe um valor válido.");
+
+    await callApi("salvarVenda",{loja: state.loja, operador_id: state.user.id, sessao_id: state.sessao_id, vendedor, forma, valor});
+    $("vValor").value="";
+    toast("Venda salva.");
+  }
+
+  async function salvarReceb(){
+    requireLogin(); await ensureSessaoFast();
+    const valor=parseMoney($("rValor").value);
+    const descricao=$("rDesc").value;
+    if(!(valor>0)) throw new Error("Informe um valor válido.");
+
+    await callApi("salvarRecebimento",{loja: state.loja, operador_id: state.user.id, sessao_id: state.sessao_id, valor, descricao});
+    $("rValor").value=""; $("rDesc").value="";
+    toast("Recebimento salvo.");
+  }
+
+  async function salvarLanc(){
+    requireLogin(); await ensureSessaoFast();
+    const tipo=$("lTipo").value;
+    const valor=parseMoney($("lValor").value);
+    const descricao=$("lDesc").value;
+    if(!tipo) throw new Error("Selecione o tipo.");
+    if(!(valor>0)) throw new Error("Informe um valor válido.");
+
+    await callApi("salvarLancamento",{loja: state.loja, operador_id: state.user.id, sessao_id: state.sessao_id, tipo, valor, descricao});
+    $("lValor").value=""; $("lDesc").value="";
+    toast("Lançamento salvo.");
+  }
+
+  async function atualizarMov(){
+    requireLogin(); await ensureSessaoFast();
+    const r=await callApi("movimentosResumo",{loja: state.loja, sessao_id: state.sessao_id});
+    $("kSaldo").textContent=brl(r.saldo_atual);
+    $("kVendas").textContent=brl(r.total_vendas);
+    $("kReceb").textContent=brl(r.total_recebimentos);
+    $("kSaidas").textContent=brl((r.total_sangrias||0)+(r.total_despesas||0));
+    toast("Atualizado.");
+  }
+
+  async function buscarMov(){
+    requireLogin();
+    // aqui não precisa de sessão; busca geral por loja
+    if(!state.loja) state.loja = $("abLoja").value || "LOJA 1";
+
+    const forma=$("mForma").value;
+    const inicio=$("mIni").value;
+    const fim=$("mFim").value;
+
+    const list=await callApi("buscarVendasPorForma",{loja: state.loja, forma, inicio, fim});
+    const tb=$("movTbody");
+    tb.innerHTML = (!list || list.length===0)
+      ? `<tr><td colspan="4" class="tmuted">Nenhuma venda no período.</td></tr>`
+      : list.map(v=>`
+          <tr>
+            <td class="mono">${escapeHtml(v.data)} ${escapeHtml(v.hora)}</td>
+            <td>${escapeHtml(v.vendedor||"")}</td>
+            <td>${escapeHtml(v.forma||"")}</td>
+            <td class="right">${brl(v.valor)}</td>
+          </tr>
+        `).join("");
+    toast("Busca concluída.");
+  }
+
+  function relTipoUI(){
+    const t=$("relTipo").value;
+    $("relBoxDiario").classList.toggle("hidden", t!=="DIARIO");
+    $("relBoxMensal").classList.toggle("hidden", t!=="MENSAL");
+    $("relBoxAnual").classList.toggle("hidden", t!=="ANUAL");
+  }
+  function relGetData(){
+    const t=$("relTipo").value;
+    if(t==="DIARIO") return $("relDataDiario").value;
+    if(t==="MENSAL") return $("relDataMensal").value;
+    if(t==="ANUAL") return $("relAno").value;
+    return "";
+  }
+
+  async function unlockRel(){
+    requireLogin();
+    const pin=$("relPin").value;
+    const ok=await callApi("reauth",{operadorId: state.user.id, pin});
+    if(ok!==true) throw new Error("PIN inválido.");
+
+    state.relUnlocked=true;
+    $("relLockBox").classList.add("hidden");
+    $("relContent").classList.remove("hidden");
+    $("relPin").value="";
+    toast("Relatórios desbloqueados.");
+  }
+
+  function lockRel(){
+    state.relUnlocked=false;
+    $("relLockBox").classList.remove("hidden");
+    $("relContent").classList.add("hidden");
+    toast("Relatórios bloqueados.");
+  }
+
+  async function gerarRel(){
+    requireLogin();
+    if(!state.relUnlocked) throw new Error("Desbloqueie Relatórios.");
+
+    if(!state.loja) state.loja = $("abLoja").value || "LOJA 1";
+
+    const tipo=$("relTipo").value;
+    const data=relGetData();
+    if(!data) throw new Error("Selecione a data.");
+
+    const r = await callApi("relatorioResumo",{loja: state.loja, tipo, data});
+
+    $("relPeriodo").textContent = `Período: ${r.periodo.inicio} até ${r.periodo.fim} (${r.periodo.tipo})`;
+    $("relTotalVendas").textContent = `Vendas: ${brl(r.vendas_total)}`;
+    $("relQtdVendas").textContent = `Qtd vendas: ${r.vendas_qtd}`;
+
+    $("relReceb").textContent = brl(r.receb_total);
+    $("relQtdReceb").textContent = `Qtd: ${r.receb_qtd}`;
+
+    $("relSangria").textContent = brl(r.sangria_total);
+    $("relDespesa").textContent = brl(r.despesa_total);
+
+    const pf=r.vendas_por_forma||{};
+    $("relPorForma").innerHTML = Object.keys(pf).length
+      ? Object.entries(pf).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${k}: ${brl(v)}`).join("<br>")
+      : "—";
+
+    const pv=r.vendas_por_vendedor||{};
+    $("relPorVendedor").innerHTML = Object.keys(pv).length
+      ? Object.entries(pv).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`${escapeHtml(k)}: ${brl(v)}`).join("<br>")
+      : "—";
+
+    const ult=r.vendas_ultimas||[];
+    $("relTbody").innerHTML = ult.length
+      ? ult.map(v=>`
+          <tr>
+            <td class="mono">${escapeHtml(v.data)} ${escapeHtml(v.hora)}</td>
+            <td>${escapeHtml(v.vendedor||"")}</td>
+            <td>${escapeHtml(v.forma||"")}</td>
+            <td class="right">${brl(v.valor)}</td>
+          </tr>
+        `).join("")
+      : `<tr><td colspan="4" class="tmuted">Nenhuma venda no período.</td></tr>`;
+
+    toast("Relatório gerado.");
+  }
+
+  function fillYears(){
+    const y = new Date().getFullYear();
+    const sel = $("relAno");
+    sel.innerHTML="";
+    for(let i=y;i>=y-6;i--){
+      const o=document.createElement("option");
+      o.value=String(i);
+      o.textContent=String(i);
+      sel.appendChild(o);
+    }
+  }
+
+  async function init(){
+    try{
+      await callApi("ping",{});
+      $("subline").textContent="Servidor OK — faça login.";
+      $("srvTxt").textContent="ok"; $("dotServer").classList.add("ok");
+
+      await loadOperadores();
+      showMenus(false);
+      showTab("login");
+
+      const t=todayISO();
+      $("mIni").value=t; $("mFim").value=t;
+
+      $("relDataDiario").value=t;
+      $("relDataMensal").value=t.slice(0,7);
+      fillYears();
+      relTipoUI();
+    }catch(e){
+      $("subline").textContent="Erro no servidor — revise URL / Deploy.";
+      $("srvTxt").textContent="erro"; $("dotServer").classList.add("bad");
+      toast("Erro: verifique a URL do Web App / Deploy.", false);
+    }
+  }
+
+  // eventos
+  $("btnReloadOps").addEventListener("click", async ()=>{ try{ await loadOperadores(); toast("Operadores atualizados."); }catch(e){ toast(e.message,false);} });
+
+  $("btnLogin").addEventListener("click", () => withBusy($("btnLogin"), doLogin));
+  $("btnLogout").addEventListener("click", doLogout);
+
+  $("abLoja").addEventListener("change", async ()=>{
+    state.loja = $("abLoja").value;
+    try{
+      await syncSessaoByLoja();
+      toast(state.sessao_id ? "Sessão carregada." : "Nenhum caixa aberto nessa loja.", true);
+    }catch(e){ toast(e.message,false); }
+  });
+
+  $("btnAbrir").addEventListener("click", () => withBusy($("btnAbrir"), abrirCaixa));
+  $("btnFechar").addEventListener("click", () => withBusy($("btnFechar"), fecharCaixa));
+
+  $("btnSalvarVenda").addEventListener("click", () => withBusy($("btnSalvarVenda"), salvarVenda));
+  $("btnSalvarReceb").addEventListener("click", () => withBusy($("btnSalvarReceb"), salvarReceb));
+  $("btnSalvarLanc").addEventListener("click", () => withBusy($("btnSalvarLanc"), salvarLanc));
+
+  $("btnAtualizarMov").addEventListener("click", () => withBusy($("btnAtualizarMov"), atualizarMov));
+  $("btnBuscarMov").addEventListener("click", () => withBusy($("btnBuscarMov"), buscarMov));
+
+  $("relTipo").addEventListener("change", relTipoUI);
+  $("btnRelUnlock").addEventListener("click", () => withBusy($("btnRelUnlock"), unlockRel));
+  $("btnRelLock").addEventListener("click", lockRel);
+  $("btnGerarRel").addEventListener("click", () => withBusy($("btnGerarRel"), gerarRel));
+
+  init();
 </script>
 </body>
 </html>
