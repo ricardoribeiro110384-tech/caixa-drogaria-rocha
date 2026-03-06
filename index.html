@@ -1,501 +1,355 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Caixa — Drogaria Rocha</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Caixa Drogaria Rocha — Profissional</title>
   <style>
     :root{
-      --orange:#ff6a00;
-      --orange2:#ff8a3d;
-      --bg:#eef0f3;
-      --card:#ffffff;
-      --muted:#6b7280;
+      --brand:#ff6a00;
+      --brand-2:#ff8a3d;
+      --bg:#f3f4f6;
+      --panel:#ffffff;
       --text:#111827;
-      --border:#e5e7eb;
-      --shadow:0 14px 34px rgba(17,24,39,.08);
-      --r:18px;
-      --r2:26px;
+      --muted:#6b7280;
+      --line:#e5e7eb;
+      --danger:#dc2626;
       --ok:#16a34a;
-      --bad:#dc2626;
+      --warn:#f59e0b;
+      --shadow:0 12px 30px rgba(0,0,0,.08);
+      --r:18px;
+      --r2:24px;
     }
     *{box-sizing:border-box}
-    body{
-      margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
-      background:linear-gradient(180deg,#f7f7f8,var(--bg));
-      color:var(--text);
-    }
-    .topbar{
-      position:sticky; top:0; z-index:10;
-      background:linear-gradient(90deg,var(--orange),var(--orange2));
-      color:#fff;
-      padding:14px 18px;
-      box-shadow:0 10px 25px rgba(0,0,0,.10);
-    }
-    .topwrap{display:flex; align-items:center; gap:12px; justify-content:space-between; flex-wrap:wrap;}
-    .brand{display:flex; align-items:center; gap:10px;}
-    .logo{
-      width:34px;height:34px;border-radius:10px;
-      background:#fff2; display:grid; place-items:center;
-      border:1px solid #fff4; overflow:hidden;
-    }
+    body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#fafafa,var(--bg));color:var(--text)}
+    .topbar{position:sticky;top:0;z-index:50;background:linear-gradient(90deg,var(--brand),var(--brand-2));color:#fff;padding:14px 18px;box-shadow:var(--shadow)}
+    .topbar-wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:42px;height:42px;border-radius:12px;background:#ffffff22;border:1px solid #ffffff40;display:grid;place-items:center;overflow:hidden}
     .logo img{width:100%;height:100%;object-fit:cover}
-    .title{font-weight:800; letter-spacing:.2px}
-    .subtitle{font-size:12px; opacity:.9}
-    .chips{display:flex; gap:10px; flex-wrap:wrap}
-    .chip{
-      background:#fff2; border:1px solid #fff4; color:#fff;
-      padding:8px 12px; border-radius:999px; display:flex; gap:8px; align-items:center;
-      font-weight:600; font-size:13px;
-    }
-    .dot{width:10px;height:10px;border-radius:99px;background:#f59e0b; box-shadow:0 0 0 3px #ffffff22}
-    .dot.ok{background:#22c55e}
-    .dot.bad{background:#ef4444}
-
-    .wrap{display:flex; gap:16px; padding:16px; max-width:1250px; margin:0 auto;}
-    .side{
-      width:270px; min-width:240px;
-      background:rgba(255,255,255,.55);
-      border:1px solid var(--border);
-      border-radius:var(--r2);
-      box-shadow:var(--shadow);
-      padding:12px;
-      backdrop-filter: blur(6px);
-      height:calc(100vh - 92px);
-      position:sticky; top:78px;
-      overflow:auto;
-    }
-    .main{
-      flex:1;
-      background:rgba(255,255,255,.55);
-      border:1px solid var(--border);
-      border-radius:var(--r2);
-      box-shadow:var(--shadow);
-      padding:16px;
-      min-height:calc(100vh - 92px);
-      backdrop-filter: blur(6px);
-    }
-
-    .menuTitle{font-weight:800; margin:6px 8px 10px}
-    .menu{display:flex; flex-direction:column; gap:8px;}
-    .mitem{
-      border:1px solid var(--border);
-      background:linear-gradient(180deg,#fff,#fafafa);
-      padding:12px 12px;
-      border-radius:14px;
-      cursor:pointer;
-      display:flex; align-items:center; justify-content:space-between;
-      font-weight:700;
-    }
-    .mitem.active{border-color:#ffd3b7; box-shadow:0 10px 20px rgba(255,106,0,.12)}
-    .mnum{font-weight:800; color:var(--muted); background:#f3f4f6; padding:2px 8px;border-radius:999px}
-
-    .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:var(--r2);
-      box-shadow:var(--shadow);
-      padding:16px;
-      margin-bottom:12px;
-    }
-    h2{margin:0 0 6px}
-    .muted{color:var(--muted)}
-    .grid2{display:grid; grid-template-columns:1fr 1fr; gap:12px}
-    .grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px}
-    @media (max-width: 900px){
-      .wrap{flex-direction:column}
-      .side{position:relative; top:auto; width:auto; height:auto}
-      .grid2,.grid3{grid-template-columns:1fr}
-    }
-
-    label{display:block; font-size:12px; color:var(--muted); font-weight:700; margin:0 0 6px}
-    input,select,textarea{
-      width:100%;
-      border:1px solid var(--border);
-      border-radius:14px;
-      padding:12px 12px;
-      font-size:14px;
-      outline:none;
-      background:#fff;
-    }
-    textarea{min-height:90px; resize:vertical}
-    .row{display:flex; gap:12px; align-items:end; flex-wrap:wrap}
-    .row > div{flex:1}
-
-    .btn{
-      border:none; cursor:pointer;
-      border-radius:16px;
-      padding:12px 14px;
-      font-weight:900;
-      background:linear-gradient(90deg,var(--orange),var(--orange2));
-      color:white;
-      box-shadow:0 10px 24px rgba(255,106,0,.25);
-    }
-    .btn.ghost{
-      background:#fff;
-      color:#111;
-      border:1px solid var(--border);
-      box-shadow:none;
-    }
-    .btn.danger{
-      background:linear-gradient(90deg,#ef4444,#f97316);
-    }
-    .right{display:flex; justify-content:flex-end; gap:10px; flex-wrap:wrap}
-
-    table{width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; border-radius:16px; border:1px solid var(--border)}
-    th,td{padding:10px 10px; border-bottom:1px solid var(--border); font-size:14px}
-    th{background:#f7f7f8; text-align:left; color:#374151}
+    .brand h1{margin:0;font-size:18px}
+    .brand small{display:block;opacity:.9}
+    .chips{display:flex;gap:10px;flex-wrap:wrap}
+    .chip{background:#ffffff22;border:1px solid #ffffff35;border-radius:999px;padding:8px 12px;font-size:13px;font-weight:700;display:flex;gap:8px;align-items:center}
+    .dot{width:10px;height:10px;border-radius:50%;background:#ddd}
+    .dot.ok{background:#22c55e}.dot.bad{background:#ef4444}.dot.warn{background:#f59e0b}
+    .app{max-width:1300px;margin:0 auto;padding:16px;display:grid;grid-template-columns:280px 1fr;gap:16px}
+    .side,.panel{background:rgba(255,255,255,.78);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:var(--r2);box-shadow:var(--shadow)}
+    .side{padding:12px;height:calc(100vh - 96px);position:sticky;top:80px;overflow:auto}
+    .panel{padding:16px;min-height:calc(100vh - 96px)}
+    .nav{display:flex;flex-direction:column;gap:8px}
+    .navbtn{width:100%;border:1px solid var(--line);background:#fff;border-radius:14px;padding:12px 14px;font-weight:800;text-align:left;cursor:pointer;display:flex;justify-content:space-between;align-items:center}
+    .navbtn.active{border-color:#ffd2b3;box-shadow:0 10px 24px rgba(255,106,0,.14)}
+    .badge{background:#f3f4f6;border-radius:999px;padding:3px 8px;color:#6b7280;font-size:12px}
+    .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:16px;box-shadow:var(--shadow);margin-bottom:14px}
+    .grid2,.grid3,.grid4{display:grid;gap:12px}
+    .grid2{grid-template-columns:1fr 1fr}.grid3{grid-template-columns:repeat(3,1fr)}.grid4{grid-template-columns:repeat(4,1fr)}
+    label{display:block;font-size:12px;color:var(--muted);font-weight:800;margin-bottom:6px}
+    input,select,textarea{width:100%;padding:12px;border-radius:14px;border:1px solid var(--line);background:#fff;outline:none;font-size:14px}
+    textarea{min-height:90px;resize:vertical}
+    input:focus,select:focus,textarea:focus{border-color:#ffb27f;box-shadow:0 0 0 4px rgba(255,106,0,.12)}
+    .actions{display:flex;gap:10px;justify-content:flex-end;flex-wrap:wrap}
+    .btn{border:none;border-radius:14px;padding:12px 14px;font-weight:900;cursor:pointer;background:linear-gradient(90deg,var(--brand),var(--brand-2));color:#fff;box-shadow:0 10px 20px rgba(255,106,0,.24)}
+    .btn.ghost{background:#fff;color:var(--text);border:1px solid var(--line);box-shadow:none}
+    .btn.danger{background:linear-gradient(90deg,#ef4444,#f97316)}
+    .hero-kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px}
+    .kpi .t{font-size:12px;color:var(--muted);font-weight:800}.kpi .v{font-size:24px;font-weight:900;margin-top:6px}
+    table{width:100%;border-collapse:separate;border-spacing:0;border:1px solid var(--line);border-radius:16px;overflow:hidden;background:#fff}
+    th,td{padding:10px;border-bottom:1px solid var(--line);text-align:left;font-size:14px}
+    th{background:#f8fafc;color:#374151;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
     tr:last-child td{border-bottom:none}
-    .actions{display:flex; gap:8px}
-    .tag{
-      display:inline-flex; align-items:center; gap:6px;
-      padding:4px 10px; border-radius:999px;
-      background:#f3f4f6; color:#111; font-weight:800; font-size:12px;
-    }
-
-    .hidden{display:none !important}
-    .toast{
-      position:fixed; right:16px; bottom:16px; z-index:50;
-      background:#111827; color:white;
-      padding:12px 14px; border-radius:16px;
-      box-shadow:0 18px 40px rgba(0,0,0,.25);
-      max-width:320px;
-    }
-    .toast.good{background:#0f4d2b}
-    .toast.bad{background:#5b0f0f}
+    .tag{display:inline-flex;align-items:center;padding:4px 10px;border-radius:999px;background:#f3f4f6;font-weight:800;font-size:12px}
+    .muted{color:var(--muted)}
+    .hidden{display:none!important}
+    .toast{position:fixed;right:16px;bottom:16px;background:#111827;color:#fff;padding:12px 14px;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.25);z-index:100}
+    .toast.bad{background:#5b0f0f}.toast.hidden{display:none}
+    @media (max-width:980px){.app{grid-template-columns:1fr}.side{height:auto;position:relative;top:auto}.grid2,.grid3,.grid4,.hero-kpis{grid-template-columns:1fr}}
   </style>
 </head>
 <body>
   <div class="topbar">
-    <div class="topwrap">
+    <div class="topbar-wrap">
       <div class="brand">
-        <div class="logo">
-          <img src="https://i.imgur.com/5b6pG3B.png" alt="logo" onerror="this.style.display='none'">
-        </div>
+        <div class="logo"><img src="https://i.imgur.com/5b6pG3B.png" alt="logo" onerror="this.style.display='none'"></div>
         <div>
-          <div class="title">Caixa • Drogaria Rocha</div>
-          <div class="subtitle" id="topHint">Servidor — conectando...</div>
+          <h1>Caixa Drogaria Rocha</h1>
+          <small id="topHint">Servidor — conectando...</small>
         </div>
       </div>
-
       <div class="chips">
-        <div class="chip"><span class="dot" id="dotSrv"></span>Servidor&nbsp;<span id="srvTxt">—</span></div>
-        <div class="chip"><span class="dot" id="dotLoja"></span>Loja&nbsp;<span id="lojaTxt">—</span></div>
-        <div class="chip"><span class="dot" id="dotOp"></span>Operador&nbsp;<span id="opTxt">—</span></div>
-        <div class="chip"><span class="dot" id="dotSess"></span>Sessão&nbsp;<span id="sessTxt">—</span></div>
+        <div class="chip"><span id="dotSrv" class="dot warn"></span><span id="srvTxt">Servidor —</span></div>
+        <div class="chip"><span id="dotLoja" class="dot warn"></span><span id="lojaTxt">Loja —</span></div>
+        <div class="chip"><span id="dotOp" class="dot warn"></span><span id="opTxt">Operador —</span></div>
+        <div class="chip"><span id="dotSess" class="dot warn"></span><span id="sessTxt">Sessão —</span></div>
       </div>
     </div>
-  </div>
-
-  <div class="wrap">
+  </div>  <div class="app">
     <aside class="side">
-      <div class="menuTitle">Sistema de Caixa</div>
-      <div class="menu">
-        <div class="mitem active" data-tab="login" onclick="showTab('login')">
-          Login <span class="mnum">1</span>
-        </div>
+      <div class="card" style="margin-bottom:10px">
+        <strong>Sistema de Caixa</strong>
+        <div class="muted" style="font-size:12px;margin-top:6px">Versão profissional para uso diário.</div>
+      </div>
+      <div class="nav">
+        <button class="navbtn active" data-tab="login" onclick="showTab('login')">Login <span class="badge">1</span></button>
+        <button class="navbtn hidden" data-auth="1" data-tab="dashboard" onclick="showTab('dashboard')">Dashboard <span class="badge">2</span></button>
+        <button class="navbtn hidden" data-auth="1" data-tab="abertura" onclick="showTab('abertura')">Abertura/Fechamento <span class="badge">3</span></button>
+        <button class="navbtn hidden" data-auth="1" data-tab="vendas" onclick="showTab('vendas')">Vendas <span class="badge">4</span></button>
+        <button class="navbtn hidden" data-auth="1" data-tab="receb" onclick="showTab('receb')">Recebimentos <span class="badge">5</span></button>
+        <button class="navbtn hidden" data-auth="1" data-tab="outros" onclick="showTab('outros')">Outros lançamentos <span class="badge">6</span></button>
+        <button class="navbtn hidden" data-auth="1" data-tab="mov" onclick="showTab('mov')">Movimentos <span class="badge">7</span></button>
+        <button class="navbtn hidden" data-auth="1" data-tab="rel" onclick="showTab('rel')">Relatórios <span class="badge">8</span></button>
+      </div>
+    </aside><main class="panel">
+  <section id="tab-login" class="card">
+    <h2>Login do Operador</h2>
+    <div class="muted">Selecione o operador e digite o PIN.</div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <label>Operador</label>
+        <select id="loginOp"></select>
+      </div>
+      <div>
+        <label>PIN</label>
+        <input id="loginPin" inputmode="numeric" placeholder="Digite o PIN" />
+      </div>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn ghost" onclick="loadBootstrap()">Recarregar listas</button>
+      <button class="btn" onclick="doLogin()">Entrar</button>
+    </div>
+  </section>
 
-        <div class="mitem hidden" data-auth="1" data-tab="abertura" onclick="showTab('abertura')">
-          Abertura/Fechamento <span class="mnum">2</span>
+  <section id="tab-dashboard" class="card hidden">
+    <h2>Dashboard</h2>
+    <div class="muted">Resumo rápido do dia selecionado.</div>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <label>Loja</label>
+        <select id="dashLoja" onchange="syncLoja(this.value); refreshDashboard()">
+          <option value="">Selecione</option>
+          <option>LOJA 1</option>
+          <option>LOJA 2</option>
+        </select>
+      </div>
+      <div>
+        <label>Data</label>
+        <input id="dashData" type="date" onchange="refreshDashboard()" />
+      </div>
+    </div>
+    <div class="hero-kpis" style="margin-top:12px">
+      <div class="kpi"><div class="t">Vendas</div><div class="v" id="dashVendas">R$ 0,00</div></div>
+      <div class="kpi"><div class="t">Recebimentos</div><div class="v" id="dashReceb">R$ 0,00</div></div>
+      <div class="kpi"><div class="t">Sangrias</div><div class="v" id="dashSang">R$ 0,00</div></div>
+      <div class="kpi"><div class="t">Despesas</div><div class="v" id="dashDesp">R$ 0,00</div></div>
+    </div>
+  </section>
+
+  <section id="tab-abertura" class="card hidden">
+    <h2>Abertura e Fechamento de Caixa</h2>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <label>Loja</label>
+        <select id="lojaSel" onchange="onLojaChange()">
+          <option value="">Selecione</option>
+          <option>LOJA 1</option>
+          <option>LOJA 2</option>
+        </select>
+      </div>
+      <div>
+        <label>Suprimento inicial</label>
+        <input id="suprIni" placeholder="0,00" />
+      </div>
+    </div>
+    <div style="margin-top:12px">
+      <label>Observação de fechamento</label>
+      <textarea id="obsFech" placeholder="Ex: conferido, sem divergências..."></textarea>
+    </div>
+    <div class="actions" style="margin-top:12px">
+      <button class="btn" onclick="abrirCaixa()">Abrir caixa</button>
+      <button class="btn danger" onclick="fecharCaixa()">Fechar caixa</button>
+    </div>
+  </section>
+
+  <section id="tab-vendas" class="card hidden">
+    <h2>Registrar Venda</h2>
+    <div class="grid3" style="margin-top:12px">
+      <div>
+        <label>Vendedor</label>
+        <select id="vendSel"></select>
+      </div>
+      <div>
+        <label>Forma</label>
+        <select id="formaSel">
+          <option value="">Selecione</option>
+          <option>DINHEIRO</option>
+          <option>PIX</option>
+          <option>CARTAO</option>
+          <option>OUTRO</option>
+        </select>
+      </div>
+      <div>
+        <label>Valor</label>
+        <input id="valorVenda" placeholder="0,00" />
+      </div>
+    </div>
+    <div class="actions" style="margin-top:12px"><button class="btn" onclick="salvarVenda()">Salvar venda</button></div>
+  </section>
+
+  <section id="tab-receb" class="card hidden">
+    <h2>Recebimentos</h2>
+    <div class="grid2" style="margin-top:12px">
+      <div>
+        <label>Descrição</label>
+        <input id="recDesc" placeholder="Ex: Convênio, cliente, ajuste..." />
+      </div>
+      <div>
+        <label>Valor</label>
+        <input id="recValor" placeholder="0,00" />
+      </div>
+    </div>
+    <div class="actions" style="margin-top:12px"><button class="btn" onclick="salvarReceb()">Salvar recebimento</button></div>
+  </section>
+
+  <section id="tab-outros" class="card hidden">
+    <h2>Outros lançamentos</h2>
+    <div class="grid3" style="margin-top:12px">
+      <div>
+        <label>Tipo</label>
+        <select id="outTipo">
+          <option>SANGRIA</option>
+          <option>DESPESA</option>
+        </select>
+      </div>
+      <div>
+        <label>Descrição</label>
+        <input id="outDesc" placeholder="Descrição" />
+      </div>
+      <div>
+        <label>Valor</label>
+        <input id="outValor" placeholder="0,00" />
+      </div>
+    </div>
+    <div class="actions" style="margin-top:12px"><button class="btn" onclick="salvarOutro()">Salvar lançamento</button></div>
+  </section>
+
+  <section id="tab-mov" class="card hidden">
+    <div class="row" style="justify-content:space-between;align-items:center">
+      <div>
+        <h2 style="margin:0">Movimentos</h2>
+        <div class="muted">Visualização completa dos lançamentos do dia.</div>
+      </div>
+      <div class="actions"><button class="btn ghost" onclick="buscarMovimentos()">Atualizar</button></div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="grid3">
+        <div>
+          <label>Forma</label>
+          <select id="mvForma">
+            <option value="(todas)">(todas)</option>
+            <option>DINHEIRO</option>
+            <option>PIX</option>
+            <option>CARTAO</option>
+            <option>OUTRO</option>
+          </select>
         </div>
-        <div class="mitem hidden" data-auth="1" data-tab="vendas" onclick="showTab('vendas')">
-          Vendas <span class="mnum">3</span>
+        <div>
+          <label>Data</label>
+          <input id="mvData" type="date" />
         </div>
-        <div class="mitem hidden" data-auth="1" data-tab="receb" onclick="showTab('receb')">
-          Recebimentos <span class="mnum">4</span>
+        <div class="actions" style="align-items:end"><button class="btn" onclick="buscarMovimentos()">Buscar</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Vendas</h3>
+      <table>
+        <thead><tr><th>Data/Hora</th><th>Vendedor</th><th>Forma</th><th>Valor</th><th>Ações</th></tr></thead>
+        <tbody id="mvBodyVendas"><tr><td colspan="5" class="muted">—</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Recebimentos</h3>
+      <table>
+        <thead><tr><th>Data/Hora</th><th>Descrição</th><th>Valor</th><th>Ações</th></tr></thead>
+        <tbody id="mvBodyReceb"><tr><td colspan="4" class="muted">—</td></tr></tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h3 style="margin-top:0">Sangrias / Despesas</h3>
+      <table>
+        <thead><tr><th>Data/Hora</th><th>Tipo</th><th>Descrição</th><th>Valor</th><th>Ações</th></tr></thead>
+        <tbody id="mvBodyOutros"><tr><td colspan="5" class="muted">—</td></tr></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="tab-rel" class="card hidden">
+    <h2>Relatórios</h2>
+    <div class="muted">Área protegida. Somente operador com permissão.</div>
+
+    <div id="relLock" class="card" style="margin-top:12px">
+      <div style="font-weight:900;margin-bottom:8px">ÁREA RESTRITA</div>
+      <div class="grid2">
+        <div>
+          <label>Operador</label>
+          <select id="relOp"></select>
         </div>
-        <div class="mitem hidden" data-auth="1" data-tab="outros" onclick="showTab('outros')">
-          Outros lançamentos <span class="mnum">5</span>
-        </div>
-        <div class="mitem hidden" data-auth="1" data-tab="mov" onclick="showTab('mov')">
-          Movimentos <span class="mnum">6</span>
-        </div>
-        <div class="mitem hidden" data-auth="1" data-tab="rel" onclick="showTab('rel')">
-          Relatórios <span class="mnum">7</span>
+        <div>
+          <label>PIN</label>
+          <input id="relPin" inputmode="numeric" placeholder="PIN" />
         </div>
       </div>
-    </aside>
+      <div class="actions" style="margin-top:12px">
+        <button class="btn" onclick="unlockRel()">Desbloquear</button>
+        <button class="btn ghost" onclick="lockRel()">Bloquear</button>
+      </div>
+    </div>
 
-    <main class="main">
-      <section id="tab-login" class="card">
-        <h2>Login do Operador</h2>
-        <div class="muted">Selecione o operador e digite o PIN.</div>
-        <div class="grid2" style="margin-top:12px">
-          <div>
-            <label>Operador</label>
-            <select id="loginOp"></select>
-          </div>
-          <div>
-            <label>PIN</label>
-            <input id="loginPin" inputmode="numeric" placeholder="ex: 1234" />
-          </div>
-        </div>
-        <div class="right" style="margin-top:12px">
-          <button class="btn ghost" onclick="loadBootstrap()">Recarregar listas</button>
-          <button class="btn" onclick="doLogin()">Entrar</button>
-        </div>
-      </section>
-
-      <section id="tab-abertura" class="card hidden">
-        <h2>Abertura e Fechamento de Caixa</h2>
-        <div class="grid2" style="margin-top:10px">
-          <div>
-            <label>Loja</label>
-            <select id="lojaSel" onchange="onLojaChange()">
-              <option value="">Selecione</option>
-              <option>LOJA 1</option>
-              <option>LOJA 2</option>
-            </select>
-          </div>
-          <div>
-            <label>Suprimento inicial (ao abrir)</label>
-            <input id="suprIni" placeholder="0,00" />
-          </div>
-        </div>
-
-        <div class="row" style="margin-top:12px">
-          <div>
-            <label>Observação (fechamento)</label>
-            <textarea id="obsFech" placeholder="Ex: conferido, sem divergências..."></textarea>
-          </div>
-        </div>
-
-        <div class="right" style="margin-top:12px">
-          <button class="btn" onclick="abrirCaixa()">Abrir caixa</button>
-          <button class="btn danger" onclick="fecharCaixa()">Fechar caixa (gera TXT)</button>
-        </div>
-      </section>
-
-      <section id="tab-vendas" class="card hidden">
-        <h2>Registrar Venda</h2>
-        <div class="grid3" style="margin-top:10px">
-          <div>
-            <label>Vendedor</label>
-            <select id="vendSel"></select>
-          </div>
-          <div>
-            <label>Forma de pagamento</label>
-            <select id="formaSel">
-              <option value="">Selecione</option>
-              <option>DINHEIRO</option>
-              <option>PIX</option>
-              <option>CARTAO</option>
-              <option>OUTRO</option>
-            </select>
-          </div>
-          <div>
-            <label>Valor</label>
-            <input id="valorVenda" placeholder="0,00" />
-          </div>
-        </div>
-        <div class="right" style="margin-top:12px">
-          <button class="btn" onclick="salvarVenda()">Salvar venda</button>
-        </div>
-      </section>
-
-      <section id="tab-receb" class="card hidden">
-        <h2>Recebimentos</h2>
-        <div class="grid2" style="margin-top:10px">
-          <div>
-            <label>Descrição</label>
-            <input id="recDesc" placeholder="Ex: Convênio / Cliente / Ajuste..." />
-          </div>
-          <div>
-            <label>Valor</label>
-            <input id="recValor" placeholder="0,00" />
-          </div>
-        </div>
-        <div class="right" style="margin-top:12px">
-          <button class="btn" onclick="salvarReceb()">Salvar recebimento</button>
-        </div>
-      </section>
-
-      <section id="tab-outros" class="card hidden">
-        <h2>Outros lançamentos</h2>
-        <div class="grid3" style="margin-top:10px">
+    <div id="relArea" class="hidden">
+      <div class="card" style="margin-top:12px">
+        <div class="grid3">
           <div>
             <label>Tipo</label>
-            <select id="outTipo">
-              <option>SANGRIA</option>
-              <option>DESPESA</option>
+            <select id="relTipo" onchange="syncRelDateHint()">
+              <option value="DIARIO">DIÁRIO</option>
+              <option value="MENSAL">MENSAL</option>
+              <option value="ANUAL">ANUAL</option>
             </select>
           </div>
           <div>
-            <label>Descrição</label>
-            <input id="outDesc" placeholder="Ex: depósito / combustível / fornecedor..." />
+            <label>Data</label>
+            <input id="relData" type="date" />
           </div>
-          <div>
-            <label>Valor</label>
-            <input id="outValor" placeholder="0,00" />
-          </div>
+          <div class="actions" style="align-items:end"><button class="btn" onclick="gerarRel()">Gerar</button></div>
         </div>
-        <div class="right" style="margin-top:12px">
-          <button class="btn" onclick="salvarOutro()">Salvar</button>
+        <div class="muted" style="margin-top:8px" id="relHint">O período muda automaticamente conforme o tipo.</div>
+      </div>
+
+      <div class="card">
+        <div class="muted" id="rPeriodo">Período: —</div>
+        <div class="grid2" style="margin-top:12px">
+          <div><b>Vendas:</b> <span id="rVendas">R$ 0,00</span></div>
+          <div><b>Recebimentos:</b> <span id="rReceb">R$ 0,00</span></div>
+          <div><b>Sangrias:</b> <span id="rSang">R$ 0,00</span></div>
+          <div><b>Despesas:</b> <span id="rDesp">R$ 0,00</span></div>
         </div>
-      </section>
+      </div>
 
-      <section id="tab-mov" class="card hidden">
-        <div class="row" style="justify-content:space-between; align-items:center">
-          <div>
-            <h2 style="margin:0">Movimentos</h2>
-            <div class="muted">Visualização completa dos lançamentos do dia.</div>
-          </div>
-          <div class="right">
-            <button class="btn ghost" onclick="buscarMovimentos()">Atualizar</button>
-          </div>
-        </div>
+      <div class="card">
+        <h3 style="margin-top:0">Todas as vendas do período</h3>
+        <table>
+          <thead><tr><th>Data/Hora</th><th>Vendedor</th><th>Forma</th><th>Valor</th></tr></thead>
+          <tbody id="rBody"><tr><td colspan="4" class="muted">—</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+</main>
 
-        <div class="card" style="margin-top:12px">
-          <div class="grid3">
-            <div>
-              <label>Forma</label>
-              <select id="mvForma">
-                <option value="(todas)">(todas)</option>
-                <option>DINHEIRO</option>
-                <option>PIX</option>
-                <option>CARTAO</option>
-                <option>OUTRO</option>
-              </select>
-            </div>
-
-            <div>
-              <label>Data do movimento</label>
-              <input id="mvData" type="date"/>
-            </div>
-
-            <div class="right" style="align-items:end">
-              <button class="btn" onclick="buscarMovimentos()">Buscar</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="card">
-          <h3 style="margin:0 0 10px">Vendas</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Data/Hora</th>
-                <th>Vendedor</th>
-                <th>Forma</th>
-                <th>Valor</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="mvBodyVendas">
-              <tr><td colspan="5" class="muted">—</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <h3 style="margin:0 0 10px">Recebimentos</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Data/Hora</th>
-                <th>Descrição</th>
-                <th>Valor</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="mvBodyReceb">
-              <tr><td colspan="4" class="muted">—</td></tr>
-            </tbody>
-          </table>
-        </div>
-
-        <div class="card">
-          <h3 style="margin:0 0 10px">Sangrias / Despesas</h3>
-          <table>
-            <thead>
-              <tr>
-                <th>Data/Hora</th>
-                <th>Tipo</th>
-                <th>Descrição</th>
-                <th>Valor</th>
-                <th>Ações</th>
-              </tr>
-            </thead>
-            <tbody id="mvBodyOutros">
-              <tr><td colspan="5" class="muted">—</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
-
-      <section id="tab-rel" class="card hidden">
-        <h2>Relatórios</h2>
-        <div class="muted">Área protegida. Somente operador com permissão.</div>
-
-        <div id="relLock" class="card" style="margin-top:12px">
-          <div style="font-weight:900; margin-bottom:8px">ÁREA RESTRITA</div>
-          <div class="grid2">
-            <div>
-              <label>Operador</label>
-              <select id="relOp"></select>
-            </div>
-            <div>
-              <label>PIN</label>
-              <input id="relPin" inputmode="numeric" placeholder="PIN"/>
-            </div>
-          </div>
-          <div class="right" style="margin-top:12px">
-            <button class="btn" onclick="unlockRel()">Desbloquear</button>
-            <button class="btn ghost" onclick="lockRel()">Bloquear</button>
-          </div>
-        </div>
-
-        <div id="relArea" class="hidden">
-          <div class="card" style="margin-top:12px">
-            <div class="grid3">
-              <div>
-                <label>Tipo</label>
-                <select id="relTipo" onchange="syncRelDateHint()">
-                  <option value="DIARIO">DIÁRIO</option>
-                  <option value="MENSAL">MENSAL</option>
-                  <option value="ANUAL">ANUAL</option>
-                </select>
-              </div>
-              <div>
-                <label>Data</label>
-                <input id="relData" type="date"/>
-              </div>
-              <div class="right" style="align-items:end">
-                <button class="btn" onclick="gerarRel()">Gerar</button>
-              </div>
-            </div>
-            <div class="muted" style="margin-top:8px" id="relHint">O período muda automaticamente conforme o tipo.</div>
-          </div>
-
-          <div class="card">
-            <div class="muted" id="rPeriodo">Período: —</div>
-            <div class="grid2" style="margin-top:12px">
-              <div><b>Vendas:</b> <span id="rVendas">R$ 0,00</span></div>
-              <div><b>Recebimentos:</b> <span id="rReceb">R$ 0,00</span></div>
-              <div><b>Sangrias:</b> <span id="rSang">R$ 0,00</span></div>
-              <div><b>Despesas:</b> <span id="rDesp">R$ 0,00</span></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <h3 style="margin:10px 0">Todas as vendas do período</h3>
-            <table>
-              <thead>
-                <tr><th>Data/Hora</th><th>Vendedor</th><th>Forma</th><th>Valor</th></tr>
-              </thead>
-              <tbody id="rBody">
-                <tr><td colspan="4" class="muted">—</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </section>
-    </main>
-  </div>
-
-  <div id="toast" class="toast hidden"></div>
-
-<script>
+  </div>  <div id="toast" class="toast hidden"></div><script>
 const API_URL = "https://script.google.com/macros/s/AKfycbwbZ-l32CMDB4PHDXzX60ndDrW_WWLyHMrZa_lrLDjZm9Kw2HH82eJ5WHzbFYzzZ4uVbA/exec";
 
 const state = {
@@ -539,17 +393,12 @@ function toast(msg, type="good"){
   setTimeout(()=>el.classList.add("hidden"), 2600);
 }
 
-function lockMenus(){
-  document.querySelectorAll("[data-auth='1']").forEach(x=>x.classList.add("hidden"));
-}
-
-function unlockMenus(){
-  document.querySelectorAll("[data-auth='1']").forEach(x=>x.classList.remove("hidden"));
-}
+function lockMenus(){ document.querySelectorAll("[data-auth='1']").forEach(x=>x.classList.add("hidden")); }
+function unlockMenus(){ document.querySelectorAll("[data-auth='1']").forEach(x=>x.classList.remove("hidden")); }
 
 function activateMenu(tab){
-  document.querySelectorAll(".mitem").forEach(x=>x.classList.remove("active"));
-  const el = document.querySelector(`.mitem[data-tab="${tab}"]`);
+  document.querySelectorAll(".navbtn").forEach(x=>x.classList.remove("active"));
+  const el = document.querySelector(`.navbtn[data-tab="${tab}"]`);
   if(el) el.classList.add("active");
 }
 
@@ -557,20 +406,27 @@ function showTab(key){
   document.querySelectorAll("main section").forEach(s=>s.classList.add("hidden"));
   $("tab-"+key).classList.remove("hidden");
   activateMenu(key);
-
   if(key === "mov" && state.logged){
     if(!$("mvData").value) $("mvData").value = todayISO();
     buscarMovimentos();
   }
+  if(key === "dashboard" && state.logged){ refreshDashboard(); }
 }
 
 async function api(action, payload={}){
   const res = await fetch(API_URL, {
     method:"POST",
-    headers:{ "Content-Type":"application/json" },
+    headers:{ "Content-Type":"text/plain;charset=utf-8" },
     body: JSON.stringify({ action, ...payload })
   });
-  return await res.json();
+
+  const txt = await res.text();
+
+  try{
+    return JSON.parse(txt);
+  }catch(e){
+    throw new Error("Resposta inválida do servidor: " + txt);
+  }
 }
 
 async function ping(){
@@ -591,15 +447,11 @@ async function loadBootstrap(){
     toast("Cole a URL do WebApp em API_URL.","bad");
     return;
   }
-
   await ping();
   if(!state.serverOK) return;
 
   const r = await api("bootstrap",{});
-  if(!r.ok){
-    toast(r.error || "Falha ao carregar listas.","bad");
-    return;
-  }
+  if(!r.ok){ toast(r.error || "Falha ao carregar listas.","bad"); return; }
 
   state.ops = r.operadores || [];
   state.vendedores = r.vendedores || [];
@@ -607,98 +459,70 @@ async function loadBootstrap(){
   $("loginOp").innerHTML = `<option value="">Selecione</option>` + state.ops.map(o=>`<option value="${o.id}">${o.nome}</option>`).join("");
   $("relOp").innerHTML = `<option value="">Selecione</option>` + state.ops.filter(o=>o.pode_apagar).map(o=>`<option value="${o.id}">${o.nome}</option>`).join("");
   $("vendSel").innerHTML = `<option value="">Selecione</option>` + state.vendedores.map(v=>`<option value="${v.nome}">${v.nome}</option>`).join("");
-
   toast("Listas carregadas.","good");
 }
 
 async function doLogin(){
-  if(!state.serverOK){
-    toast("Servidor offline.","bad");
-    return;
-  }
-
+  if(!state.serverOK){ toast("Servidor offline.","bad"); return; }
   const operador_id = $("loginOp").value;
   const pin = $("loginPin").value.trim();
-
-  if(!operador_id || !pin){
-    toast("Selecione operador e digite o PIN.","bad");
-    return;
-  }
+  if(!operador_id || !pin){ toast("Selecione operador e digite o PIN.","bad"); return; }
 
   const r = await api("login",{ operador_id, pin });
-  if(!r.ok){
-    toast(r.error || "Login falhou.","bad");
-    return;
-  }
+  if(!r.ok){ toast(r.error || "Login falhou.","bad"); return; }
 
   state.logged = true;
   state.operador = r.operador;
   unlockMenus();
-
   setChip("dotOp","opTxt","ok", state.operador.nome + (state.operador.pode_apagar ? " (apagar)" : ""));
   toast("Login OK.","good");
-  showTab("abertura");
+  showTab("dashboard");
 }
 
-function onLojaChange(){
-  state.loja = $("lojaSel").value;
-  if(state.loja){
-    setChip("dotLoja","lojaTxt","ok", state.loja);
-  } else {
-    setChip("dotLoja","lojaTxt","bad", "—");
-  }
+function syncLoja(value){
+  state.loja = value;
+  $("lojaSel").value = value;
+  $("dashLoja").value = value;
+  if(state.loja){ setChip("dotLoja","lojaTxt","ok", state.loja); }
 }
+
+function onLojaChange(){ syncLoja($("lojaSel").value); }
 
 async function abrirCaixa(){
   if(!state.logged) return;
   state.loja = $("lojaSel").value;
-  if(!state.loja){
-    toast("Selecione a loja.","bad");
-    return;
-  }
+  if(!state.loja){ toast("Selecione a loja.","bad"); return; }
 
   const r = await api("abrir_caixa", {
     loja: state.loja,
     operador_id: state.operador.id,
     suprimento_inicial: $("suprIni").value
   });
-
-  if(!r.ok){
-    toast(r.error || "Erro ao abrir.","bad");
-    return;
-  }
-
+  if(!r.ok){ toast(r.error || "Erro ao abrir.","bad"); return; }
   state.sessao_id = r.sessao_id || "";
   setChip("dotSess","sessTxt","ok", state.sessao_id || "ABERTO");
   toast("Caixa aberto.","good");
+  refreshDashboard();
 }
 
 async function fecharCaixa(){
   if(!state.logged) return;
   state.loja = $("lojaSel").value;
-  if(!state.loja){
-    toast("Selecione a loja.","bad");
-    return;
-  }
+  if(!state.loja){ toast("Selecione a loja.","bad"); return; }
 
   const r = await api("fechar_caixa", {
     loja: state.loja,
     operador_id: state.operador.id,
     observacao: $("obsFech").value
   });
-
-  if(!r.ok){
-    toast(r.error || "Erro ao fechar.","bad");
-    return;
-  }
+  if(!r.ok){ toast(r.error || "Erro ao fechar.","bad"); return; }
 
   setChip("dotSess","sessTxt","bad","FECHADO");
   state.sessao_id = "";
-
   const txt = buildFechamentoTXT(r);
   downloadTXT(`fechamento_${state.loja.replace(" ","_")}_${todayISO()}.txt`, txt);
-
   toast("Fechamento concluído (TXT gerado).","good");
+  refreshDashboard();
 }
 
 function buildFechamentoTXT(r){
@@ -718,11 +542,7 @@ function buildFechamentoTXT(r){
     `Despesas: ${moneyBR(s.total_despesas)}`,
     `SALDO FINAL: ${moneyBR(s.saldo)}`,
     "",
-    `Qtd vendas: ${s.vendas_qtd || 0}`,
-    `Qtd recebimentos: ${s.receb_qtd || 0}`,
-    "",
-    "Gerado em: " + new Date().toLocaleString("pt-BR"),
-    "==================================="
+    "Gerado em: " + new Date().toLocaleString("pt-BR")
   ].join("\n");
 }
 
@@ -730,21 +550,11 @@ function downloadTXT(filename, content){
   const blob = new Blob([content], {type:"text/plain;charset=utf-8"});
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  a.remove();
-  URL.revokeObjectURL(url);
+  a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
 }
 
 async function salvarVenda(){
-  if(!state.logged) return;
-  if(!state.loja){
-    toast("Selecione a loja na Abertura.","bad");
-    return;
-  }
-
+  if(!state.logged || !state.loja){ toast("Selecione a loja na Abertura.","bad"); return; }
   const r = await api("salvar_venda", {
     loja: state.loja,
     operador_id: state.operador.id,
@@ -752,51 +562,32 @@ async function salvarVenda(){
     forma: $("formaSel").value,
     valor: $("valorVenda").value
   });
-
-  if(!r.ok){
-    toast(r.error || "Falha ao salvar.","bad");
-    return;
-  }
-
+  if(!r.ok){ toast(r.error || "Falha ao salvar.","bad"); return; }
   $("valorVenda").value = "";
   toast("Venda salva.","good");
   if(!$("tab-mov").classList.contains("hidden")) await buscarMovimentos();
   if(!$("tab-rel").classList.contains("hidden") && state.relUnlocked) await gerarRel();
+  refreshDashboard();
 }
 
 async function salvarReceb(){
-  if(!state.logged) return;
-  if(!state.loja){
-    toast("Selecione a loja na Abertura.","bad");
-    return;
-  }
-
+  if(!state.logged || !state.loja){ toast("Selecione a loja na Abertura.","bad"); return; }
   const r = await api("salvar_receb", {
     loja: state.loja,
     operador_id: state.operador.id,
     descricao: $("recDesc").value.trim(),
     valor: $("recValor").value
   });
-
-  if(!r.ok){
-    toast(r.error || "Falha ao salvar.","bad");
-    return;
-  }
-
-  $("recDesc").value = "";
-  $("recValor").value = "";
+  if(!r.ok){ toast(r.error || "Falha ao salvar.","bad"); return; }
+  $("recDesc").value = ""; $("recValor").value = "";
   toast("Recebimento salvo.","good");
   if(!$("tab-mov").classList.contains("hidden")) await buscarMovimentos();
   if(!$("tab-rel").classList.contains("hidden") && state.relUnlocked) await gerarRel();
+  refreshDashboard();
 }
 
 async function salvarOutro(){
-  if(!state.logged) return;
-  if(!state.loja){
-    toast("Selecione a loja na Abertura.","bad");
-    return;
-  }
-
+  if(!state.logged || !state.loja){ toast("Selecione a loja na Abertura.","bad"); return; }
   const r = await api("salvar_outro", {
     loja: state.loja,
     operador_id: state.operador.id,
@@ -804,41 +595,20 @@ async function salvarOutro(){
     descricao: $("outDesc").value.trim(),
     valor: $("outValor").value
   });
-
-  if(!r.ok){
-    toast(r.error || "Falha ao salvar.","bad");
-    return;
-  }
-
-  $("outDesc").value = "";
-  $("outValor").value = "";
+  if(!r.ok){ toast(r.error || "Falha ao salvar.","bad"); return; }
+  $("outDesc").value = ""; $("outValor").value = "";
   toast("Lançamento salvo.","good");
   if(!$("tab-mov").classList.contains("hidden")) await buscarMovimentos();
   if(!$("tab-rel").classList.contains("hidden") && state.relUnlocked) await gerarRel();
+  refreshDashboard();
 }
 
 async function buscarMovimentos(){
-  if(!state.logged) return;
-  if(!state.loja){
-    toast("Selecione a loja.","bad");
-    return;
-  }
-
+  if(!state.logged || !state.loja){ toast("Selecione a loja.","bad"); return; }
   const forma = $("mvForma").value;
   const data = $("mvData").value || todayISO();
-
-  const r = await api("movimentos", {
-    loja: state.loja,
-    ini: data,
-    fim: data,
-    forma
-  });
-
-  if(!r.ok){
-    toast(r.error || "Erro ao carregar movimentos.","bad");
-    return;
-  }
-
+  const r = await api("movimentos", { loja: state.loja, ini: data, fim: data, forma });
+  if(!r.ok){ toast(r.error || "Erro ao carregar movimentos.","bad"); return; }
   renderMovVendas(r.vendas || []);
   renderMovReceb(r.recebimentos || []);
   renderMovOutros(r.outros || []);
@@ -846,99 +616,41 @@ async function buscarMovimentos(){
 
 function renderMovVendas(rows){
   const body = $("mvBodyVendas");
-  if(!rows.length){
-    body.innerHTML = `<tr><td colspan="5" class="muted">Nenhuma venda nessa data.</td></tr>`;
-    return;
-  }
-
+  if(!rows.length){ body.innerHTML = `<tr><td colspan="5" class="muted">Nenhuma venda nessa data.</td></tr>`; return; }
   body.innerHTML = rows.map(v=>{
     const canDel = !!(state.operador && state.operador.pode_apagar);
-    return `
-      <tr>
-        <td>${v.data} ${v.hora}</td>
-        <td><span class="tag">${escapeHtml(v.vendedor)}</span></td>
-        <td>${escapeHtml(v.forma)}</td>
-        <td style="font-weight:900">${moneyBR(v.valor)}</td>
-        <td>
-          ${canDel ? `<button class="btn danger" style="padding:8px 10px;border-radius:12px" onclick="apagarMovimento('VENDAS','${v.id}')">Apagar</button>` : `<span class="muted">—</span>`}
-        </td>
-      </tr>
-    `;
+    return `<tr><td>${v.data} ${v.hora}</td><td><span class="tag">${escapeHtml(v.vendedor)}</span></td><td>${escapeHtml(v.forma)}</td><td style="font-weight:900">${moneyBR(v.valor)}</td><td>${canDel ? `<button class="btn danger" style="padding:8px 10px;border-radius:12px" onclick="apagarMovimento('VENDAS','${v.id}')">Apagar</button>` : `<span class="muted">—</span>`}</td></tr>`;
   }).join("");
 }
 
 function renderMovReceb(rows){
   const body = $("mvBodyReceb");
-  if(!rows.length){
-    body.innerHTML = `<tr><td colspan="4" class="muted">Nenhum recebimento nessa data.</td></tr>`;
-    return;
-  }
-
+  if(!rows.length){ body.innerHTML = `<tr><td colspan="4" class="muted">Nenhum recebimento nessa data.</td></tr>`; return; }
   body.innerHTML = rows.map(v=>{
     const canDel = !!(state.operador && state.operador.pode_apagar);
-    return `
-      <tr>
-        <td>${v.data} ${v.hora}</td>
-        <td>${escapeHtml(v.descricao)}</td>
-        <td style="font-weight:900">${moneyBR(v.valor)}</td>
-        <td>
-          ${canDel ? `<button class="btn danger" style="padding:8px 10px;border-radius:12px" onclick="apagarMovimento('RECEBIMENTOS','${v.id}')">Apagar</button>` : `<span class="muted">—</span>`}
-        </td>
-      </tr>
-    `;
+    return `<tr><td>${v.data} ${v.hora}</td><td>${escapeHtml(v.descricao)}</td><td style="font-weight:900">${moneyBR(v.valor)}</td><td>${canDel ? `<button class="btn danger" style="padding:8px 10px;border-radius:12px" onclick="apagarMovimento('RECEBIMENTOS','${v.id}')">Apagar</button>` : `<span class="muted">—</span>`}</td></tr>`;
   }).join("");
 }
 
 function renderMovOutros(rows){
   const body = $("mvBodyOutros");
-  if(!rows.length){
-    body.innerHTML = `<tr><td colspan="5" class="muted">Nenhum lançamento nessa data.</td></tr>`;
-    return;
-  }
-
+  if(!rows.length){ body.innerHTML = `<tr><td colspan="5" class="muted">Nenhum lançamento nessa data.</td></tr>`; return; }
   body.innerHTML = rows.map(v=>{
     const canDel = !!(state.operador && state.operador.pode_apagar);
-    return `
-      <tr>
-        <td>${v.data} ${v.hora}</td>
-        <td><span class="tag">${escapeHtml(v.tipo_lanc)}</span></td>
-        <td>${escapeHtml(v.descricao)}</td>
-        <td style="font-weight:900">${moneyBR(v.valor)}</td>
-        <td>
-          ${canDel ? `<button class="btn danger" style="padding:8px 10px;border-radius:12px" onclick="apagarMovimento('OUTROS','${v.id}')">Apagar</button>` : `<span class="muted">—</span>`}
-        </td>
-      </tr>
-    `;
+    return `<tr><td>${v.data} ${v.hora}</td><td><span class="tag">${escapeHtml(v.tipo_lanc)}</span></td><td>${escapeHtml(v.descricao)}</td><td style="font-weight:900">${moneyBR(v.valor)}</td><td>${canDel ? `<button class="btn danger" style="padding:8px 10px;border-radius:12px" onclick="apagarMovimento('OUTROS','${v.id}')">Apagar</button>` : `<span class="muted">—</span>`}</td></tr>`;
   }).join("");
 }
 
 async function apagarMovimento(kind, id){
-  if(!state.operador?.pode_apagar){
-    toast("Sem permissão para apagar.","bad");
-    return;
-  }
-
+  if(!state.operador?.pode_apagar){ toast("Sem permissão para apagar.","bad"); return; }
   const pin = prompt("Digite seu PIN para apagar:");
   if(!pin) return;
-
-  const r = await api("apagar_registro", {
-    operador_id: state.operador.id,
-    pin,
-    kind,
-    id
-  });
-
-  if(!r.ok){
-    toast(r.error || "Não foi possível apagar.","bad");
-    return;
-  }
-
+  const r = await api("apagar_registro", { operador_id: state.operador.id, pin, kind, id });
+  if(!r.ok){ toast(r.error || "Não foi possível apagar.","bad"); return; }
   toast("Movimento apagado.","good");
   await buscarMovimentos();
-
-  if(!$("tab-rel").classList.contains("hidden") && state.relUnlocked){
-    try{ await gerarRel(); }catch(e){}
-  }
+  if(!$("tab-rel").classList.contains("hidden") && state.relUnlocked){ try{ await gerarRel(); }catch(e){} }
+  refreshDashboard();
 }
 
 function lockRel(){
@@ -952,10 +664,7 @@ function lockRel(){
 function unlockRel(){
   const operador_id = $("relOp").value;
   const pin = $("relPin").value.trim();
-  if(!operador_id || !pin){
-    toast("Selecione operador e informe PIN.","bad");
-    return;
-  }
+  if(!operador_id || !pin){ toast("Selecione operador e informe PIN.","bad"); return; }
   state.relUnlocked = true;
   state.relAuth = { operador_id, pin };
   $("relArea").classList.remove("hidden");
@@ -963,21 +672,11 @@ function unlockRel(){
   toast("Área liberada.","good");
 }
 
-function syncRelDateHint(){
-  $("relHint").textContent = "O período muda automaticamente conforme o tipo.";
-}
+function syncRelDateHint(){ $("relHint").textContent = "O período muda automaticamente conforme o tipo."; }
 
 async function gerarRel(){
-  if(!state.logged) return;
-  if(!state.loja){
-    toast("Selecione a loja.","bad");
-    return;
-  }
-  if(!state.relUnlocked){
-    toast("Desbloqueie os relatórios.","bad");
-    return;
-  }
-
+  if(!state.logged || !state.loja){ toast("Selecione a loja.","bad"); return; }
+  if(!state.relUnlocked){ toast("Desbloqueie os relatórios.","bad"); return; }
   const r = await api("report", {
     loja: state.loja,
     tipo: $("relTipo").value,
@@ -985,11 +684,7 @@ async function gerarRel(){
     operador_id: state.relAuth.operador_id,
     pin: state.relAuth.pin
   });
-
-  if(!r.ok){
-    toast(r.error || "Relatório falhou.","bad");
-    return;
-  }
+  if(!r.ok){ toast(r.error || "Relatório falhou.","bad"); return; }
 
   $("rVendas").textContent = moneyBR(r.resumo?.vendas || 0);
   $("rReceb").textContent = moneyBR(r.resumo?.recebimentos || 0);
@@ -999,37 +694,34 @@ async function gerarRel(){
 
   const rows = r.vendas || [];
   const b = $("rBody");
-
-  if(!rows.length){
-    b.innerHTML = `<tr><td colspan="4" class="muted">Nenhuma venda no período.</td></tr>`;
-    return;
-  }
-
-  b.innerHTML = rows.map(v=>`
-    <tr>
-      <td>${v.data} ${v.hora}</td>
-      <td>${escapeHtml(v.vendedor)}</td>
-      <td>${escapeHtml(v.forma)}</td>
-      <td style="font-weight:900">${moneyBR(v.valor)}</td>
-    </tr>
-  `).join("");
-
+  if(!rows.length){ b.innerHTML = `<tr><td colspan="4" class="muted">Nenhuma venda no período.</td></tr>`; return; }
+  b.innerHTML = rows.map(v=>`<tr><td>${v.data} ${v.hora}</td><td>${escapeHtml(v.vendedor)}</td><td>${escapeHtml(v.forma)}</td><td style="font-weight:900">${moneyBR(v.valor)}</td></tr>`).join("");
   toast("Relatório gerado.","good");
 }
 
-function escapeHtml(s){
-  return String(s || "").replace(/[&<>"']/g, m => ({
-    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
-  }[m]));
+async function refreshDashboard(){
+  if(!state.logged || !state.loja) return;
+  const data = $("dashData").value || todayISO();
+  const r = await api("report", {
+    loja: state.loja,
+    tipo: 'DIARIO',
+    data,
+    operador_id: state.operador.pode_apagar ? state.operador.id : (state.ops.find(o=>o.pode_apagar)?.id || state.operador.id),
+    pin: state.operador.pode_apagar ? $("loginPin").value.trim() : ''
+  }).catch(()=>null);
+  if(!r || !r.ok) return;
+  $("dashVendas").textContent = moneyBR(r.resumo?.vendas || 0);
+  $("dashReceb").textContent = moneyBR(r.resumo?.recebimentos || 0);
+  $("dashSang").textContent = moneyBR(r.resumo?.sangrias || 0);
+  $("dashDesp").textContent = moneyBR(r.resumo?.despesas || 0);
 }
 
-$("mvData").addEventListener("change", async ()=>{
-  try{ await buscarMovimentos(); }catch(e){ toast("Erro ao atualizar por data.","bad"); }
-});
+function escapeHtml(s){
+  return String(s || "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+}
 
-$("mvForma").addEventListener("change", async ()=>{
-  try{ await buscarMovimentos(); }catch(e){ toast("Erro ao atualizar por forma.","bad"); }
-});
+$("mvData").addEventListener("change", async ()=>{ try{ await buscarMovimentos(); }catch(e){ toast("Erro ao atualizar por data.","bad"); } });
+$("mvForma").addEventListener("change", async ()=>{ try{ await buscarMovimentos(); }catch(e){ toast("Erro ao atualizar por forma.","bad"); } });
 
 window.addEventListener("load", async ()=>{
   lockMenus();
@@ -1038,9 +730,8 @@ window.addEventListener("load", async ()=>{
   setChip("dotSess","sessTxt","bad","—");
   $("mvData").value = todayISO();
   $("relData").value = todayISO();
+  $("dashData").value = todayISO();
   await loadBootstrap();
 });
-</script>
-</body>
+</script></body>
 </html>
-
